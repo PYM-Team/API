@@ -1,5 +1,7 @@
+/* eslint-disable no-console */
 const Koa = require('koa');
 const indexRoutes = require('./routes/index');
+
 const app = new Koa();
 const PORT = process.env.PORT || 1337;
 

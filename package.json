@@ -7,7 +7,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "mocha tests/routes.test.app.js",
+    "test": "mocha tests/*.js",
     "start": "node app.js"
   },
   "repository": {
@@ -20,14 +20,19 @@
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/wo0lien/web-API/issues"
+    "url": "https://github.com/RPplanner-Team/API/issues"
   },
-  "homepage": "https://github.com/wo0lien/web-API#readme",
+  "homepage": "https://github.com/RPplanner-Team/API#readme",
   "dependencies": {
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
     "koa": "^2.11.0",
     "koa-router": "^8.0.6",
     "mocha": "^7.0.1"
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.20.1"
   }
 }
