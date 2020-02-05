@@ -1,0 +1,32 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "description": "RestAPI for the 3TC-web-project",
+  "main": "app.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "mocha tests/routes.test.app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wo0lien/web-API.git"
+  },
+  "keywords": [
+    "RestAPI"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wo0lien/web-API/issues"
+  },
+  "homepage": "https://github.com/wo0lien/web-API#readme",
+  "dependencies": {
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "koa": "^2.11.0",
+    "koa-router": "^8.0.6",
+    "mocha": "^7.0.1"
+  }
+}
