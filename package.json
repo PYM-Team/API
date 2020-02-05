@@ -7,11 +7,12 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "mocha tests/routes.test.app.js"
+    "test": "mocha tests/routes.test.app.js",
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wo0lien/web-API.git"
+    "url": "git+https://github.com/RPplanner-Team/API.git"
   },
   "keywords": [
     "RestAPI"
