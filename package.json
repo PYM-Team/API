@@ -7,10 +7,10 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "eslint . && mocha tests/*.js",
+    "test": "eslint . && mocha --require babel-polyfill --require @babel/register ./tests/*.js",
     "start": "nodemon --exec babel-node app.js",
     "lint": "eslint .",
-    "lint-fix": "eslint . --fix" 
+    "lint-fix": "eslint . --fix"
   },
   "repository": {
     "type": "git",
@@ -39,6 +39,8 @@
     "@babel/core": "^7.8.4",
     "@babel/node": "^7.8.4",
     "@babel/preset-env": "^7.8.4",
+    "@babel/register": "^7.8.3",
+    "babel-polyfill": "^6.26.0",
     "babel-eslint": "^10.0.3",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.0.0",
