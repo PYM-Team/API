@@ -1,16 +1,17 @@
 /* eslint-disable no-console */
-const mongoose = require('mongoose');
+import { connect, connection } from 'mongoose';
+
 require('dotenv').config();
 
 const initDB = () => {
-  mongoose.connect(
+  connect(
     `mongodb+srv://${process.env.USERNAME}:${process.env.PASSWORD}@${process.env.DBURI}`,
     { useNewUrlParser: true, useUnifiedTopology: true },
   );
 
-  mongoose.connection.once('open', () => {
+  connection.once('open', () => {
     console.log('connected to database');
   });
 };
 
-module.exports = initDB;
+export default initDB;

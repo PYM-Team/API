@@ -1,14 +1,14 @@
-const Router = require('koa-router');
+import Router from 'koa-router';
+import { helloWorld, createGame } from '../controllers/games.controller';
 
 const router = new Router();
-const gamesController = require('../controllers/games.controller');
 
 router.prefix('/api');
 
 // GET
-router.get('/games', gamesController.helloWorld);
+router.get('/games', helloWorld);
 
 // POST
-router.post('/games', gamesController.createGame);
+router.post('/games', createGame);
 
-module.exports = router;
+export default router;

@@ -1,12 +1,12 @@
 /* eslint-disable no-console */
 /* eslint-disable func-names */
-const Game = require('../models/games.model');
+import Game from '../models/games.model';
 
-exports.helloWorld = function (ctx, next) {
+export function helloWorld(ctx, next) {
   console.log('Hello world');
-};
+}
 
-exports.createGame = function (ctx, next) {
+export function createGame(ctx, next) {
   const game = new Game({});
   game.save();
 
@@ -14,4 +14,4 @@ exports.createGame = function (ctx, next) {
     status: 'success',
     message: 'Game created',
   };
-};
+}
