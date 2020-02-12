@@ -22,11 +22,12 @@ export function getGame(ctx, next) {
   }
 }
 
-function findGameId(gameid, callback) {
-  let gid = gameid;
+function findGameId(callback) {
+  let gid = Math.round(Math.random() * 899999) + 100000;
+  // eslint-disable-next-line consistent-return
   Game.find({ id: gid }, (_err, games) => {
     if (games.length != 0) {
-      gid += 1;
+      gid = Math.round(Math.random() * 899999) + 100000;
       return findGameId(gid, callback);
     }
     callback(gid);
@@ -35,12 +36,18 @@ function findGameId(gameid, callback) {
 
 export function createGame(ctx, next) {
   // generating the random id;
-  findGameId(1, (gameid) => {
-    Game({ id: gameid }).save();
-    ctx.body = {
-      status: 'success',
-      message: 'Game created',
-      id: gameid,
-    };
-  });
+  return new Promise(((resolve) => {
+    findGameId((gameid) => {
+      Game({ id: gameid }).save()
+        .then(() => {
+          console.log(`saved to db with id ${gameid}`);
+          ctx.body = {
+            status: 'success',
+            message: 'Game created',
+            id: gameid,
+          };
+          resolve();
+        });
+    });
+  }));
 }
