@@ -1,7 +1,8 @@
 /* eslint-disable no-console */
 import { connect, connection } from 'mongoose';
 
-require('dotenv').config();
+const { resolve } = require('path');
+require('dotenv').config({ path: resolve(__dirname, '../.env') });
 
 const initDB = () => {
   connect(

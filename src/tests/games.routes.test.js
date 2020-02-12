@@ -2,7 +2,7 @@
 import { should as _should, use, request } from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../app';
-import 'babel-polyfill';
+import '@babel/polyfill';
 
 process.env.NODE_ENV = 'test';
 
