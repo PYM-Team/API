@@ -7,19 +7,24 @@ export function helloWorld(ctx, next) {
 }
 
 export function getGame(ctx, next) {
-  console.log(ctx.params);
-  if (ctx.params.gameid) {
-    Game.find({ id: ctx.params.gameid })
-      .then((games, err) => {
-        ctx.body = games;
-      })
-      .catch((err) => {
-        ctx.status = 400;
-        ctx.body = err;
-      });
-  } else {
-    ctx.status = 400;
-  }
+  return new Promise((resolve) => {
+    if (true) {
+      Game.find({ id: ctx.params.id })
+        .then((games, err) => {
+          console.log(games);
+          ctx.body = games;
+          resolve();
+        })
+        .catch((err) => {
+          ctx.status = 400;
+          ctx.body = err;
+          resolve();
+        });
+    } else {
+      ctx.status = 400;
+      resolve();
+    }
+  });
 }
 
 function findGameId(callback) {
@@ -36,7 +41,7 @@ function findGameId(callback) {
 
 export function createGame(ctx, next) {
   // generating the random id;
-  return new Promise(((resolve) => {
+  return new Promise((resolve) => {
     findGameId((gameid) => {
       Game({ id: gameid }).save()
         .then(() => {
@@ -49,5 +54,5 @@ export function createGame(ctx, next) {
           resolve();
         });
     });
-  }));
+  });
 }

@@ -9,7 +9,7 @@ router.prefix('/api');
 router.get('/', helloWorld);
 
 // GET
-router.get('/games', getGame);
+router.get('/games/:id', getGame);
 
 // POST
 router.post('/games', createGame);
