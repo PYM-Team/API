@@ -14,7 +14,7 @@
     "clean": "rm -rf build && mkdir build",
     "build-babel": "babel -d ./build ./src -s",
     "build": "npm run clean && npm run build-babel",
-    "start": "npm run build && node ./build/app.js"
+    "start": "node ./build/app.js"
   },
   "repository": {
     "type": "git",
@@ -37,11 +37,11 @@
     "koa-bodyparser": "^4.2.1",
     "koa-router": "^8.0.6",
     "mocha": "^7.0.1",
-    "mongoose": "^5.8.11",
-    "@babel/cli": "^7.8.4",
-    "@babel/core": "^7.8.4"
+    "mongoose": "^5.8.11"
   },
   "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.8.4",
     "@babel/node": "^7.8.4",
     "@babel/polyfill": "^7.8.3",
     "@babel/preset-env": "^7.8.4",
