@@ -1,12 +1,15 @@
 import Router from 'koa-router';
-import { helloWorld, createGame } from '../controllers/games.controller';
+import { helloWorld, createGame, getGame } from '../controllers/games.controller';
 
 const router = new Router();
 
 router.prefix('/api');
 
 // GET
-router.get('/games', helloWorld);
+router.get('/', helloWorld);
+
+// GET
+router.get('/games', getGame);
 
 // POST
 router.post('/games', createGame);
