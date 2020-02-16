@@ -1,11 +1,9 @@
 /* eslint-disable global-require */
 /* eslint-disable no-console */
 import { connect, connection } from 'mongoose';
-import fs from 'fs';
-import path from 'path';
 
-// add this line to fix deployement problem
-if (process.env.NODE_ENV !== 'production') require('dotenv').config();
+// eslint-disable-next-line import/named
+import { NODE_ENV } from './config';
 
 const initDB = () => {
   connect(
