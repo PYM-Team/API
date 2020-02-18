@@ -7,7 +7,7 @@ import { NODE_ENV } from './config';
 
 const initDB = () => {
   connect(
-    `mongodb+srv://${process.env.USERNAME}:${process.env.PASSWORD}@${process.env.DBURI}`,
+    `mongodb+srv://${process.env.DBUSERNAME}:${process.env.PASSWORD}@${process.env.DBURI}`,
     { useNewUrlParser: true, useUnifiedTopology: true },
   );
 
