@@ -1,5 +1,6 @@
 /* eslint-disable eqeqeq */
 import Game from '../models/games.model';
+import Player from '../models/players.model';
 
 export function helloWorld(ctx, next) {
   // eslint-disable-next-line no-console
@@ -54,5 +55,26 @@ export function createGame(ctx, next) {
           resolve();
         });
     });
+  });
+}
+
+export function createPlayer(ctx, next) {
+  return new Promise((resolve) => {
+    console.log(ctx.params.gameId);
+    Player({ gameId: ctx.params.gameId }).save()
+      .then(() => {
+        console.log(`saved to db with Game ${ctx.params.gameId}`);
+        ctx.body = {
+          status: 'success',
+          message: 'Player created',
+          game: ctx.params.gameId,
+        };
+        resolve();
+      })
+      .catch((err) => {
+        ctx.status = 400;
+        ctx.body = err;
+        resolve();
+      });
   });
 }
