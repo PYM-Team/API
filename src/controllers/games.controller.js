@@ -9,22 +9,17 @@ export function helloWorld(ctx, next) {
 
 export function getGame(ctx, next) {
   return new Promise((resolve) => {
-    if (true) {
-      Game.find({ id: ctx.params.id })
-        .then((games, err) => {
-          console.log(games);
-          ctx.body = games;
-          resolve();
-        })
-        .catch((err) => {
-          ctx.status = 400;
-          ctx.body = err;
-          resolve();
-        });
-    } else {
-      ctx.status = 400;
-      resolve();
-    }
+    Game.find({ id: ctx.params.id })
+      .then((games, err) => {
+        console.log(games);
+        ctx.body = games;
+        resolve();
+      })
+      .catch((err) => {
+        ctx.status = 400;
+        ctx.body = err;
+        resolve();
+      });
   });
 }
 
@@ -55,6 +50,22 @@ export function createGame(ctx, next) {
           resolve();
         });
     });
+  });
+}
+
+export function getPlayers(ctx, next) {
+  return new Promise((resolve) => {
+    Player.find({ gameId: ctx.params.gameId })
+      .then((players, err) => {
+        console.log(players);
+        ctx.body = players;
+        resolve();
+      })
+      .catch((err) => {
+        ctx.status = 400;
+        ctx.body = err;
+        resolve();
+      });
   });
 }
 
