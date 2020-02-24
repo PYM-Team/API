@@ -1,5 +1,5 @@
 import Router from 'koa-router';
-import { helloWorld, createGame, getGame } from '../controllers/games.controller';
+import { helloWorld, createGame, getGame, createPlayer } from '../controllers/games.controller';
 
 const router = new Router();
 
@@ -13,5 +13,8 @@ router.get('/games/:id', getGame);
 
 // POST
 router.post('/games', createGame);
+
+// POST
+router.post('/players/:gameId', createPlayer);
 
 export default router;
