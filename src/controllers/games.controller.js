@@ -53,6 +53,24 @@ export function createGame(ctx, next) {
   });
 }
 
+export function deleteGame(ctx, next) {
+  return new Promise((resolve) => {
+    Game.deleteOne({ id: ctx.params.id })
+      .then((err) => {
+        ctx.body = {
+          status: 'success',
+          message: 'Game deleted',
+        };
+        resolve();
+      })
+      .catch((err) => {
+        ctx.status = 400;
+        ctx.body = err;
+        resolve();
+      });
+  });
+}
+
 export function getPlayers(ctx, next) {
   return new Promise((resolve) => {
     Player.find({ gameId: ctx.params.gameId })
