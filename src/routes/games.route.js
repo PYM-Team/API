@@ -1,5 +1,7 @@
 import Router from 'koa-router';
-import { helloWorld, createGame, getGame, createPlayer, getPlayers } from '../controllers/games.controller';
+import {
+  helloWorld, createGame, getGame, createPlayer, getPlayers,
+} from '../controllers/games.controller';
 
 const router = new Router();
 
