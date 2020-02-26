@@ -71,14 +71,14 @@ export function getPlayers(ctx, next) {
 
 export function createPlayer(ctx, next) {
   return new Promise((resolve) => {
-    console.log(ctx.params.gameId);
-    Player({ gameId: ctx.params.gameId }).save()
+    Player({ gameId: ctx.params.gameId, name: ctx.request.body.name }).save()
       .then(() => {
         console.log(`saved to db with Game ${ctx.params.gameId}`);
         ctx.body = {
           status: 'success',
           message: 'Player created',
           game: ctx.params.gameId,
+          name: ctx.request.body.name,
         };
         resolve();
       })
