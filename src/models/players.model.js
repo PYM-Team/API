@@ -8,6 +8,7 @@ mongoose.Promise = global.Promise;
 
 const PlayerSchema = new Schema({
   gameId: { type: Number, required: true },
+  name: { type: String, required: true },
 });
 
 // changing this line to export default mongoose.model(...) breaks the controller
