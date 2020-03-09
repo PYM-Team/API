@@ -1,21 +1,53 @@
-import Koa from 'koa';
+/* eslint-disable no-console */
 import bodyparser from 'koa-bodyparser';
+import Koa from 'koa';
 import initDB from './database';
 import gameRouter from './routes/games.route';
 
+const app = new Koa();
+const server = require('http').createServer(app.callback());
 const cors = require('@koa/cors');
+
+const sio = require('socket.io');
+// eslint-disable-next-line new-cap
+const io = new sio(server);
 
 initDB();
 
-const app = new Koa();
+
 app.use(cors());
 const PORT = process.env.PORT || 1337;
 
 app.use(bodyparser());
 app.use(gameRouter.routes());
 
-const server = app.listen(PORT, () => {
-  // eslint-disable-next-line no-console
+app.context.io = io;
+
+io.on('connection', (socket) => {
+  let gameId = 0;
+
+  console.log('Connection established with client : ', socket.id);
+
+  socket.on('createGame', (roomId) => {
+    gameId = roomId;
+    socket.join(gameId);
+    console.log(`Create real time for the room ${roomId}`);
+  });
+
+  socket.on('connectGame', (roomId) => {
+    gameId = roomId;
+    socket.join(`${gameId}player`);
+    console.log('player connected to roomId');
+    io.to(gameId).emit('playerConnected');
+  });
+
+  socket.on('disconnect', (reason) => {
+    io.to(gameId).emit('playerDisconnected');
+  });
+});
+
+
+server.listen(PORT, () => {
   console.log(`Server listening on port: ${PORT}`);
 });
 
