@@ -60,6 +60,7 @@ export function deleteGame(ctx, next) {
         ctx.body = {
           status: 'success',
           message: 'Game deleted',
+          id: ctx.params.id,
         };
         resolve();
       })
@@ -97,6 +98,25 @@ export function createPlayer(ctx, next) {
           message: 'Player created',
           game: ctx.params.gameId,
           name: ctx.request.body.name,
+        };
+        resolve();
+      })
+      .catch((err) => {
+        ctx.status = 400;
+        ctx.body = err;
+        resolve();
+      });
+  });
+}
+
+export function deletePlayers(ctx, next) {
+  return new Promise((resolve) => {
+    Player.deleteMany({ gameId: ctx.params.gameId })
+      .then((err) => {
+        ctx.body = {
+          status: 'success',
+          message: 'Players deleted',
+          gameId: ctx.params.gameId,
         };
         resolve();
       })
