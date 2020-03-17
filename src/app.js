@@ -42,7 +42,7 @@ io.on('connection', (socket) => {
     console.log('player connected to roomId');
     Player({ gameId: roomId, name: 'toto' }).save()
       .then(() => {
-        Player.find({ gameId : roomId })
+        Player.find({ gameId: roomId })
           .then((players, err) => {
             console.log(players);
             io.to(gameId).emit('playerConnected', players);
