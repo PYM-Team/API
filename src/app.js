@@ -1,8 +1,10 @@
 /* eslint-disable no-console */
 import bodyparser from 'koa-bodyparser';
 import Koa from 'koa';
+import Player from './models/players.model';
 import initDB from './database';
 import gameRouter from './routes/games.route';
+
 
 const app = new Koa();
 const server = require('http').createServer(app.callback());
@@ -38,7 +40,16 @@ io.on('connection', (socket) => {
     gameId = roomId;
     socket.join(`${gameId}player`);
     console.log('player connected to roomId');
-    io.to(gameId).emit('playerConnected');
+    Player({ gameId: roomId, name: 'toto' }).save()
+      .then(() => {
+        Player.find({ gameId : roomId })
+          .then((players, err) => {
+            console.log(players);
+            io.to(gameId).emit('playerConnected', players);
+          });
+      })
+      .catch((err) => {
+      });
   });
 
   socket.on('disconnect', (reason) => {
