@@ -39,7 +39,7 @@ export function createGame(ctx, next) {
   // generating the random id;
   return new Promise((resolve) => {
     findGameId((gameid) => {
-      Game({ id: gameid }).save()
+      Game({ id: gameid, usernames: [] }).save()
         .then(() => {
           console.log(`saved to db with id ${gameid}`);
           ctx.body = {
@@ -50,6 +50,25 @@ export function createGame(ctx, next) {
           resolve();
         });
     });
+  });
+}
+
+export function modifyGame(ctx, next) {
+  return new Promise((resolve) => {
+    Game.findOneAndUpdate({ id: ctx.params.id }, { usernames: ctx.params.newUsernames })
+      .then((err) => {
+        ctx.body = {
+          status: 'success',
+          message: 'Game updated',
+          newUsernames: ctx.params.newUsernames,
+        };
+        resolve();
+      })
+      .catch((err) => {
+        ctx.status = 400;
+        ctx.body = err;
+        resolve();
+      });
   });
 }
 
