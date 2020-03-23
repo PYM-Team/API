@@ -2,6 +2,7 @@
 import bodyparser from 'koa-bodyparser';
 import Koa from 'koa';
 import Player from './models/players.model';
+import Game from './models/games.model';
 import initDB from './database';
 import gameRouter from './routes/games.route';
 
@@ -32,6 +33,7 @@ io.on('connection', (socket) => {
 
   socket.on('createGame', (roomId) => {
     gameId = roomId;
+    Game({ id: roomId, usernames: [] }).save();
     socket.join(gameId);
     console.log(`Create real time for the room ${roomId}`);
   });
@@ -46,6 +48,7 @@ io.on('connection', (socket) => {
           .then((players, err) => {
             console.log(players);
             io.to(gameId).emit('playerConnected', players);
+            Game.findOneAndUpdate({ id: roomId }, { $push: { usernames: players.name } });
           });
       })
       .catch((err) => {
