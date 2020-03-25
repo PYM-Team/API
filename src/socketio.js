@@ -29,6 +29,7 @@ const initSocketIO = (server) => {
   // eslint-disable-next-line global-require
   const Sio = require('socket.io');
   const io = new Sio(server);
+  io.set('origins', '*:*');
 
   io.on('connection', (socket) => {
     let gameId = 0;
