@@ -1,25 +1,61 @@
 /* eslint-disable no-console */
+/* eslint-disable no-prototype-builtins */
+/* eslint-disable no-underscore-dangle */
 import Player from './models/players.model';
 import Game from './models/games.model';
+import Mission from './models/missions.model';
+import Announcement from './models/announcements.model';
+
+// TODO: Every docstrings
 
 // Live storage for non-essential data keys are gameid
 const storedGames = {};
 
+// Structure live storage objects
+function LiveGame(gameId) {
+  this.id = gameId || null; // Primary key
+  this.players = {};
+  this.announcements = {};
+}
+
+function LivePlayer(name) {
+  this.id = null;
+  this.name = name || null; // Primary key
+  this.connected = false;
+  this.socket = null;
+  this.missions = {};
+}
+
+function LiveMission(description) {
+  this.id = null; // Primary key
+  this.description = description;
+  this.achieved = false;
+  this.started = false;
+}
+
+function LiveAnnounce(message) {
+  this.id = null;
+  this.message = message;
+  this.date = null;
+}
+
 // Populate the storedGames with already in database games and players
 Game.find()
   .then((games) => {
+    // loop thru games
     games.forEach((game) => {
+      // find players list of each game
       Player.find({ gameId: game.id })
         .then((players) => {
-          storedGames[game.id] = {
-            players: {}, // Players are identified by their username inside
-          };
+          // create a LiveGame in ram
+          const lGame = new LiveGame(game.id);
+          storedGames[lGame.id] = lGame;
 
           players.forEach((player) => {
-            storedGames[game.id].players[player.name] = { connected: false };
+            const lPlayer = new LivePlayer(player.name);
+            lPlayer.id = player._id;
+            storedGames[lGame.id].players[lPlayer.name] = lPlayer;
           });
-
-          console.log(storedGames);
         });
     });
   })
@@ -32,37 +68,37 @@ const initSocketIO = (server) => {
   io.set('origins', '*:*');
 
   io.on('connection', (socket) => {
-    let gameId = 0;
-    let playerUsername;
+    // Global socket vars
+    let sGameId = 0;
+    let sPlayerName;
     let isGameMaster = false;
+
+    // v2 of socket vars
+    let sGame = null;
+    let sPlayer = null;
 
     console.log('Connection established with client : ', socket.id);
 
     socket.on('createGame', (roomId) => {
-      console.log('Client is a game Master, requesting game creation');
-      gameId = roomId;
+      // storing vars
+      sGameId = roomId;
       isGameMaster = true;
 
-      Game.find({ id: roomId })
-        .then((games) => {
-          if (games.length === 0) {
-            console.log('Game id is free, creation allowed');
-            Game({ id: roomId }).save(); // adding it to the db
-            storedGames[roomId] = {
-              players: {}, // Players are identified by their username inside
-            }; // adding it to the live memory
+      if (!storedGames.hasOwnProperty(roomId)) {
+        sGame = storedGames[roomId];
+        console.log('Game id is free, creation allowed');
 
-            console.log(storedGames);
+        // adding it to the db
+        const dbGame = new Game({ id: sGameId });
+        dbGame.save();
+        const lGame = new LiveGame(sGameId);
+        storedGames[sGameId] = lGame;
 
-            socket.join(gameId);
-            console.log(`Game Master ${socket.id} joined socket.io room ${roomId}`);
-          } else {
-            console.log('Game id is already used, just connecting the Game Master to it');
-            socket.join(gameId);
-            console.log(`Game Master ${socket.id} joined socket.io room ${roomId}`);
-          }
-        })
-        .catch((err) => { console.log(err); });
+        socket.join(sGameId);
+      } else {
+        console.log('Game id is already used, just connecting the Game Master to it');
+        socket.join(sGameId);
+      }
     });
 
     // ************************************ TEST ID **************************************
@@ -72,7 +108,7 @@ const initSocketIO = (server) => {
       Game.find({ id: roomId })
         .then((games) => {
           if (games.length === 0) {
-            socket.emit('incorretId');
+            socket.emit('incorrectId');
           } else {
             socket.emit('correctId');
           }
@@ -86,11 +122,17 @@ const initSocketIO = (server) => {
     // ************************************** ANNOUNCEMENT **********************************
 
     socket.on('announcement', (message) => {
-      console.log('annoucement');
+      console.log('Annoucement');
       // check if it is a gameMaster
       if (isGameMaster) {
-        io.to(`${gameId}player`).emit('announcement', message);
-        // TODO: Store in database
+        io.to(`${sGameId}player`).emit('announcement', message);
+        // Save in db
+        const dbAnn = new Announcement({ description: message });
+        const lAnn = new LiveAnnounce(message);
+        lAnn.date = dbAnn.date;
+        sGame.announcements[dbAnn._id] = lAnn;
+        dbAnn.save()
+          .catch((err) => { console.log(err); });
       } else {
         socket.emit('error', 'You are not a gameMaster');
       }
@@ -98,74 +140,105 @@ const initSocketIO = (server) => {
 
     // ************************************** MISSIONS ***************************************
 
-    // TODO: New mission for a player
+    // TODO: send updateMission(missionList)
+    /**
+     * newMission create a mission in the mission list of the a player
+     * @param {*} mission - An object with at least description and playerName
+     * @param {boolean} state - False if not started instantly, true otherwise
+     */
+    socket.on('newMission', (mission, state) => {
+      if (isGameMaster) {
+        if (sGame.hasOwnProperty(mission.playerName)) {
+          const mPlayer = sGame.players[mission.playerName];
+          const dbMission = new Mission({
+            description: mission.description,
+            playerId: mPlayer.id,
+          });
 
-    // TODO: Mission complete (ack and confirmation to discuss)
+          const lMission = new LiveMission(mission.description);
+          lMission.started = state;
+          lMission.id = dbMission._id;
+          mPlayer.missions[lMission.id] = lMission;
 
-    // TODO: store the personals socket io ids in the live memory
-
-
-    // ***************************************** GAME *******************************************
-    socket.on('connectGame', (roomId, username) => {
-      // dynamically store connection information in the server
-      gameId = roomId;
-      playerUsername = username;
-
-      // test if the game exist
-      // eslint-disable-next-line no-prototype-builtins
-      if (storedGames.hasOwnProperty(roomId)) {
-        // Add the player to the right socket.io group
-        socket.join(`${gameId}player`);
-        console.log(`Client is a player. Now connected to roomId ${roomId}`);
-
-        // Check if the player does not already exist in the database
-        Player.find({ gameId: roomId, name: username })
-          .then((player) => {
-            // If not
-            if (player.length === 0) {
-              console.log(`Player not in database. Adding it with game id ${roomId}`);
-
-              // Add it to db and live memory
-              storedGames[roomId].players[username] = { connected: true };
-              Player({ gameId: roomId, name: playerUsername }).save()
-                .then(() => {
-                  // Then we get every players from the game and send it to the game master
-                  io.to(gameId).emit('playerConnected', storedGames[roomId].players);
-                  console.log('players list :', storedGames[roomId].players);
-                });
-            } else {
-              console.log(`The player ${username} just reconnected, he already is in database`);
-
-              //! not tested
-              storedGames[roomId].players[username].connected = true;
-
-              io.to(gameId).emit('playerConnected', storedGames[roomId].players);
-              console.log('players list :', storedGames[roomId].players);
+          // Loop thru missions to only show started ones to player
+          const missionList = {};
+          mPlayer.missions.forEach((m) => {
+            if (m.started) {
+              missionList[m.id] = m;
             }
-          })
-          .catch((err) => { console.log(err); });
+          });
+          mPlayer.socket.emit('updateMission', missionList);
+          dbMission.save()
+            .catch((err) => { console.log(err); });
+        } else {
+          socket.emit('error', 'There is no player with this name.');
+        }
       } else {
-        // if the game id does not exist
-        io.to(`${gameId}player`).emit('error', 'Game id is not correct');
-        console.log('incorrect gameId provided by the player');
+        socket.emit('error', 'You are not a gameMaster.');
       }
     });
 
-    //* need use gameId and playerUsername because roomId and username aren't in the scope
-    // TODO: test if there is a possibility for not existing game
+    socket.on('missionCompleted', () => {
+      // TODO
+    });
 
-    socket.on('disconnect', (reason) => {
+    // ***************************************** GAME *******************************************
+
+    socket.on('connectGame', (roomId, playerName) => {
+      // dynamically store connection information in the server
+      sGameId = roomId;
+      sPlayerName = playerName;
+
+      // test if the game exist
+      if (storedGames.hasOwnProperty(sGameId)) {
+        sGame = storedGames[roomId];
+
+        // Add the player to the right socket.io group
+        socket.join(`${sGameId}player`);
+
+        // Check if the player does not already exist in the database
+        if (!sGame.players.hasOwnProperty(sPlayerName)) {
+          console.log(`Player not in database. Adding it with game id ${sGameId}`);
+
+          // Add it to db and live memory
+          const dbPlayer = new Player({ gameId: sGameId, name: sPlayerName });
+          const lPlayer = new LivePlayer(sPlayerName);
+          lPlayer.id = dbPlayer._id;
+          lPlayer.socket = socket;
+          dbPlayer.save()
+            .then(() => {
+              // Then we get every players from the game and send it to the game master
+              io.to(sGameId).emit('playerConnected', sGame.players);
+              sGame.players[lPlayer.name] = lPlayer;
+              sPlayer = sGame.players[lPlayer.name];
+            });
+        } else {
+          sPlayer = sGame.players[sPlayerName];
+          sPlayer.socket = socket;
+          sPlayer.connected = true;
+          io.to(sGameId).emit('playerConnected', sGame.players);
+        }
+      } else {
+        // if the game id does not exist
+        io.to(`${sGameId}player`).emit('error', 'Game id is not correct');
+        console.log('Incorrect gameId provided by the player');
+      }
+    });
+
+    /**
+     * Function which is automaticaly ran when a socket disconnect
+     */
+    socket.on('disconnect', () => {
       // handle 2 different cases : player or gameMaster
-      if (!isGameMaster) {
+      if (sPlayer != null && sGame != null) {
         try {
-          storedGames[gameId].players[playerUsername].connected = false;
-          io.to(gameId).emit('playerDisconnected', storedGames[gameId].players);
-          console.log('players list : ', storedGames[gameId].players);
+          sPlayer.connected = false;
+          io.to(sGameId).emit('playerDisconnected', sGame.players);
         } catch (error) {
           console.log(error);
         }
       } else {
-        // TODO
+        // rien a faire
       }
     });
   });
