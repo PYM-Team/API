@@ -13,6 +13,12 @@
     },
     "parser": "babel-eslint",
     "rules": {
-        "no-unused-vars": 0
+        "no-unused-vars": 1,
+        "no-trailing-spaces": 1,
+        "semi": 1,
+        "quotes": 1,
+        "prefer-const": 1,
+        "comma-dangle" :1,
+        "spaced-comment": 1
     }
 }
