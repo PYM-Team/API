@@ -65,6 +65,47 @@ const initSocketIO = (server) => {
         .catch((err) => { console.log(err); });
     });
 
+    // ************************************ TEST ID **************************************
+    // *Working but players undefined errors
+    socket.on('testId', (roomId) => {
+      console.log('testID request');
+      Game.find({ id: roomId })
+        .then((games) => {
+          if (games.length === 0) {
+            socket.emit('incorretId');
+          } else {
+            socket.emit('correctId');
+          }
+        })
+        .catch((err) => {
+          socket.emit('error', 'Database Timeout');
+          console.log(err);
+        });
+    });
+
+    // ************************************** ANNOUNCEMENT **********************************
+
+    socket.on('announcement', (message) => {
+      console.log('annoucement');
+      // check if it is a gameMaster
+      if (isGameMaster) {
+        io.to(`${gameId}player`).emit('announcement', message);
+        // TODO: Store in database
+      } else {
+        socket.emit('error', 'You are not a gameMaster');
+      }
+    });
+
+    // ************************************** MISSIONS ***************************************
+
+    // TODO: New mission for a player
+
+    // TODO: Mission complete (ack and confirmation to discuss)
+
+    // TODO: store the personals socket io ids in the live memory
+
+
+    // ***************************************** GAME *******************************************
     socket.on('connectGame', (roomId, username) => {
       // dynamically store connection information in the server
       gameId = roomId;
