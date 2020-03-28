@@ -6,6 +6,8 @@ import Game from './models/games.model';
 import Mission from './models/missions.model';
 import Announcement from './models/announcements.model';
 
+const Sio = require('socket.io');
+
 // TODO: Every docstrings
 
 // Live storage for non-essential data keys are gameid
@@ -62,8 +64,6 @@ Game.find()
   .catch((err) => { console.log(err); });
 
 const initSocketIO = (server) => {
-  // eslint-disable-next-line global-require
-  const Sio = require('socket.io');
   const io = new Sio(server);
   io.set('origins', '*:*');
 
@@ -140,22 +140,22 @@ const initSocketIO = (server) => {
 
     // ************************************** MISSIONS ***************************************
 
-    // TODO: send updateMission(missionList)
     /**
      * newMission create a mission in the mission list of the a player
-     * @param {*} mission - An object with at least description and playerName
+     * @param {String} desc - The mission description
+     * @param {String} playerName - The targeted player for the mission
      * @param {boolean} state - False if not started instantly, true otherwise
      */
-    socket.on('newMission', (mission, state) => {
+    socket.on('newMission', (desc, playerName, state) => {
       if (isGameMaster) {
-        if (sGame.hasOwnProperty(mission.playerName)) {
-          const mPlayer = sGame.players[mission.playerName];
+        if (sGame.hasOwnProperty(playerName)) {
+          const mPlayer = sGame.players[playerName];
           const dbMission = new Mission({
-            description: mission.description,
+            description: desc,
             playerId: mPlayer.id,
           });
 
-          const lMission = new LiveMission(mission.description);
+          const lMission = new LiveMission(desc);
           lMission.started = state;
           lMission.id = dbMission._id;
           mPlayer.missions[lMission.id] = lMission;
@@ -178,8 +178,73 @@ const initSocketIO = (server) => {
       }
     });
 
-    socket.on('missionCompleted', () => {
-      // TODO
+    /**
+    * missionStarted activate a mission in the mission list of the a player
+    * Handle this message from a gameMaster
+    * @param {String} playerName - the player name
+    * @param {String} id - the mission id
+    */
+    socket.on('missionStarted', (playerName, id) => {
+      if (isGameMaster) {
+        if (sGame.players.hasOwnProperty(playerName)) {
+          const mPlayer = sGame.players[playerName];
+          if (mPlayer.missions.hasOwnProperty(id)) {
+            mPlayer.missions[id].started = true;
+            const missionList = {};
+            mPlayer.missions.forEach((m) => {
+              if (m.started) {
+                missionList[m.id] = m;
+              }
+            });
+            sGame.players[playerName].socket.emit('updateMission', missionList);
+            // TODO: database storage
+          }
+        }
+      }
+    });
+
+    /**
+    * missionCompleted update the database while receving the completed mission message
+    * Handle this message from the gameMaster
+    * @param {String} playerName - the player name
+    * @param {String} id - the mission id
+    */
+    socket.on('missionAchieved', (playerName, id) => {
+      if (isGameMaster) {
+        if (sGame.players.hasOwnProperty(playerName)) {
+          const mPlayer = sGame.players[playerName];
+          if (mPlayer.missions.hasOwnProperty(id)) {
+            mPlayer.missions[id].achieved = true;
+            const missionList = {};
+            mPlayer.missions.forEach((m) => {
+              if (m.started) {
+                missionList[m.id] = m;
+              }
+            });
+            sGame.players[playerName].socket.emit('updateMission', missionList);
+            // TODO: database storage
+          }
+        }
+      }
+    });
+
+    /**
+    * validateMission tell the game master that a mission needs to be validated
+    * Handle this message from the player
+    * @param {String} id - the mission id
+    */
+    socket.on('validateMission', (id) => {
+      // test if it a player
+      if (sGame != null && sPlayer != null) {
+        if (sPlayer.missions.hasOwnProperty(id)) {
+          // emit to the gameMaster
+          io.to(sGame.id).emit('validateMission', id);
+        } else {
+          socket.emit('erorr', 'Wrong mission id');
+        }
+      } else {
+        socket.emit('error', 'You are not a player');
+      }
     });
 
     // ***************************************** GAME *******************************************
@@ -229,7 +294,7 @@ const initSocketIO = (server) => {
      * Function which is automaticaly ran when a socket disconnect
      */
     socket.on('disconnect', () => {
-      // handle 2 different cases : player or gameMaster
+      // Is it a player ?
       if (sPlayer != null && sGame != null) {
         try {
           sPlayer.connected = false;
@@ -237,8 +302,6 @@ const initSocketIO = (server) => {
         } catch (error) {
           console.log(error);
         }
-      } else {
-        // rien a faire
       }
     });
   });
