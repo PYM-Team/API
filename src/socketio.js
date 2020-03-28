@@ -6,8 +6,6 @@ import Game from './models/games.model';
 import Mission from './models/missions.model';
 import Announcement from './models/announcements.model';
 
-const Sio = require('socket.io');
-
 // TODO: Every docstrings
 
 // Live storage for non-essential data keys are gameid
@@ -64,6 +62,8 @@ Game.find()
   .catch((err) => { console.log(err); });
 
 const initSocketIO = (server) => {
+  // eslint-disable-next-line global-require
+  const Sio = require('socket.io');
   const io = new Sio(server);
   io.set('origins', '*:*');
 
@@ -167,7 +167,7 @@ const initSocketIO = (server) => {
               missionList[m.id] = m;
             }
           });
-          mPlayer.socket.emit('updateMission', missionList);
+          io.to(mPlayer.socket).emit('updateMission', missionList);
           dbMission.save()
             .catch((err) => { console.log(err); });
         } else {
@@ -196,7 +196,7 @@ const initSocketIO = (server) => {
                 missionList[m.id] = m;
               }
             });
-            sGame.players[playerName].socket.emit('updateMission', missionList);
+            io.to(sGame.players[playerName].socket).emit('updateMission', missionList);
             // TODO: database storage
           }
         }
@@ -221,7 +221,7 @@ const initSocketIO = (server) => {
                 missionList[m.id] = m;
               }
             });
-            sGame.players[playerName].socket.emit('updateMission', missionList);
+            io.to(sGame.players[playerName].socket).emit('updateMission', missionList);
             // TODO: database storage
           }
         }
@@ -269,7 +269,7 @@ const initSocketIO = (server) => {
           const dbPlayer = new Player({ gameId: sGameId, name: sPlayerName });
           const lPlayer = new LivePlayer(sPlayerName);
           lPlayer.id = dbPlayer._id;
-          lPlayer.socket = socket;
+          lPlayer.socket = socket.id;
           dbPlayer.save()
             .then(() => {
               // Then we get every players from the game and send it to the game master
@@ -279,7 +279,7 @@ const initSocketIO = (server) => {
             });
         } else {
           sPlayer = sGame.players[sPlayerName];
-          sPlayer.socket = socket;
+          sPlayer.socket = socket.id;
           sPlayer.connected = true;
           io.to(sGameId).emit('playerConnected', sGame.players);
         }
@@ -295,13 +295,9 @@ const initSocketIO = (server) => {
      */
     socket.on('disconnect', () => {
       // Is it a player ?
-      if (sPlayer != null && sGame != null) {
-        try {
-          sPlayer.connected = false;
-          io.to(sGameId).emit('playerDisconnected', sGame.players);
-        } catch (error) {
-          console.log(error);
-        }
+      if (sGame != null && sPlayer != null) {
+        sPlayer.connected = false;
+        io.to(sGame.id).emit('playerDisconnected', sGame.players);
       }
     });
   });
