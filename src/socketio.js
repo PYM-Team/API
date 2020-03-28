@@ -97,6 +97,7 @@ const initSocketIO = (server) => {
         socket.join(sGameId);
       } else {
         console.log('Game id is already used, just connecting the Game Master to it');
+        sGame = storedGames[sGameId];
         socket.join(sGameId);
       }
     });
@@ -114,7 +115,7 @@ const initSocketIO = (server) => {
           }
         })
         .catch((err) => {
-          socket.emit('error', 'Database Timeout');
+          socket.emit('sendError', 'Database Timeout');
           console.log(err);
         });
     });
@@ -134,7 +135,7 @@ const initSocketIO = (server) => {
         dbAnn.save()
           .catch((err) => { console.log(err); });
       } else {
-        socket.emit('error', 'You are not a gameMaster');
+        socket.emit('sendError', 'You are not a gameMaster');
       }
     });
 
@@ -171,10 +172,10 @@ const initSocketIO = (server) => {
           dbMission.save()
             .catch((err) => { console.log(err); });
         } else {
-          socket.emit('error', 'There is no player with this name.');
+          socket.emit('sendError', 'There is no player with this name.');
         }
       } else {
-        socket.emit('error', 'You are not a gameMaster.');
+        socket.emit('sendError', 'You are not a gameMaster.');
       }
     });
 
@@ -240,10 +241,10 @@ const initSocketIO = (server) => {
           // emit to the gameMaster
           io.to(sGame.id).emit('validateMission', id);
         } else {
-          socket.emit('erorr', 'Wrong mission id');
+          socket.emit('sendError', 'Wrong mission id');
         }
       } else {
-        socket.emit('error', 'You are not a player');
+        socket.emit('sendError', 'You are not a player');
       }
     });
 
