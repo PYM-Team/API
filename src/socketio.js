@@ -109,9 +109,9 @@ const initSocketIO = (server) => {
       Game.find({ id: roomId })
         .then((games) => {
           if (games.length === 0) {
-            socket.emit('incorrectId');
+            socket.emit('isCorrectId', 0);
           } else {
-            socket.emit('correctId');
+            socket.emit('isCorrectId', 1);
           }
         })
         .catch((err) => {
