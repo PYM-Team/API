@@ -1,0 +1,135 @@
+{
+  "coverage": "25.33%",
+  "expectCount": 75,
+  "actualCount": 19,
+  "files": {
+    "src/app.js": {
+      "expectCount": 2,
+      "actualCount": 0,
+      "undocumentLines": [
+        7,
+        9
+      ]
+    },
+    "src/gameElements/action.js": {
+      "expectCount": 6,
+      "actualCount": 1,
+      "undocumentLines": [
+        7,
+        8,
+        9,
+        10,
+        11
+      ]
+    },
+    "src/gameElements/announcement.js": {
+      "expectCount": 5,
+      "actualCount": 1,
+      "undocumentLines": [
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    "src/gameElements/modules/mission.js": {
+      "expectCount": 4,
+      "actualCount": 1,
+      "undocumentLines": [
+        10,
+        12,
+        13
+      ]
+    },
+    "src/gameElements/modules/module.js": {
+      "expectCount": 4,
+      "actualCount": 1,
+      "undocumentLines": [
+        7,
+        8,
+        9
+      ]
+    },
+    "src/gameElements/player.js": {
+      "expectCount": 11,
+      "actualCount": 1,
+      "undocumentLines": [
+        3,
+        9,
+        10,
+        11,
+        12,
+        13,
+        16,
+        20,
+        24,
+        28
+      ]
+    },
+    "src/gameElements/role.js": {
+      "expectCount": 4,
+      "actualCount": 1,
+      "undocumentLines": [
+        7,
+        8,
+        9
+      ]
+    },
+    "src/gameElements/triggers/horloge.js": {
+      "expectCount": 4,
+      "actualCount": 2,
+      "undocumentLines": [
+        4,
+        18
+      ]
+    },
+    "src/gameElements/triggers/trigger.js": {
+      "expectCount": 5,
+      "actualCount": 1,
+      "undocumentLines": [
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    "src/gameTemplates/basicMurder.js": {
+      "expectCount": 3,
+      "actualCount": 0,
+      "undocumentLines": [
+        6,
+        13,
+        25
+      ]
+    },
+    "src/gameTemplates/gameTemplate.js": {
+      "expectCount": 22,
+      "actualCount": 10,
+      "undocumentLines": [
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        67
+      ]
+    },
+    "src/socketio.js": {
+      "expectCount": 5,
+      "actualCount": 0,
+      "undocumentLines": [
+        6,
+        8,
+        58,
+        64,
+        70
+      ]
+    }
+  }
+}

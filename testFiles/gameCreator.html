@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GameMaster</title>
+</head>
+<body>
+  <h1>GameMaster</h1>
+  <p>The current game id is : <span id="game-id">Wait for game starts</span></p>
+  <p>Currently <span id="nb-players">0</span> players</p>
+  <button onclick="startGame()">Click me</button> 
+</body>
+</html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+  const socket = io('http://localhost:1337/');
+
+  socket.on('connect', () => {
+    console.log("Connect to the game");
+    const content = {
+      gameId: 101938,
+      templateName: 'basicMurder'
+    };
+    socket.emit('newGame', content);
+  });
+
+  function startGame() {
+    const content = {
+      gameId: 101938,
+      action: 'startGame'
+    }
+    socket.emit('request', content);
+  }
+
+  socket.on('realTimeUpdate', (content) => {
+    $('#nb-players').html(content.players.length);
+    $('#game-id').html(content.gameId);
+  });
+
+</script>

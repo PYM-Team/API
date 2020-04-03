@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Player</title>
+</head>
+<body>
+  <h1>Player view</h1>
+  <p>Name : <span id="name">Wait for the game to start</span></p>
+  <p>Role : <span id="role-name">Wait for the game to start</span></p>
+  <p>Description : <span id="role-desc">Wait for the game to start</span></p>
+  <p><script>console.log('coucou');</script></p>
+</body>
+</html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+  const socket = io('http://localhost:1337/');
+  console.log("test");
+  const id = 101938;
+  const username = Math.random() * 100;
+
+  const mySpecs = {
+    role: undefined,
+    name: undefined,
+  };
+
+  socket.on('connect', () => {
+    console.log("Connect to the game");
+    const content = {
+      gameId: id,
+      name: username
+    }; 
+    socket.emit('connectGame', content);
+  });
+
+  socket.on('connected', () => {
+    console.log('Connected');
+  });
+
+  socket.on('realTimeUpdate', (content) => {
+      console.log('realTimeReception');
+      $('#role-name').html(content.role.name);
+      $('#role-desc').html(content.role.description);
+      $('#name').html(content.name);
+  });
+
+</script>
