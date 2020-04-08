@@ -6,6 +6,7 @@ const websockify = require('koa-websocket');
 
 const wsOptions = {};
 const app = websockify(new Koa(), wsOptions);
+const cors = require('@koa/cors');
 
 app.ws.use(route.all('/', (ctx) => {
   // the websocket is added to the context as `ctx.websocket`.
@@ -33,8 +34,11 @@ app.ws.use(route.all('/', (ctx) => {
       default:
         break;
     }
-
   });
 }));
 
-app.listen(3000);
+app.ws.use(cors);
+
+const PORT = process.env.PORT || 1337;
+
+app.listen(PORT);
