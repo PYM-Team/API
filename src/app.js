@@ -1,17 +1,40 @@
+/* eslint-disable eqeqeq */
 /* eslint-disable no-console */
-import Koa from 'koa';
-import { initSocketIO } from './socketio';
+const Koa = require('koa');
+const route = require('koa-route');
+const websockify = require('koa-websocket');
 
+const wsOptions = {};
+const app = websockify(new Koa(), wsOptions);
 
-const app = new Koa();
-const server = require('http').createServer(app.callback());
+app.ws.use(route.all('/', (ctx) => {
+  // the websocket is added to the context as `ctx.websocket`.
+  ctx.websocket.on('message', (message) => {
+    const data = JSON.parse(message);
+    console.log(data);
 
-const PORT = process.env.PORT || 1337;
+    switch (data.type) {
+      case 'testId':
+        if (data.id == '101938') {
+          const content = {
+            type: 'isCorrectId',
+            result: 1,
+          };
+          ctx.websocket.send(JSON.stringify(content));
+        } else {
+          const content = {
+            type: 'isCorrectId',
+            result: 0,
+          };
+          ctx.websocket.send(JSON.stringify(content));
+        }
+        break;
 
-initSocketIO(server);
+      default:
+        break;
+    }
 
-server.listen(PORT, () => {
-  console.log(`Server listening on port: ${PORT}`);
-});
+  });
+}));
 
-export default app;
+app.listen(3000);
