@@ -9,6 +9,7 @@ export class Player {
     this.name = name || null;
     this.role = null;
     this.alive = true;
+    this.inventory = [];
     this.socketId = socketid || null;
     this.gameId = gameId || null;
   }
