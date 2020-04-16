@@ -13,7 +13,6 @@ class GameTemplate {
     this.gameId = null;
     this.started = false;
     this.actions = [];
-    this.missions = [];
     this.roles = [];
     this.players = [];
     this.gameMasterSocketId = null;
