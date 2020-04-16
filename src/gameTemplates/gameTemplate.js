@@ -13,7 +13,6 @@ class GameTemplate {
     this.gameId = null;
     this.started = false;
     this.actions = [];
-    this.missions = [];
     this.roles = [];
     this.players = [];
     this.gameMasterSocketId = null;
@@ -121,8 +120,8 @@ class GameTemplate {
    * @param {String} name Role name
    * @param {String} desc Role description
    */
-  addRole(name, desc) {
-    return this.roles.push(new Role(name, desc));
+  addRole(name, desc, mission) {
+    return this.roles.push(new Role(name, desc, mission));
   }
 
   /**
@@ -132,9 +131,9 @@ class GameTemplate {
    * @param {Role} role The Role which the mission is assigned to
    * @param {String} desc The missions description
    */
-  addMission(name, action, role, desc) {
-    return this.missions.push(new Mission(name, action, role, desc));
-  }
+  //  addMission(name, action, role, desc) {
+  //    return this.missions.push(new Mission(name, action, role, desc));
+  //  }
 
   /**
    * addAction store an action in the current Game object.
