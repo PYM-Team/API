@@ -3,11 +3,13 @@ import GameTemplate from './gameTemplate';
 const currentGame = new GameTemplate('basicMurder');
 
 // Create roles in the game
-const meurtrier = currentGame.addRole('Meurtrier', 'Vous etes un très méchant meurtrier');
-let detective;
-for (let i = 0; i < 3; i += 1) {
-  detective = currentGame.addRole('Detective', 'Vous êtes un gentil détective');
-}
+const Vito = currentGame.addRole('Vito Falcaninio', 'le bras droit');
+const Carla = currentGame.addRole('Carla Gurzio', 'la femme du parrain');
+const Petro = currentGame.addRole('Petro Francesco', 'l\'infiltré de la police locale');
+const Sebastiano = currentGame.addRole('Sebastiano Pechetto', 'dit le “Chimiste”, responsable des labos de synthèse de drogue');
+const Tommaso = currentGame.addRole('Tommaso-Giorgio', 'fils du parrain');
+const Sampico = currentGame.addRole('"El Sampico"', 'le meilleur tueur à gage');
+
 
 // Murderer mission
 const kill = (_, others) => {
