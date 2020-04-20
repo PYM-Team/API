@@ -10,7 +10,7 @@ const imageTest = 'iVBORw0KGgoAAAANSUhEUgAAAEYAAABGCAQAAADbJyoPAAAABGdBTUEAALGPC
 
 export const initWS = () => {
   // Importing the game Templates available in the given folder
-  // gameTemplates = importModules('gameTemplates');
+  gameTemplates = importModules('gameTemplates/working');
   console.log(gameTemplates);
 };
 
@@ -66,6 +66,15 @@ function createGame(websocket, data) {
   console.log(games);
 }
 
+function connectGame(websocket, data) {
+  // if game still exist
+  if (games.hasOwnProperty(data.gameId)) {
+    games[data.gameId].addPlayer(data.name, websocket, data.roleName);
+  } else {
+    // TODO
+  }
+}
+
 export const websockified = (ctx) => {
   // the websocket is added to the context as `ctx.websocket`.
   ctx.websocket.on('message', (event) => {
@@ -80,8 +89,21 @@ export const websockified = (ctx) => {
       case 'createGame':
         createGame(ctx.websocket, data);
         break;
+      case 'connectGame':
+        connectGame(ctx.websocket, data);
+        break;
       default:
         break;
     }
+  });
+};
+
+export const sendMessageToSocket = (websocket, content) => {
+  websocket.send(JSON.stringify(content));
+};
+
+export const sendMessageToPlayers = (gameId, content) => {
+  this.games[gameId].getPlayers().forEach((p) => {
+    p.websocket.send(JSON.stringify(content));
   });
 };
