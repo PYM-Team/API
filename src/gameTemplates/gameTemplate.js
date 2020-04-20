@@ -5,7 +5,7 @@ import { Player } from '../gameElements/player';
 import { Mission } from '../gameElements/modules/mission';
 import { Action } from '../gameElements/action';
 
-import { sendMessageToGameMaster, sendMessageToPlayers, sendMessageToSocket } from '../socketio';
+import { sendMessageToPlayers, sendMessageToSocket } from '../websockets';
 
 class GameTemplate {
   constructor(name) {
@@ -13,9 +13,10 @@ class GameTemplate {
     this.gameId = null;
     this.started = false;
     this.actions = [];
-    this.roles = [];
+    this.roles = {};
     this.players = [];
-    this.gameMasterSocketId = null;
+    this.missions = []; // mission is still there in legacy purpose
+    this.gameMasterSocket = null;
     this.functions = {
       /**
       * Change game started property to true
@@ -35,7 +36,7 @@ class GameTemplate {
               name: player.name,
               alive: player.alive,
             };
-            sendMessageToSocket(player.socketId, content);
+            sendMessageToSocket(player.socket, content);
             console.log('message sent');
           });
         }
@@ -71,34 +72,38 @@ class GameTemplate {
     }
   }
 
+  getPlayers() {
+    return this.players;
+  }
+
   /**
    * Add the gameMaster socketId to the game
-   * @param {Number} socketId The id of the gameMaster Socket
+   * @param {Websocket} socket The gameMaster's socket
    */
-  addGameMaster(socketId) {
-    this.gameMasterSocketId = socketId;
+  addGameMaster(socket) {
+    this.gameMasterSocket = socket;
   }
 
   /**
    * Create a new player and add it to players list
    * @param {String} name The player's name
-   * @param {Number} socketId The player's socketid
+   * @param {Websocket} socket The player's socket
    */
-  addPlayer(name, socketId) {
-    const p = new Player(name, socketId);
+  addPlayer(name, socket, roleName) {
+    const p = new Player(name, socket, this.roles[roleName]);
     this.players.push(p);
     const content = {
       gameId: this.gameId,
       players: this.players,
     };
-    sendMessageToGameMaster(this.gameMasterSocketId, content);
+    sendMessageToSocket(this.gameMasterSocket, content);
   }
 
   /**
-   * Get the GM socket id
+   * Get the GM socket
    */
   getGameMaster() {
-    return this.gameMasterSocketId;
+    return this.gameMasterSocket;
   }
 
   /**
@@ -121,18 +126,19 @@ class GameTemplate {
    * @param {String} desc Role description
    */
   addRole(name, desc) {
-    return this.roles.push(new Role(name, desc));
+    this.roles[name] = new Role(name, desc);
+    return this.roles[name];
   }
 
   /**
    * addMission store a new mission in the current Game object
    * @param {String} name The mission's name
    * @param {Action} action The action which can be done to success the mission
-   * @param {Role} role The Role which the mission is assigned to
+   * @param {String} roleName The name of the role which the mission is assigned to
    * @param {String} desc The missions description
    */
-  addMission(name, action, role, desc) {
-    return this.missions.push(new Mission(name, action, role, desc));
+  addMission(name, action, roleName, desc) {
+    return this.missions.push(new Mission(name, action, this.roles[roleName], desc));
   }
 
   /**
@@ -145,18 +151,6 @@ class GameTemplate {
    */
   addAction(name, effect, affectYourself, affectOthers) {
     return this.actions.push(new Action(name, effect, affectYourself, affectOthers));
-  }
-
-  /**
-   * assignRole create players with already connected players in the game
-   * @param {*} players players infos from the socket io client
-   */
-  assignRoles() {
-    // Assign role to every players in the game.
-    this.players.forEach((p) => {
-      const role = this.roles.pop();
-      p.setRole(role);
-    });
   }
 }
 
