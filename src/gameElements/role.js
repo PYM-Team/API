@@ -4,10 +4,10 @@
  * @param
  */
 export class Role {
-  constructor(name, description, mission, basicObjets) {
+  constructor(name, description, mission, basicObjects) {
     this.name = name || null;
     this.description = description || null;
     this.mission = mission || null;
-    this.basicObjets = basicObjets || null;
+    this.basicObjects = basicObjects || null;
   }
 }
