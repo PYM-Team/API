@@ -10,6 +10,7 @@ export class Player {
     this.role = role || null;
     this.alive = true;
     this.protected = false;
+    this.spied = false;
     this.inventory = [];
     this.socketId = socket || null;
   }
@@ -20,6 +21,10 @@ export class Player {
 
   setProtected(a) {
     this.protected = a;
+  }
+
+  setSpied(a) {
+    this.spied = a;
   }
 
   getRole() {
