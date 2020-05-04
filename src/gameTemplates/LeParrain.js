@@ -129,7 +129,7 @@ const espionnage = (_, others) => {
   if(others[0].protected == true){
     others[0].setProtected(false);
   } else {
-    others[0].setAlive(false);
+    others[0].setSpied(true);
     others[0].announce('You have been killed');
   }
 };
