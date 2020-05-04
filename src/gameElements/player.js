@@ -9,6 +9,7 @@ export class Player {
     this.name = name || null;
     this.role = null;
     this.alive = true;
+    this.protected = false;
     this.inventory = [];
     this.socketId = socketid || null;
     this.gameId = gameId || null;
@@ -16,6 +17,10 @@ export class Player {
 
   setAlive(a) {
     this.alive = a;
+  }
+
+  setProtected(a) {
+    this.protected = a;
   }
 
   getRole() {
