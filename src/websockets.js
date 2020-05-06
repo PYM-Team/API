@@ -19,8 +19,8 @@ export const initWS = () => {
  * @param {Websocket} websocket The user websocket
  * @param {Object} received The content parsed from the request
  */
-function testId(websocket, received) {
-  if (received.data.id == '101938') {
+function testId(websocket, data) {
+  if (data.id == '101938') {
     const content = {
       type: 'isCorrectId',
       data: {
