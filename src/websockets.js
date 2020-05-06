@@ -23,23 +23,28 @@ function testId(websocket, data) {
   if (data.id == '101938') {
     const content = {
       type: 'isCorrectId',
-      result: 1,
-      roles: [
-        {
-          name: 'Jacquie',
-          image: imageTest,
-        },
-        {
-          name: 'Marc',
-          image: imageTest,
-        },
-      ],
+      data: {
+        result: 1,
+        roles: [
+          {
+            name: 'Jacquie',
+            image: imageTest,
+          },
+          {
+            name: 'Marc',
+            image: imageTest,
+          },
+        ],
+      },
     };
     websocket.send(JSON.stringify(content));
   } else {
     const content = {
       type: 'isCorrectId',
-      result: 0,
+      data: {
+        result: 0,
+        roles: null,
+      },
     };
     websocket.send(JSON.stringify(content));
   }
