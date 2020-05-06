@@ -35,8 +35,6 @@
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
     "dotenv": "^8.2.0",
-    "esdoc": "^1.1.0",
-    "esdoc-standard-plugin": "^1.0.0",
     "import-modules": "^2.0.0",
     "koa": "^2.11.0",
     "koa-bodyparser": "^4.2.1",
@@ -60,6 +58,8 @@
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.20.1",
-    "nodemon": "^2.0.2"
+    "nodemon": "^2.0.2",
+    "esdoc": "^1.1.0",
+    "esdoc-standard-plugin": "^1.0.0"
   }
 }

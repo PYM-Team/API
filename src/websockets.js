@@ -84,20 +84,23 @@ export const websockified = (ctx) => {
   // the websocket is added to the context as `ctx.websocket`.
   ctx.websocket.on('message', (event) => {
     console.log(event);
-    const data = JSON.parse(event);
-    console.log(data);
+    const received = JSON.parse(event);
+    console.log(received);
 
-    switch (data.type) {
+    switch (received.type) {
       case 'testId':
-        testId(ctx.websocket, data);
+        testId(ctx.websocket, received.data);
         break;
       case 'createGame':
-        createGame(ctx.websocket, data);
+        createGame(ctx.websocket, received.data);
         break;
       case 'connectGame':
-        connectGame(ctx.websocket, data);
+        connectGame(ctx.websocket, received.data);
         break;
       default:
+        if (received.emitter == 'appli') {
+          this.games[received.data.gameId].handlePlayerUpdate(ctx.websocket, received.data);
+        }
         break;
     }
   });
