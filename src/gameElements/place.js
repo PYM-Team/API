@@ -4,9 +4,9 @@
  * @param
  */
 export class Place {
-    constructor(name, description, objects) {
-        this.name = name;
-        this.description = description || null;
-        this.objects = objects || null;
-    }
+  constructor(name, description, objects) {
+    this.name = name;
+    this.description = description || null;
+    this.objects = objects || null;
+  }
 }
