@@ -5,6 +5,7 @@ import { Player } from '../gameElements/player';
 import { Mission } from '../gameElements/modules/mission';
 import { Action } from '../gameElements/action';
 
+
 import { sendMessageToPlayers, sendMessageToSocket } from '../websockets';
 
 class GameTemplate {
@@ -14,6 +15,7 @@ class GameTemplate {
     this.started = false;
     this.actions = [];
     this.roles = {};
+    this.places = [];
     this.players = [];
     this.missions = []; // mission is still there in legacy purpose
     this.gameMasterSocket = null;
