@@ -17,10 +17,10 @@ export const initWS = () => {
 /**
  * Test the id sent by the player to know if a game exist with this id. Return the user a boolean
  * @param {Websocket} websocket The user websocket
- * @param {Object} data The data parsed from the request
+ * @param {Object} received The content parsed from the request
  */
-function testId(websocket, data) {
-  if (data.id == '101938') {
+function testId(websocket, received) {
+  if (received.data.id == '101938') {
     const content = {
       type: 'isCorrectId',
       data: {
