@@ -99,7 +99,7 @@ export const websockified = (ctx) => {
         break;
       default:
         if (received.emitter == 'appli') {
-          this.games[received.data.gameId].handlePlayerUpdate(ctx.websocket, received.data);
+          this.games[received.data.gameId].handlePlayerUpdate(ctx.websocket, received);
         }
         break;
     }

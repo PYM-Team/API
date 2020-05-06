@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 /* eslint-disable no-console */
 
 import { Role } from '../gameElements/role';
@@ -6,11 +7,13 @@ import { Mission } from '../gameElements/modules/mission';
 import { Action } from '../gameElements/action';
 
 
-import { sendMessageToPlayers, sendMessageToSocket } from '../websockets';
+import { sendMessageToSocket } from '../websockets';
 
 class GameTemplate {
   constructor(name) {
     this.name = name || null;
+    this.summary = null;
+    this.description = null;
     this.gameId = null;
     this.started = false;
     this.actions = [];
@@ -65,13 +68,6 @@ class GameTemplate {
    */
   setGameId(gameId) {
     this.gameId = gameId;
-  }
-
-  getRequest(content) {
-    // eslint-disable-next-line no-prototype-builtins
-    if (this.functions.hasOwnProperty(content.action)) {
-      this.functions[content.action]();
-    }
   }
 
   getPlayers() {
@@ -154,6 +150,67 @@ class GameTemplate {
   addAction(name, effect, affectYourself, affectOthers) {
     return this.actions.push(new Action(name, effect, affectYourself, affectOthers));
   }
+
+  /**
+ * handle Websocket request from the player
+ * @param {Websocket} websocket the sender websocket
+ * @param {Object} received all the data received with the request
+ */
+  handlePlayerUpdate(websocket, received) {
+    // TODO: identify the player who made the request
+    const response = {};
+    const p = new Player('random');
+    switch (received.type) {
+      case 'getHomePage':
+        response.type = 'homePage';
+        response.data = this.getHomePage(p);
+        break;
+      case 'getMyPlayer':
+        // TODO
+        break;
+      case 'getMyActions':
+        // TODO
+        break;
+      case 'getEventPage':
+        // TODO
+        break;
+      case 'getPlayersPage':
+        // TODO
+        break;
+      case 'getPlayerData':
+        // TODO
+        break;
+      case 'getMyInventoryPage':
+        // TODO
+        break;
+      case 'getMyObjectPage':
+        // TODO
+        break;
+      default:
+        break;
+    }
+    this.sendMessageToSocket(websocket, response);
+  }
+
+  /**
+   * Liste des informations a donner au player pour qu'il affiche sa homepage dans l'appli
+   * @param {Player} player le player qui a demandé sa homePage
+   */
+  getHomePage(player) {
+    const content = {
+      data: {
+        characterName: player.role.name,
+        characterFirstName: player.role.firstname,
+        characterPhoto: player.role.photo,
+        characterSummaryRole: player.role.summary,
+        characterHints: player.inventory,
+        scenarioTitle: this.name,
+        scenarioSummary: this.summary,
+      },
+    };
+    return content;
+  }
 }
+
 
 export default GameTemplate;
