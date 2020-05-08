@@ -2,6 +2,14 @@
 /* eslint-disable no-console */
 /* eslint-disable import/prefer-default-export */
 import importModules from 'import-modules';
+import Joi from '@hapi/joi';
+// import { JsonWebTokenError } from 'jsonwebtoken';
+
+const schema = Joi.object({
+  type: Joi.string().alphanum().required(),
+  status: Joi.string().alphanum().required(), // TODO allow only ok and error
+  data: Joi.object().required(),
+});
 
 const games = {};
 let gameTemplates = {};
@@ -81,25 +89,37 @@ function connectGame(websocket, data) {
 }
 
 export const websockified = (ctx) => {
-  // the websocket is added to the context as `ctx.websocket`.
   ctx.websocket.on('message', (event) => {
-    console.log(event);
     const received = JSON.parse(event);
-    console.log(received);
 
-    switch (received.type) {
+    const valid = schema.validate(received);
+    if (valid.error != undefined) {
+      const content = {
+        type: received.type,
+        status: 'error',
+        data: {
+          message: 'The request does not fit the requirings',
+        },
+      };
+      ctx.websocket.send(JSON.stringify(content));
+      return;
+    }
+
+    console.log(valid.value);
+    switch (valid.value.type) {
       case 'testId':
-        testId(ctx.websocket, received.data);
+        console.log('testId');
+        testId(ctx.websocket, valid.value.data);
         break;
       case 'createGame':
-        createGame(ctx.websocket, received.data);
+        createGame(ctx.websocket, valid.value.data);
         break;
       case 'connectGame':
-        connectGame(ctx.websocket, received.data);
+        connectGame(ctx.websocket, valid.value.data);
         break;
       default:
-        if (received.emitter == 'appli') {
-          this.games[received.data.gameId].handlePlayerUpdate(ctx.websocket, received);
+        if (valid.value.emitter == 'appli') {
+          this.games[valid.value.data.gameId].handlePlayerUpdate(ctx.websocket, valid.value);
         }
         break;
     }

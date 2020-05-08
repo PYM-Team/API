@@ -31,11 +31,13 @@
   },
   "homepage": "https://github.com/RPplanner-Team/API#readme",
   "dependencies": {
+    "@hapi/joi": "^17.1.1",
     "@koa/cors": "^2.2.3",
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
     "dotenv": "^8.2.0",
     "import-modules": "^2.0.0",
+    "jsonwebtoken": "^8.5.1",
     "koa": "^2.11.0",
     "koa-bodyparser": "^4.2.1",
     "koa-route": "^3.2.0",

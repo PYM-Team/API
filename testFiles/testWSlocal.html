@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Player</title>
+</head>
+<body>
+  <h1>Player view</h1>
+</body>
+</html>
+<script>
+  var socket = new WebSocket('ws://localhost:1337');
+  console.log("test");
+  const id = 101938;
+
+  socket.onopen = function (event) {
+    const content = {
+      type: 'testId',
+      status: 'ok',
+      data:{
+          id,
+      },
+    };
+    socket.send(JSON.stringify(content)); 
+
+    socket.onmessage = function (message) {
+      const data = JSON.parse(message.data);
+      console.log(data);
+    };
+};
+
+</script>
