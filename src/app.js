@@ -16,6 +16,4 @@ app.ws.use(route.all('/', (ctx) => websockified(ctx)));
 
 app.ws.use(cors);
 
-const PORT = process.env.PORT || 1337;
-
-app.listen(PORT);
+export default app;

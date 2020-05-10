@@ -10,14 +10,17 @@
 </body>
 </html>
 <script>
-  var socket = new WebSocket('ws://rpplanner-api.herokuapp.com/');
+  var socket = new WebSocket('wss://rpplanner-api.herokuapp.com/');
   console.log("test");
   const id = 101938;
 
   socket.onopen = function (event) {
     const content = {
       type: 'testId',
-      id,
+      status: 'ok',
+      data: {
+        id
+      },
     };
     socket.send(JSON.stringify(content)); 
 
