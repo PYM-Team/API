@@ -5,8 +5,9 @@ export class Player {
    * Constructeur d'un player dans une partie
    * @param {*} name Nom du player
    */
-  constructor(name, socket, role) {
+  constructor(name, pass, socket, role) {
     this.name = name || null;
+    this.password = pass || null;
     this.role = role || null;
     this.alive = true;
     this.protected = false;

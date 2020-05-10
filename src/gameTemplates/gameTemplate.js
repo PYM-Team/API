@@ -1,5 +1,4 @@
 /* eslint-disable class-methods-use-this */
-/* eslint-disable no-console */
 
 import { Role } from '../gameElements/role';
 import { Player } from '../gameElements/player';
@@ -28,13 +27,12 @@ class GameTemplate {
       */
       startGame: () => {
         if (this.started) {
-          console.log('already running game');
+          // TODO
         } else if (this.howManyRoles() !== this.howManyPlayers()) {
-          console.log('not enough players');
+          // TODO
         } else {
           this.assignRoles();
           this.started = true;
-          console.log('game starts !');
           this.players.forEach((player) => {
             const content = {
               role: player.role,
@@ -42,7 +40,6 @@ class GameTemplate {
               alive: player.alive,
             };
             sendMessageToSocket(player.socket, content);
-            console.log('message sent');
           });
         }
       },
@@ -54,9 +51,8 @@ class GameTemplate {
         if (this.started) {
           // TODO: send update to players
           this.started = false;
-          console.log('Game stopped');
         } else {
-          console.log('Not started game cant be stopped');
+          // TODO
         }
       },
     };
@@ -86,15 +82,15 @@ class GameTemplate {
    * Create a new player and add it to players list
    * @param {String} name The player's name
    * @param {Websocket} socket The player's socket
+   * @return error
    */
-  addPlayer(name, socket, roleName) {
-    const p = new Player(name, socket, this.roles[roleName]);
-    this.players.push(p);
-    const content = {
-      gameId: this.gameId,
-      players: this.players,
-    };
-    sendMessageToSocket(this.gameMasterSocket, content);
+  addPlayer(name, pass, socket, roleName, callback) {
+    if (Object.keys(this.roles).includes(roleName)) {
+      const p = new Player(name, pass, socket, this.roles[roleName]);
+      this.players.push(p);
+      callback(null);
+    }
+    callback(new Error('No role matching role name'));
   }
 
   /**
@@ -156,40 +152,54 @@ class GameTemplate {
  * @param {Websocket} websocket the sender websocket
  * @param {Object} received all the data received with the request
  */
-  handlePlayerUpdate(websocket, received) {
+  handlePlayerUpdate(websocket, received, tokenPayload) {
     // TODO: identify the player who made the request
-    const response = {};
-    const p = new Player('random');
-    switch (received.type) {
-      case 'getHomePage':
-        response.type = 'homePage';
-        response.data = this.getHomePage(p);
-        break;
-      case 'getMyPlayer':
-        // TODO
-        break;
-      case 'getMyActions':
-        // TODO
-        break;
-      case 'getEventPage':
-        // TODO
-        break;
-      case 'getPlayersPage':
-        // TODO
-        break;
-      case 'getPlayerData':
-        // TODO
-        break;
-      case 'getMyInventoryPage':
-        // TODO
-        break;
-      case 'getMyObjectPage':
-        // TODO
-        break;
-      default:
-        break;
-    }
-    this.sendMessageToSocket(websocket, response);
+    let response = {};
+    this.players.forEach((player) => {
+      if (player.name == tokenPayload.user && player.password == tokenPayload.pass) {
+        response.status = 'ok';
+        switch (received.type) {
+          case 'getHomePage':
+            response.type = 'getHomePage';
+            response.data = this.getHomePage(player);
+            break;
+          case 'getMyPlayer':
+            // TODO
+            break;
+          case 'getMyActions':
+            // TODO
+            break;
+          case 'getEventPage':
+            // TODO
+            break;
+          case 'getPlayersPage':
+            // TODO
+            break;
+          case 'getPlayerData':
+            // TODO
+            break;
+          case 'getMyInventoryPage':
+            // TODO
+            break;
+          case 'getMyObjectPage':
+            // TODO
+            break;
+          default:
+            break;
+        }
+        sendMessageToSocket(websocket, response);
+      }
+    });
+
+    response = {
+      type: received.type,
+      status: 'error',
+      token: null,
+      data: {
+        message: 'unable to find player',
+      },
+    };
+    sendMessageToSocket(websocket, response);
   }
 
   /**
@@ -197,18 +207,15 @@ class GameTemplate {
    * @param {Player} player le player qui a demandé sa homePage
    */
   getHomePage(player) {
-    const content = {
-      data: {
-        characterName: player.role.name,
-        characterFirstName: player.role.firstname,
-        characterPhoto: player.role.photo,
-        characterSummaryRole: player.role.summary,
-        characterHints: player.inventory,
-        scenarioTitle: this.name,
-        scenarioSummary: this.summary,
-      },
+    const data = {
+      characterName: player.role.name,
+      // characterPhoto: player.role.photo,
+      characterSummaryRole: player.role.summary,
+      characterHints: player.inventory,
+      scenarioTitle: this.name,
+      scenarioSummary: this.summary,
     };
-    return content;
+    return data;
   }
 }
 

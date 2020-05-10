@@ -6,6 +6,7 @@
 export class Role {
   constructor(name, description, mission, basicObjects) {
     this.name = name || null;
+    this.summary = null;
     this.description = description || null;
     this.mission = mission || null;
     this.basicObjects = basicObjects || null;
