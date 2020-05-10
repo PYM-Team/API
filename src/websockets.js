@@ -1,15 +1,14 @@
 /* eslint-disable no-prototype-builtins */
-/* eslint-disable no-console */
 /* eslint-disable import/prefer-default-export */
 import importModules from 'import-modules';
 import Joi from '@hapi/joi';
-// import { JsonWebTokenError } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 
 const schema = Joi.object({
   type: Joi.string().alphanum().required(),
   status: Joi.string().alphanum().required(), // TODO allow only ok and error
   data: Joi.object().required(),
-});
+}).unknown();
 
 const games = {};
 let gameTemplates = {};
@@ -19,7 +18,6 @@ const imageTest = 'iVBORw0KGgoAAAANSUhEUgAAAEYAAABGCAQAAADbJyoPAAAABGdBTUEAALGPC
 export const initWS = () => {
   // Importing the game Templates available in the given folder
   gameTemplates = importModules('gameTemplates/working');
-  console.log(gameTemplates);
 };
 
 /**
@@ -68,27 +66,103 @@ function createGame(websocket, data) {
   let newId = 0;
   do {
     newId = Math.floor((Math.random() * 899999) + 100000);
-  } while (!games.hasOwnProperty(newId));
+  } while (games.hasOwnProperty(newId));
+
+  if (!Object.keys(gameTemplates).includes(data.templateName)) {
+    const content = {
+      type: 'createGame',
+      status: 'error',
+      token: null,
+      data: {
+        message: 'The templateName does not match the possible values',
+      },
+    };
+    websocket.send(JSON.stringify(content));
+    return;
+  }
+
   games[newId] = gameTemplates[data.templateName].default;
   games[newId].addGameMaster(websocket);
   const content = {
-    type: 'gameCreation',
-    gameId: newId,
+    type: 'createGame',
+    status: 'ok',
+    token: null,
+    data: {
+      gameId: newId,
+    },
   };
   websocket.send(JSON.stringify(content));
-  console.log(games);
 }
 
 function connectGame(websocket, data) {
   // if game still exist
-  if (games.hasOwnProperty(data.gameId)) {
-    games[data.gameId].addPlayer(data.name, websocket, data.roleName);
+  // TODO data validation
+  if (Object.keys(games).includes(data.gameId.toString())) {
+    jwt.sign({
+      entity: 'player',
+      gameId: data.gameId,
+      user: data.username,
+      pass: data.password,
+    }, 'secret', (error, token) => {
+      if (error != null) {
+        const content = {
+          type: 'connectGame',
+          status: 'error',
+          data: {
+            message: 'Error while loading the JWT',
+          },
+        };
+        websocket.send(JSON.stringify(content));
+        return;
+      }
+      games[data.gameId].addPlayer(data.username, data.password, websocket, data.roleName,
+        (err) => {
+          if (err != null) {
+            const content = {
+              type: 'connectGame',
+              status: 'error',
+              data: {
+                message: 'Could not create the player', // TODO: Use the Error message
+              },
+            };
+            websocket.send(JSON.stringify(content));
+            return;
+          }
+          const content = {
+            type: 'connectGame',
+            status: 'ok',
+            data: {
+              token,
+            },
+          };
+          websocket.send(JSON.stringify(content));
+        });
+    });
   } else {
-    // TODO
+    const content = {
+      type: 'connectGame',
+      status: 'error',
+      data: {
+        message: 'The game id provided is incorrect',
+      },
+    };
+    websocket.send(JSON.stringify(content));
   }
 }
 
+function ping(websocket) {
+  const content = {
+    type: 'pong',
+    status: 'ok',
+    token: null,
+    data: {},
+  };
+  websocket.send(JSON.stringify(content));
+}
+
 export const websockified = (ctx) => {
+  ctx.websocket.send('hello world');
+
   ctx.websocket.on('message', (event) => {
     const received = JSON.parse(event);
 
@@ -105,10 +179,11 @@ export const websockified = (ctx) => {
       return;
     }
 
-    console.log(valid.value);
     switch (valid.value.type) {
+      case 'ping':
+        ping(ctx.websocket);
+        break;
       case 'testId':
-        console.log('testId');
         testId(ctx.websocket, valid.value.data);
         break;
       case 'createGame':
@@ -118,9 +193,27 @@ export const websockified = (ctx) => {
         connectGame(ctx.websocket, valid.value.data);
         break;
       default:
-        if (valid.value.emitter == 'appli') {
-          this.games[valid.value.data.gameId].handlePlayerUpdate(ctx.websocket, valid.value);
-        }
+        jwt.verify(valid.value.token, 'secret', (error, payload) => {
+          if (error != null) {
+            const content = {
+              type: valid.value.type,
+              status: error,
+              token: null,
+              data: {
+                message: 'could not verify the token',
+              },
+            };
+            ctx.websocket.send(JSON.stringify(content));
+            return;
+          }
+          switch (payload.entity) {
+            case 'player':
+              games[payload.gameId].handlePlayerUpdate(ctx.websocket, valid.value, payload);
+              break;
+            default:
+              break;
+          }
+        });
         break;
     }
   });
