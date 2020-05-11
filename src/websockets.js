@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable no-prototype-builtins */
 /* eslint-disable import/prefer-default-export */
 import importModules from 'import-modules';
@@ -114,18 +115,31 @@ function createGame(websocket, data) {
 function connectGame(websocket, data) {
   // if game still exist
   // TODO data validation
-  if (Object.keys(games).includes(data.gameId.toString())) {
+  const dataSchema = Joi.object({
+    gameId: Joi.alternatives(
+      Joi.string().alphanum(),
+      Joi.number().integer().min(100000).max(999999),
+    ),
+    username: Joi.string().alphanum(),
+    password: Joi.string().alphanum(),
+  });
+  const validData = dataSchema.validate(data);
+  if (validData.error != null) {
+    sendError('Data sent is not valid');
+    return;
+  }
+  if (Object.keys(games).includes(validData.value.gameId.toString())) {
     jwt.sign({
       entity: 'player',
-      gameId: data.gameId,
-      user: data.username,
-      pass: data.password,
+      gameId: validData.value.gameId,
+      user: validData.value.username,
+      pass: validData.value.password,
     }, 'secret', (error, token) => {
       if (error != null) {
         sendError(websocket, 'connectGame', 'Error while generating the JWT');
         return;
       }
-      games[data.gameId].addPlayer(data.username, data.password, websocket);
+      games[validData.value.gameId].addPlayer(validData.value.username, validData.value.password, websocket);
       const content = {
         type: 'connectGame',
         status: 'ok',

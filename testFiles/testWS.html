@@ -16,13 +16,14 @@
 
   socket.onopen = function (event) {
     const content = {
-      type: 'testId',
-      status: 'ok',
-      data: {
-        id
-      },
-    };
-    socket.send(JSON.stringify(content)); 
+        type: 'createGame',
+        status: 'ok',
+        token: null,
+        data: {
+          templateName: 'basicMurder',
+        },
+      };
+    socket.send(JSON.stringify(content));
 
     socket.onmessage = function (message) {
       const data = JSON.parse(message.data);
