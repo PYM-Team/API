@@ -7,8 +7,8 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "eslint ./src && mocha --require @babel/polyfill --require @babel/register ./src/tests/*.js",
-    "test-no-lint": "mocha --require @babel/polyfill --require @babel/register ./src/tests/*.js",
+    "test": "eslint ./src && mocha --require @babel/polyfill --require @babel/register --timeout 5000 ./src/tests/*.js",
+    "test-no-lint": "mocha --require @babel/polyfill --require @babel/register --timeout 5000 ./src/tests/*.js",
     "dev": "nodemon --exec babel-node ./src/index.js",
     "lint": "eslint ./src",
     "lint-fix": "eslint ./src --fix",
