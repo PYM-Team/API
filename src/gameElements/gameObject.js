@@ -3,7 +3,7 @@
  * Definition d'une structure de base d'un objet du jeu
  * @param
  */
-export class Object {
+export class GameObject {
   constructor(name, description, clue) {
     this.name = name;
     this.desciption = description || null;

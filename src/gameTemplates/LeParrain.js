@@ -1,5 +1,5 @@
 import GameTemplate from './gameTemplate';
-import { Object } from '../gameElements/object';
+import { GameObject } from '../gameElements/gameObject';
 import { Place } from '../gameElements/place';
 import { Role } from '../gameElements/role';
 import { Player } from '../gameElements/player';
@@ -116,17 +116,29 @@ const Piece = {
 };
 
 // Actions
+/**
+ * 
+ * @param {*} _ 
+ * @param {*} place prend en argument l'objet Place qui correspond à la pièce voulant être fouillée
+ */
 const fouillerPiece = (_, place) => {
-  switch (place.name) {
-    case 'La chambre du parrain':
-      break;
-    case 'Le  laboratoire du chimiste':
-      break;
-    case 'La pièce d\'à côté':
-      break;
-    default:
-      break;
+  const a = getRandomInt(2);
+  let object;
+  let findableObjects;
+  if (a == 0 && place.getClues.length > 0) {
+    findableObjects = place.getClues();
+    object = findableObjects[Math.floor(Math.random() * findableObjects.length)];
+    const index = place.objects.indexOf(object);
+    place.objects.splice(index, 1);
+  } else if (place.getNotClues.length > 0) {
+    findableObjects = place.getNotClues();
+    object = findableObjects[Math.floor(Math.random() * findableObjects.length)];
+    const index = place.objects.indexOf(object);
+    place.objects.splice(index, 1);
+  } else {
+    object = null;
   }
+  return object;
 };
 const pickpocket = (_, others) => {
   if (others[0].protected == true) {
@@ -134,15 +146,14 @@ const pickpocket = (_, others) => {
   } else {
     const a = getRandomInt(3);
     if (a == 0) {
-      
+      // TODO
     }
     if (a == 1) {
-
+      // TODO
     }
     if (a == 2) {
-
+      others[0].announce('Someone tried to steal you');
     }
-    others[0].announce('You have been killed');
   }
 };
 const espionnage = (_, others) => {
