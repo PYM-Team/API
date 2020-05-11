@@ -22,12 +22,12 @@ const PoemeAmour = {
 const NoteHotel = {
   name: 'Note de l\'hôtel',
   description: 'Une note de l’hôtel où il a passé la nuit avec Carla le soir du meurtre. Elle aurait été l’alibi parfait si elle ne révélait pas en même temps sa relation secrète et incriminante avec sa dulcinée.',
-  clue: false,
+  clue: true,
 };
 const PaquetCigarettes1 = {
   name: 'Paquet de cigarettes',
   description: 'Un paquet presque vide de cigarettes italiennes sans filtre au goût amer. El Sampico ne sait pas quoi faire de ses mains tant qu’elles ne sont pas occupées à tenir une clope. ',
-  clue: true,
+  clue: false,
 };
 const FlasqueTequila = {
   name: 'Flasque de Tequila',
@@ -58,18 +58,18 @@ const Briquet = {
   clue: false,
 };
 const LunettesSoleil = {
-  name: 'Paire de lunettes de soleil',
-  description: 'Lunettes rondes et sombre qui cache à la perfection le regard mystérieux et ténébreux de l’officier de police. Il les porte même en intérieur, ce qui lui permet de regarder là ou il veut sans se faire facilement repérer.',
+  name: 'Paire de lunettes de soleil de rechange',
+  description: 'Une paire de lunettes rondes et sombres',
   clue: false,
 };
 const BlocNote = {
   name: 'Bloc-note',
-  description: 'Un bon enquêteur à toujours de quoi noter les information les plus intéressantes qui lui sont proposée. Mais ce carnet n’est pas celui où Petro garde toutes ses notes concernant son enquête… Il serait bien trop risqué de l\'amener à ce genre de soirée.',
+  description: 'Un bloc notes avec plein de notes griffonnées incompréhensibles, à part pour les noms de toutes les personnes de la soirée !',
   clue: false,
 };
 const Menottes = {
   name: 'Paire de menottes',
-  description: 'Peuvent être utiliser au cour de la soirée, Petro les cache à l’intérieur de sa veste',
+  description: 'Une simple paire de menottes',
   clue: true,
 };
 const basicObjectsFrancesco = [PaquetCigarettes2, Briquet, LunettesSoleil, BlocNote, Menottes];
@@ -91,12 +91,61 @@ const Flingue2 = {
 };
 const basicObjectsFalcaninio = [LettreParrain, Cigare, Flingue2];
 // Tommaso-Giorgio
-const Truc = {
-  name: '',
-  description: '',
+const Addition = {
+  name: 'Addition de restaurant',
+  description: 'Ce petit bout de papier indique que Tomasso était au restaurant au moment où le parrain a été assassiné. D’après le prix et le menu, il semble qu’il y soit allé tout seul.',
+  clue: true,
+};
+const MontreGousset = {
+  name: 'Montre à gousset',
+  description: 'Une jolie montre gravée qui vaut sûrement une fortune.',
   clue: false,
 };
-
+const Chevaliere = {
+  name: 'Une chevalière en argent',
+  description: 'Une imposante bague en argent sous la forme d’un serpent qui se mord la queue.',
+  clue: false,
+};
+const basicObjectsTommaso = [Addition, MontreGousset, Chevaliere];
+// Carla Gurzio
+const Photographie = {
+  name: 'Photographie de El Sampico',
+  description: 'Dans le portefeuille de Carla se trouve une magnifique photographie noir et blanc du tueur à gages Mexicain. Sa moustache foisonnante rayonne de par son sourire chaleureux. La photographie semble usée par le temps mais reste malgré tout en bon état.',
+  clue: true,
+};
+const FlasqueParfum = {
+  name: 'Flasque de parfum',
+  description: 'Une petite fiole de parfum à la rose de couleur vive.',
+  clue: 'false',
+};
+const Peigne = {
+  name: 'Peigne en or',
+  description: 'Magnifique pièce en or gravé en forme de petit peigne. Semble avoir été utilisé à de nombreuse reprise.',
+  clue: 'false',
+};
+const Carnet = {
+  name: 'Carnet',
+  description: 'Un carnet de note à la couverture en cuir de crocodile et coloré rouge vif. Il est presque vide et on peut y lire quelques date importante et rendez-vous sans grand intérêt avec des personnalités qui ne vous disent rien… On y trouve aussi quelques numéros de téléphone.',
+  clue: false,
+};
+const basicObjectsCarla = [Photographie, FlasqueParfum, Peigne, Carnet];
+// Sebastiano Pechetto
+const RapportMorgue = {
+  name: 'Rapport de la morgue',
+  description: 'Ce rapport indique que la parrain a été empoisonné.',
+  clue: true,
+};
+const GantsLatex = {
+  name: 'Une paire de gants en latex',
+  description: 'Une vieille paire de gants tachés.',
+  clue: false,
+};
+const Cocaine = {
+  name: 'Cocaïne',
+  description: 'Une petit sachet transparent de 2 grammes de cocaïne. De quoi se donner un bon  coup de fouet.',
+  clue: false,
+};
+const basicObjectsSebastiano = [RapportMorgue, GantsLatex, Cocaine];
 
 // Places
 const ChambreParrain = {
@@ -241,10 +290,10 @@ const missionSampico = new Mission(
 
 // Create roles in the game
 currentGame.addRole('Vito Falcaninio', 'le bras droit', missionVito, basicObjectsFalcaninio);
-currentGame.addRole('Carla Gurzio', 'la femme du parrain', missionCarla);
+currentGame.addRole('Carla Gurzio', 'la femme du parrain', missionCarla, basicObjectsCarla);
 currentGame.addRole('Petro Francesco', 'l\'infiltré de la police locale', missionPetro, basicObjectsFrancesco);
-currentGame.addRole('Sebastiano Pechetto', 'dit le “Chimiste”, responsable des labos de synthèse de drogue', missionSebastiano);
-currentGame.addRole('Tommaso-Giorgio', 'fils du parrain', missionTommaso);
+currentGame.addRole('Sebastiano Pechetto', 'dit le “Chimiste”, responsable des labos de synthèse de drogue', missionSebastiano, basicObjectsSebastiano);
+currentGame.addRole('Tommaso-Giorgio', 'fils du parrain', missionTommaso, basicObjectsTommaso);
 currentGame.addRole('"El Sampico"', 'le meilleur tueur à gage', missionSampico, basicObjectsSampico);
 
 export default currentGame;
