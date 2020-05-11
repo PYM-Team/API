@@ -9,4 +9,24 @@ export class Place {
     this.description = description || null;
     this.objects = objects || null;
   }
+
+  getClues() {
+    const clues = [];
+    this.objects.forEach((element) => {
+      if (element.clue == true) {
+        clues.push(element);
+      }
+    });
+    return clues;
+  }
+
+  getNotClues() {
+    const notClues = [];
+    this.objects.forEach((element) => {
+      if (element.clue == false) {
+        notClues.push(element);
+      }
+    });
+    return notClues;
+  }
 }
