@@ -86,7 +86,6 @@ describe('websocket complete game creation and connection testing', () => {
           gameId,
           username: 'toto',
           password: 'encrypted',
-          roleName: 'Meurtrier',
         },
       };
       ws.send(JSON.stringify(content));
@@ -98,6 +97,26 @@ describe('websocket complete game creation and connection testing', () => {
         expect(data.type).to.equal('connectGame');
         expect(data.data).to.have.key('token');
         token = data.data.token;
+        done();
+      });
+    });
+
+    it('should set the role correctly', (done) => {
+      const content = {
+        type: 'setRole',
+        status: 'ok',
+        token,
+        data: {
+          roleName: 'Meurtrier',
+        },
+      };
+      ws.send(JSON.stringify(content));
+
+      ws.once('message', (event) => {
+        expect(event).to.be.a('string');
+        const data = JSON.parse(event);
+        expect(data.status).to.equal('ok');
+        expect(data.type).to.equal('setRole');
         done();
       });
     });
@@ -118,18 +137,35 @@ describe('websocket complete game creation and connection testing', () => {
         const data = JSON.parse(event);
         expect(data.status).to.equal('ok');
         expect(data.type).to.equal('getHomePage');
-        expect(data.data).to.have.keys(['characterName', 'characterFirstName', 'characterPhoto', 'characterSummaryRole', 'characterHints', 'scenarioTitle', 'scenarioSummary']);
+        expect(data.data).to.have.keys(['characterName', 'characterPhoto', 'characterSummaryRole', 'characterHints', 'scenarioTitle', 'scenarioSummary']);
         done();
       });
     });
   });
 
   describe('Unauthenticated player wants his home page', () => {
-    it('should respond an error', (done) => {
+    it('should respond a no token error', (done) => {
       const content = {
         type: 'getHomePage',
         status: 'ok',
         token: null,
+        data: {},
+      };
+      ws.send(JSON.stringify(content));
+
+      ws.once('message', (event) => {
+        expect(event).to.be.a('string');
+        const data = JSON.parse(event);
+        expect(data.status).to.equal('error');
+        done();
+      });
+    });
+
+    it('should respond a authenticated error', (done) => {
+      const content = {
+        type: 'getHomePage',
+        status: 'ok',
+        token: 'qdkjhqfjlhsfdjqshd',
         data: {},
       };
       ws.send(JSON.stringify(content));

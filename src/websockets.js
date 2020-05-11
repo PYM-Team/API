@@ -20,6 +20,18 @@ export const initWS = () => {
   gameTemplates = importModules('gameTemplates/working');
 };
 
+function sendError(websocket, type, message) {
+  const content = {
+    type,
+    status: 'error',
+    token: null,
+    data: {
+      message,
+    },
+  };
+  websocket.send(JSON.stringify(content));
+}
+
 /**
  * Test the id sent by the player to know if a game exist with this id. Return the user a boolean
  * @param {Websocket} websocket The user websocket
@@ -29,6 +41,8 @@ function testId(websocket, data) {
   if (data.id == '101938') {
     const content = {
       type: 'isCorrectId',
+      status: 'ok',
+      token: null,
       data: {
         result: 1,
         roles: [
@@ -47,6 +61,8 @@ function testId(websocket, data) {
   } else {
     const content = {
       type: 'isCorrectId',
+      status: 'ok',
+      token: null,
       data: {
         result: 0,
         roles: null,
@@ -69,29 +85,30 @@ function createGame(websocket, data) {
   } while (games.hasOwnProperty(newId));
 
   if (!Object.keys(gameTemplates).includes(data.templateName)) {
+    sendError(websocket, 'createGame', 'Any template found with given name');
+    return;
+  }
+  jwt.sign({
+    entity: 'gameMaster',
+    gameId: data.gameId,
+  }, 'secret', (error, token) => {
+    if (error != null) {
+      sendError(websocket, 'createGame', 'Could not generate the token');
+      return;
+    }
+    games[newId] = gameTemplates[data.templateName].default;
+    games[newId].addGameMaster(websocket);
     const content = {
       type: 'createGame',
-      status: 'error',
+      status: 'ok',
       token: null,
       data: {
-        message: 'The templateName does not match the possible values',
+        gameId: newId,
+        token,
       },
     };
     websocket.send(JSON.stringify(content));
-    return;
-  }
-
-  games[newId] = gameTemplates[data.templateName].default;
-  games[newId].addGameMaster(websocket);
-  const content = {
-    type: 'createGame',
-    status: 'ok',
-    token: null,
-    data: {
-      gameId: newId,
-    },
-  };
-  websocket.send(JSON.stringify(content));
+  });
 }
 
 function connectGame(websocket, data) {
@@ -105,38 +122,19 @@ function connectGame(websocket, data) {
       pass: data.password,
     }, 'secret', (error, token) => {
       if (error != null) {
-        const content = {
-          type: 'connectGame',
-          status: 'error',
-          data: {
-            message: 'Error while loading the JWT',
-          },
-        };
-        websocket.send(JSON.stringify(content));
+        sendError(websocket, 'connectGame', 'Error while generating the JWT');
         return;
       }
-      games[data.gameId].addPlayer(data.username, data.password, websocket, data.roleName,
-        (err) => {
-          if (err != null) {
-            const content = {
-              type: 'connectGame',
-              status: 'error',
-              data: {
-                message: 'Could not create the player', // TODO: Use the Error message
-              },
-            };
-            websocket.send(JSON.stringify(content));
-            return;
-          }
-          const content = {
-            type: 'connectGame',
-            status: 'ok',
-            data: {
-              token,
-            },
-          };
-          websocket.send(JSON.stringify(content));
-        });
+      games[data.gameId].addPlayer(data.username, data.password, websocket);
+      const content = {
+        type: 'connectGame',
+        status: 'ok',
+        token: null,
+        data: {
+          token,
+        },
+      };
+      websocket.send(JSON.stringify(content));
     });
   } else {
     const content = {
@@ -161,10 +159,8 @@ function ping(websocket) {
 }
 
 export const websockified = (ctx) => {
-  ctx.websocket.send('hello world');
-
   ctx.websocket.on('message', (event) => {
-    const received = JSON.parse(event);
+    const received = JSON.parse(event); // TODO if not json
 
     const valid = schema.validate(received);
     if (valid.error != undefined) {
@@ -193,17 +189,13 @@ export const websockified = (ctx) => {
         connectGame(ctx.websocket, valid.value.data);
         break;
       default:
+        if (valid.value.token == null) {
+          sendError(ctx.websocket, valid.value.type, 'You need to specify a token !');
+          return;
+        }
         jwt.verify(valid.value.token, 'secret', (error, payload) => {
           if (error != null) {
-            const content = {
-              type: valid.value.type,
-              status: error,
-              token: null,
-              data: {
-                message: 'could not verify the token',
-              },
-            };
-            ctx.websocket.send(JSON.stringify(content));
+            sendError(ctx.websocket, valid.value.type, 'Could not verify the token');
             return;
           }
           switch (payload.entity) {
