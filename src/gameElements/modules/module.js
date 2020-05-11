@@ -4,8 +4,8 @@
  * @param
  */
 export class Module {
-  constructor(name, action) {
+  constructor(name, actions) {
     this.name = name || null;
-    this.action = action || null;
+    this.actions = actions || null;
   }
 }
