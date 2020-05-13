@@ -24,7 +24,9 @@ describe('websocket complete game creation and connection testing', () => {
     // start the server
     server = app.listen(PORT, () => {
       ws = new Websocket(`ws://localhost:${PORT}`);
-      done();
+      ws.on('open', () => {
+        done();
+      });
     });
   });
 
