@@ -78,6 +78,48 @@ describe('websocket complete game creation and connection testing', () => {
     });
   });
 
+  describe('handle correctly testId', () => {
+    it('should respond ok status', (done) => {
+      const content = {
+        type: 'testId',
+        status: 'ok',
+        token: null,
+        data: {
+          id: gameId,
+        },
+      };
+      ws.send(JSON.stringify(content));
+
+      ws.once('message', (event) => {
+        expect(event).to.be.a('String');
+        const data = JSON.parse(event);
+        expect(data.status).equal('ok');
+        expect(data.type).equal('testId');
+        done();
+      });
+    });
+
+    it('should respond error status', (done) => {
+      const content = {
+        type: 'testId',
+        status: 'ok',
+        token: null,
+        data: {
+          id: 999999,
+        },
+      };
+      ws.send(JSON.stringify(content));
+
+      ws.once('message', (event) => {
+        expect(event).to.be.a('String');
+        const data = JSON.parse(event);
+        expect(data.status).equal('error');
+        expect(data.type).equal('testId');
+        done();
+      });
+    });
+  });
+
   describe('handle corectly the player connection', () => {
     it('should respond correctly', (done) => {
       const content = {
