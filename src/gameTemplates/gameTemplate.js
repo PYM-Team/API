@@ -254,6 +254,14 @@ class GameTemplate {
     };
     return data;
   }
+
+  /**
+   * Annonce à tous les joueurs
+   */
+  announcement() {
+    // TODO
+    return null;
+  }
 }
 
 
