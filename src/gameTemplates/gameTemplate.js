@@ -4,6 +4,7 @@ import { Role } from '../gameElements/role';
 import { Player } from '../gameElements/player';
 import { Mission } from '../gameElements/modules/mission';
 import { Action } from '../gameElements/action';
+import { Place } from '../gameElements/place';
 
 
 import { sendMessageToSocket } from '../websockets';
@@ -137,9 +138,12 @@ class GameTemplate {
    * addRole is used to create a new Role to have in the current game template
    * @param {String} name Role name
    * @param {String} desc Role description
+   * @param {Mission} mission Role mission
+   * @param {Array} basicObjects Basic objects of the role
+   * @param {Map} relations The relations between this role and the others
    */
-  addRole(name, desc) {
-    this.roles[name] = new Role(name, desc);
+  addRole(name, desc, mission, basicObjects, relations) {
+    this.roles[name] = new Role(name, desc, mission, basicObjects, relations);
     return this.roles[name];
   }
 
@@ -164,6 +168,16 @@ class GameTemplate {
    */
   addAction(name, effect, affectYourself, affectOthers) {
     return this.actions.push(new Action(name, effect, affectYourself, affectOthers));
+  }
+
+  /**
+   * addPlace store a place in the current Game object
+   * @param {String} name Place's name
+   * @param {String} description Place's description
+   * @param {Array} objects Place's list of objects that the players can find
+   */
+  addPlace(name, description, objects) {
+    return this.places.push(new Place(name, description, objects));
   }
 
   /**
