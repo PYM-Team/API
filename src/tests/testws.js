@@ -19,6 +19,7 @@ describe('websocket complete game creation and connection testing', () => {
 
   let gameId;
   let token;
+  let gmToken;
 
   before((done) => {
     // start the server
@@ -73,6 +74,7 @@ describe('websocket complete game creation and connection testing', () => {
         expect(data.status).equal('ok');
         expect(data.type).equal('createGame');
         gameId = data.data.gameId;
+        gmToken = data.data.token;
         done();
       });
     });
@@ -206,7 +208,7 @@ describe('websocket complete game creation and connection testing', () => {
       });
     });
 
-    it('should respond a authenticated error', (done) => {
+    it('should respond an authentication error', (done) => {
       const content = {
         type: 'getHomePage',
         status: 'ok',
@@ -219,6 +221,45 @@ describe('websocket complete game creation and connection testing', () => {
         expect(event).to.be.a('string');
         const data = JSON.parse(event);
         expect(data.status).to.equal('error');
+        done();
+      });
+    });
+  });
+
+  describe('test getMyPlayer', () => {
+    it('should respond an ok', (done) => {
+      const content = {
+        type: 'getMyPlayer',
+        status: 'ok',
+        token,
+        data: {},
+      };
+      ws.send(JSON.stringify(content));
+
+      ws.once('message', (event) => {
+        expect(event).to.be.a('string');
+        const data = JSON.parse(event);
+        expect(data.status).to.equal('ok');
+        expect(data.data).to.have.key('characterRole');
+        done();
+      });
+    });
+  });
+
+  describe('test getSetup', () => {
+    it('should respond an ok', (done) => {
+      const content = {
+        type: 'getSetup',
+        status: 'ok',
+        token: gmToken,
+        data: {},
+      };
+      ws.send(JSON.stringify(content));
+
+      ws.once('message', (event) => {
+        expect(event).to.be.a('string');
+        const data = JSON.parse(event);
+        expect(data.status).to.equal('ok');
         done();
       });
     });

@@ -310,6 +310,40 @@ class GameTemplate {
   //   callback(null, data);
   // }
 
+  handleGmUpdate(websocket, received) {
+    const response = { type: received.type, status: 'ok' };
+    switch (received.type) {
+      case 'getSetup':
+        this.getSetup((err, data) => {
+          if (err != null) {
+            response.status = 'error';
+            response.data = {
+              message: err,
+            };
+          } else {
+            response.data = data;
+          }
+        });
+        break;
+      default:
+        break;
+    }
+    sendMessageToSocket(websocket, response);
+  }
+
+  getSetup(callback) {
+    const playersToSend = [];
+    this.players.forEach((player) => {
+      playersToSend.push(player.getSetupSummary());
+    });
+    const data = {
+      gameDescription: this.name,
+      rolesNames: Object.keys(this.roles),
+      players: playersToSend, // TODO
+    };
+    callback(null, data);
+  }
+
   /**
    * Annonce à tous les joueurs
    */

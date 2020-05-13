@@ -70,7 +70,7 @@ function createGame(websocket, data) {
   }
   jwt.sign({
     entity: 'gameMaster',
-    gameId: data.gameId,
+    gameId: newId,
   }, 'secret', (error, token) => {
     if (error != null) {
       sendError(websocket, 'createGame', 'Could not generate the token');
@@ -89,6 +89,40 @@ function createGame(websocket, data) {
     };
     websocket.send(JSON.stringify(content));
   });
+}
+
+function gmReconnectGame(websocket, data) {
+  // TODO data validation
+  if (Object.keys(games).includes(data.gameId.toString())) {
+    let error = true;
+    games[data.gameId].players.forEach((player) => {
+      if (player.name == data.playerName) {
+        error = false;
+        jwt.sign({
+          entity: 'gameMaster',
+          gameId: data.gameId,
+        }, 'secret', (err, token) => {
+          if (err != null) {
+            sendError(websocket, 'createGame', 'Could not generate the token');
+            return;
+          }
+          games[data.gameId].addGameMaster(websocket);
+          const content = {
+            type: 'createGame',
+            status: 'ok',
+            token: null,
+            data: {
+              token,
+            },
+          };
+          websocket.send(JSON.stringify(content));
+        });
+      }
+    });
+    if (error) {
+      sendError(websocket, 'createGame', 'No player with this name in the game');
+    }
+  }
 }
 
 function connectGame(websocket, data) {
@@ -187,6 +221,9 @@ export const websockified = (ctx) => {
       case 'createGame':
         createGame(ctx.websocket, valid.value.data);
         break;
+      case 'gmReconnectGame':
+        gmReconnectGame(ctx.websocket, valid.value.data);
+        break;
       case 'connectGame':
         connectGame(ctx.websocket, valid.value.data);
         break;
@@ -204,7 +241,11 @@ export const websockified = (ctx) => {
             case 'player':
               games[payload.gameId].handlePlayerUpdate(ctx.websocket, valid.value, payload);
               break;
+            case 'gameMaster':
+              games[payload.gameId].handleGmUpdate(ctx.websocket, valid.value);
+              break;
             default:
+              sendError(ctx.websocket, valid.value.type, 'This type does not exist');
               break;
           }
         });

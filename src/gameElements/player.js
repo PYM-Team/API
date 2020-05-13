@@ -14,6 +14,7 @@ export class Player {
     this.spied = null;
     this.inventory = [];
     this.socketId = socket || null;
+    this.connected = true;
   }
 
   setAlive(a) {
@@ -26,6 +27,10 @@ export class Player {
 
   setSpied(a) {
     this.spied = a;
+  }
+
+  getSetupSummary() {
+    return { name: this.name, connected: this.connected, prefered: this.role.name };
   }
 
   getRole() {
