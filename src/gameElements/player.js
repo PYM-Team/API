@@ -11,7 +11,7 @@ export class Player {
     this.role = null;
     this.alive = true;
     this.protected = false;
-    this.spied = false;
+    this.spied = null;
     this.inventory = [];
     this.socketId = socket || null;
   }
