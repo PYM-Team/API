@@ -9,6 +9,8 @@
   "scripts": {
     "test": "eslint ./src && mocha --require @babel/polyfill --require @babel/register --timeout 5000 ./src/tests/*.js",
     "test-no-lint": "mocha --require @babel/polyfill --require @babel/register --timeout 5000 ./src/tests/*.js",
+    "test-tom": "mocha --require @babel/polyfill --require @babel/register --timeout 5000 ./src/tests/testws.js",
+    "test-gaetan": "mocha --require @babel/polyfill --require @babel/register --timeout 5000 ./src/tests/testParrain.js",
     "dev": "nodemon --exec babel-node ./src/index.js",
     "lint": "eslint ./src",
     "lint-fix": "eslint ./src --fix",
