@@ -36,6 +36,26 @@ export class Player {
     this.role = role;
   }
 
+  getClues() {
+    const clues = [];
+    this.inventory.forEach((element) => {
+      if (element.clue == true) {
+        clues.push(element);
+      }
+    });
+    return clues;
+  }
+
+  getNotClues() {
+    const notClues = [];
+    this.inventory.forEach((element) => {
+      if (element.clue == false) {
+        notClues.push(element);
+      }
+    });
+    return notClues;
+  }
+
   setSocketID(id) {
     this.socketId = id;
   }
