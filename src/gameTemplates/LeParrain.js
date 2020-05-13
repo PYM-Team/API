@@ -158,8 +158,8 @@ const Labo = {
   description: '',
   objects: [],
 };
-const Piece = {
-  name: 'La pièce d\'à côté',
+const Vestibule = {
+  name: 'Le vestibule',
   description: '',
   objects: [],
 };
@@ -226,6 +226,9 @@ const fouillerPiece = (_, place) => {
   let object;
   let findableObjects;
   if (a == 0 && place.getClues.length > 0) {
+    if (place.name == 'Le vestibule') {
+      // TODO
+    }
     findableObjects = place.getClues();
     object = findableObjects[Math.floor(Math.random() * findableObjects.length)];
     const index = place.objects.indexOf(object);
@@ -245,11 +248,19 @@ const pickpocket = (_, others) => {
     others[0].setProtected(false);
   } else {
     const a = getRandomInt(3);
+    let object;
+    let findableObjects;
     if (a == 0) {
-      // TODO
+      findableObjects = others[0].getClues();
+      object = findableObjects[Math.floor(Math.random() * findableObjects.length)];
+      const index = others[0].inventory.indexOf(object);
+      others[0].inventory.splice(index, 1);
     }
     if (a == 1) {
-      // TODO
+      findableObjects = others[0].getNotClues();
+      object = findableObjects[Math.floor(Math.random() * findableObjects.length)];
+      const index = others[0].inventory.indexOf(object);
+      others[0].inventory.splice(index, 1);
     }
     if (a == 2) {
       others[0].announce('Someone tried to steal you');
@@ -261,29 +272,13 @@ const espionnage = (_, others) => {
     others[0].setProtected(false);
   } else {
     others[0].setSpied(true);
-    others[0].announce('You have been killed');
   }
 };
-const potins = (_, others) => {
+const potins = (you, others) => {
   if (others[0].protected == true) {
     others[0].setProtected(false);
   } else {
-    const a = getRandomInt(2);
-    if (a == 0) {
-      switch (others[0]) {
-        case '':
-          break;
-        default:
-          break;
-      }
-    } else {
-      switch (others) {
-        case '':
-          break;
-        default:
-          break;
-      }
-    }
+    you.announce(others[0].role.relations.get(others[1].role.name));
   }
 };
 const refroidir = (_, others) => {
@@ -308,34 +303,64 @@ const seProteger = (you) => {
 };
 
 // Missions
+const actionsVito = [
+  currentGame.addAction('Fouiller une pièce', fouillerPiece, false, 1),
+  currentGame.addAction('Refroidir', refroidir, false, 1),
+  currentGame.addAction('Pickpocket', pickpocket, false, 1),
+];
 const missionVito = new Mission(
   'Objectif de Vito Falcaninio',
-  currentGame.addAction('Tuer', fouillerPiece, false, 1),
+  actionsVito,
   'Il voit la mort du parrain comme l’opportunité qu’il attendait depuis trop longtemps. Son objectif est le même que celui de Tomasso, son plus grand rival : hériter de la fortune et du pouvoir de son défunt patron.',
 );
+const actionsCarla = [
+  currentGame.addAction('Fouiller une pièce', fouillerPiece, false, 1),
+  currentGame.addAction('Potins', potins, false, 1),
+  currentGame.addAction('Espionnage', espionnage, false, 1),
+];
 const missionCarla = new Mission(
   'Objectif de Carla Gurzio',
-  currentGame.addAction('Tuer', fouillerPiece, false, 1),
+  actionsCarla,
   '20 ans plus jeune que son défunt mari, Carla joue bien la comédie en prétendant être dévastée et furieuse par l’événement tragique. Son réel objectif est de ressortir de cette affaire avec les poches les plus pleines possible. Son amour secret pour le fameux tueur à gage El Sampico la pousse à vouloir le placer comme nouveau parrain. Entre quête de pouvoir et amour coupable, Carla cherche à faire accuser n’importe qui du moment qu’elle et son bien aimé en sortent gagnants ! Malgré tout ça, elle n’a rien à voir dans l’assassinat de son mari et n’est au courant de rien...',
 );
+const actionsPetro = [
+  currentGame.addAction('Empoisonner', empoisonner, false, 1),
+  currentGame.addAction('Potins', potins, false, 1),
+  currentGame.addAction('Fouiller une pièce', fouillerPiece, false, 1),
+];
 const missionPetro = new Mission(
   'Objectif de Petro Francesco',
-  currentGame.addAction('Tuer', fouillerPiece, false, 1),
+  actionsPetro,
   'Il est devenu un ami proche de Tomasso Giorgio au fil des années dans l’objectif de pouvoir garder un oeil sur toutes les activités de la mafia. Don Giorgio commença peu à peu à avoir des doutes sur lui, et le meurtre lui permettra de placer Tomasso Giorgio au pouvoir et de finir de démanteler tout le réseau grâce à toutes les nouvelles informations qu’il pourra obtenir avec la confiance que le nouveau chef aura en lui… C’est lui qui, en suivant le plan machiavélique de Tomasso, a empoisonné la soupe du parrain en utilisant une des drogues volée dans le laboratoire la veille. Il a caché le flacon restant dans le tiroir de la table de chevet de Carla pour la faire accuser. L’argent n’a que peu d\'intérêt à ses yeux, seul le bon déroulement du plan compte et pour cela Tomasso doit devenir le nouveau chef et (bien évidemment) ne pas se faire découvrir.',
 );
+const actionsSebastiano = [
+  currentGame.addAction('Fouiller une pièce', fouillerPiece, false, 1),
+  currentGame.addAction('Empoisonner', empoisonner, false, 1),
+  currentGame.addAction('Pickpocket', pickpocket, false, 1),
+];
 const missionSebastiano = new Mission(
   'Objectif de Sebastiano Pechetto',
-  currentGame.addAction('Tuer', fouillerPiece, false, 1),
+  actionsSebastiano,
   'Sauver sa peau ! Il n’a pas tué le parrain, mais il sait que c’est l’un des produits de son laboratoire qui a servi à l’empoisonner. Il ne sait pas qui a pu lui subtiliser cet ingrédient.',
 );
+const actionsTommaso = [
+  currentGame.addAction('Fouiller une pièce', fouillerPiece, false, 1),
+  currentGame.addAction('Se protéger', seProteger, true),
+  currentGame.addAction('Espionnage', espionnage, false, 1),
+];
 const missionTommaso = new Mission(
   'Objectif de Tommaso Giorgio',
-  currentGame.addAction('Tuer', fouillerPiece, false, 1),
+  actionsTommaso,
   'L’objectif de Tommaso est simple : prendre la place de son défunt père. L’héritage se faisait trop attendre, Tomasso a préféré accélérer les choses en demandant à son acolyte Petro Francesco de tuer son père et de cacher l’arme du crime.',
 );
+const actionsSampico = [
+  currentGame.addAction('Refroidir', refroidir, false, 1),
+  currentGame.addAction('Se protéger', seProteger, true),
+  currentGame.addAction('Fouiller une pièce', fouillerPiece, false, 1),
+];
 const missionSampico = new Mission(
   'Objectif de El Sampico',
-  currentGame.addAction('Tuer', fouillerPiece, false, 1),
+  actionsSampico,
   'La mort du parrain s’annonce pour El Sampico comme une double opportunité : la place du boss est libre et sa femme est enfin seule ! Éperdument amoureux de Carla Gurzio, il va lui déclarer sa flamme pendant la soirée à l’aide d’un poème. Il ne sait pas si Carla est impliqué dans la mort de son mari, mais la protège à tout prix si elle vient à être l’objet de suspicions. Sachant que sa relation avec la veuve pourrait le rendre suspect du crime, il saura rester discret.',
 );
 
