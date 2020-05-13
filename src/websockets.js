@@ -39,37 +39,16 @@ function sendError(websocket, type, message) {
  * @param {Object} received The content parsed from the request
  */
 function testId(websocket, data) {
-  if (data.id == '101938') {
+  if (Object.keys(games).includes(data.id.toString())) {
     const content = {
-      type: 'isCorrectId',
+      type: 'testId',
       status: 'ok',
       token: null,
-      data: {
-        result: 1,
-        roles: [
-          {
-            name: 'Jacquie',
-            image: imageTest,
-          },
-          {
-            name: 'Marc',
-            image: imageTest,
-          },
-        ],
-      },
+      data: {},
     };
     websocket.send(JSON.stringify(content));
   } else {
-    const content = {
-      type: 'isCorrectId',
-      status: 'ok',
-      token: null,
-      data: {
-        result: 0,
-        roles: null,
-      },
-    };
-    websocket.send(JSON.stringify(content));
+    sendError(websocket, 'testId', 'The gameid is not active yet');
   }
 }
 
@@ -140,12 +119,21 @@ function connectGame(websocket, data) {
         return;
       }
       games[validData.value.gameId].addPlayer(validData.value.username, validData.value.password, websocket);
+      const rolesToSend = [];
+      Object.keys(games[validData.value.gameId].roles).forEach((roleName) => {
+        const r = {
+          name: roleName,
+          image: imageTest,
+        };
+        rolesToSend.push(r);
+      });
       const content = {
         type: 'connectGame',
         status: 'ok',
         token: null,
         data: {
           token,
+          roles: rolesToSend,
         },
       };
       websocket.send(JSON.stringify(content));
