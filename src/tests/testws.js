@@ -139,7 +139,8 @@ describe('websocket complete game creation and connection testing', () => {
         const data = JSON.parse(event);
         expect(data.status).to.equal('ok');
         expect(data.type).to.equal('connectGame');
-        expect(data.data).to.have.key('token');
+        expect(data.data).to.have.keys(['token', 'roles']);
+        expect(data.data.roles).to.be.an('array');
         token = data.data.token;
         done();
       });
