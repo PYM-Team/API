@@ -195,7 +195,16 @@ class GameTemplate {
         switch (received.type) {
           case 'getHomePage':
             response.type = 'getHomePage';
-            response.data = this.getHomePage(player);
+            this.getHomePage(player, (err, data) => {
+              if (err != null) {
+                response.status = 'error';
+                response.data = {
+                  message: err,
+                };
+              } else {
+                response.data = data;
+              }
+            });
             break;
           case 'setRole':
             response.type = 'setRole';
@@ -211,7 +220,16 @@ class GameTemplate {
             });
             break;
           case 'getMyPlayer':
-            // TODO
+            this.getMyPlayer(player, (err, data) => {
+              if (err != null) {
+                response.status = 'error';
+                response.data = {
+                  message: err,
+                };
+              } else {
+                response.data = data;
+              }
+            });
             break;
           case 'getMyActions':
             // TODO
@@ -254,9 +272,10 @@ class GameTemplate {
    * Liste des informations a donner au player pour qu'il affiche sa homepage dans l'appli
    * @param {Player} player le player qui a demandé sa homePage
    */
-  getHomePage(player) {
+  getHomePage(player, callback) {
     if (player.role == null) {
-      return {};
+      callback('Player has no role set', null);
+      return;
     }
     const data = {
       characterName: player.role.name,
@@ -266,8 +285,30 @@ class GameTemplate {
       scenarioTitle: this.name,
       scenarioSummary: this.summary,
     };
-    return data;
+    callback(null, data);
   }
+
+  getMyPlayer(player, callback) {
+    if (player.role == null) {
+      callback('Player has no role set', null);
+      return;
+    }
+    const data = {
+      characterRole: player.role,
+    };
+    callback(null, data);
+  }
+
+  // getMyActions(player, callback) {
+  //   if (player.role == null) {
+  //     callback('Player has no role set', null);
+  //     return;
+  //   }
+  //   const data = {
+  //     characterRole: player.role,
+  //   };
+  //   callback(null, data);
+  // }
 
   /**
    * Annonce à tous les joueurs
