@@ -114,14 +114,15 @@ const relationsSebastiano = (
  * @param {*} _
  * @param {*} place prend en argument l'objet Place qui correspond à la pièce voulant être fouillée
  */
-const fouillerPiece = (_, place) => {
+const fouillerPiece = (you, place) => {
   const a = getRandomInt(2);
   let object;
   let findableObjects;
+  if (place.name == 'Le vestibule' && a == 0) {
+    you.announce('En regardant le corps du parrain, vous ne trouvez aucune de strangulation ou d\'impacte de balle. Mais la drôle de couleur de son visage et la bave sortant de sa bouche vus font penser à un empoisonnement...');
+    return null;
+  }
   if (a == 0 && place.getClues.length > 0) {
-    if (place.name == 'Le vestibule') {
-      // TODO
-    }
     findableObjects = place.getClues();
     object = findableObjects[Math.floor(Math.random() * findableObjects.length)];
     const index = place.objects.indexOf(object);
@@ -139,32 +140,33 @@ const fouillerPiece = (_, place) => {
 const pickpocket = (_, others) => {
   if (others[0].protected == true) {
     others[0].setProtected(false);
-  } else {
-    const a = getRandomInt(3);
-    let object;
-    let findableObjects;
-    if (a == 0) {
-      findableObjects = others[0].getClues();
-      object = findableObjects[Math.floor(Math.random() * findableObjects.length)];
-      const index = others[0].inventory.indexOf(object);
-      others[0].inventory.splice(index, 1);
-    }
-    if (a == 1) {
-      findableObjects = others[0].getNotClues();
-      object = findableObjects[Math.floor(Math.random() * findableObjects.length)];
-      const index = others[0].inventory.indexOf(object);
-      others[0].inventory.splice(index, 1);
-    }
-    if (a == 2) {
-      others[0].announce('Someone tried to steal you');
-    }
+    return null;
   }
+  const a = getRandomInt(3);
+  let object;
+  let findableObjects;
+  if (a == 0) {
+    findableObjects = others[0].getClues();
+    object = findableObjects[Math.floor(Math.random() * findableObjects.length)];
+    const index = others[0].inventory.indexOf(object);
+    others[0].inventory.splice(index, 1);
+  }
+  if (a == 1) {
+    findableObjects = others[0].getNotClues();
+    object = findableObjects[Math.floor(Math.random() * findableObjects.length)];
+    const index = others[0].inventory.indexOf(object);
+    others[0].inventory.splice(index, 1);
+  }
+  if (a == 2) {
+    others[0].announce('Someone tried to steal you');
+  }
+  return object;
 };
-const espionnage = (_, others) => {
+const espionnage = (you, others) => {
   if (others[0].protected == true) {
     others[0].setProtected(false);
   } else {
-    others[0].setSpied(true);
+    others[0].setSpied(you.role.name);
   }
 };
 const potins = (you, others) => {
