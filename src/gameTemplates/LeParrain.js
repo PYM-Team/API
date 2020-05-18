@@ -52,10 +52,12 @@ const Cocaine = new GameObject('Cocaïne', 'Une petit sachet transparent de 2 gr
 const basicObjectsSebastiano = [RapportMorgue, GantsLatex, Cocaine];
 
 // Places
-
-currentGame.addPlace('La chambre du parrain', '', []);
-currentGame.addPlace('Le laboratoire du chimiste', '', []);
-currentGame.addPlace('Le vestibule', '', []);
+const Poison1 = new GameObject('Fiole de poison', 'Une fiole avec une tête de mort dessus dissimulée dans la table à chevet de Carla Gurzio. Cela ressemble à s\'y méprendre à du poison', true);
+const Poison2 = new GameObject('Fiole de Poison', 'Une fiole avec une tête de mort dessus. Pas étonnant de trouver ce genre de produits dangereux dans un laboratoire', false);
+const Antidote = new GameObject('Antidote', 'Un antidote, sûrement efficace contre l\'empoisonnement', false);
+currentGame.addPlace('La chambre du parrain', 'La chambre du parrain et de sa femme Carla Gurzio', [Poison1]);
+currentGame.addPlace('Le laboratoire du chimiste', 'Le laboratoire où travail Sebastiano Pechetto', [Poison2, Antidote, Antidote]);
+currentGame.addPlace('Le vestibule', 'C\'est ici que repose le corps du parrain', []);
 
 // Relations
 // El Sampico
@@ -135,6 +137,9 @@ const fouillerPiece = (you, place) => {
   } else {
     object = null;
   }
+  if (you.spied != null) {
+    // TODO
+  }
   return object;
 };
 const pickpocket = (_, others) => {
@@ -160,6 +165,9 @@ const pickpocket = (_, others) => {
   if (a == 2) {
     others[0].announce('Someone tried to steal you');
   }
+  if (you.spied != null) {
+    // TODO
+  }
   return object;
 };
 const espionnage = (you, others) => {
@@ -174,6 +182,9 @@ const potins = (you, others) => {
     others[0].setProtected(false);
   } else {
     you.announce(others[0].role.relations.get(others[1].role.name));
+    if (you.spied != null) {
+      // TODO
+    }
   }
 };
 const refroidir = (_, others) => {
@@ -182,6 +193,9 @@ const refroidir = (_, others) => {
   } else {
     others[0].setAlive(false);
     others[0].announce('You have been killed');
+    if (you.spied != null) {
+      // TODO
+    }
   }
 };
 const empoisonner = (_, others) => {
@@ -190,6 +204,9 @@ const empoisonner = (_, others) => {
   } else {
     others[0].setAlive(false);
     others[0].announce('You have been killed');
+    if (you.spied != null) {
+      // TODO
+    }
   }
 };
 const seProteger = (you) => {
