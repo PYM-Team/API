@@ -19,6 +19,7 @@ describe('websocket complete game creation and connection testing', () => {
 
   let gameId;
   let token;
+  let token2;
   let gmToken;
 
   before((done) => {
@@ -227,6 +228,28 @@ describe('websocket complete game creation and connection testing', () => {
   });
 
   describe('test getMyPlayer', () => {
+    before((done) => {
+      const content = {
+        type: 'connectGame',
+        status: 'ok',
+        token: null,
+        data: {
+          gameId,
+          username: 'titi',
+          password: 'encrypted',
+        },
+      };
+      ws.send(JSON.stringify(content));
+
+      ws.once('message', (event) => {
+        const data = JSON.parse(event);
+        if (data.status == 'ok') {
+          token2 = data.data.token;
+          done();
+        }
+      });
+    });
+
     it('should respond an ok', (done) => {
       const content = {
         type: 'getMyPlayer',
@@ -241,6 +264,24 @@ describe('websocket complete game creation and connection testing', () => {
         const data = JSON.parse(event);
         expect(data.status).to.equal('ok');
         expect(data.data).to.have.key('characterRole');
+        done();
+      });
+    });
+
+    it('should respond an error because player has no role', (done) => {
+      const content = {
+        type: 'getMyPlayer',
+        status: 'ok',
+        token: token2,
+        data: {},
+      };
+      ws.send(JSON.stringify(content));
+
+      ws.once('message', (event) => {
+        expect(event).to.be.a('string');
+        const data = JSON.parse(event);
+        expect(data.status).to.equal('error');
+        expect(data.data.message).to.equal('Player has no role set');
         done();
       });
     });

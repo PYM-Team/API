@@ -9,6 +9,7 @@ export class Player {
     this.name = name || null;
     this.password = pass || null;
     this.role = null;
+    this.rolePref = null;
     this.alive = true;
     this.protected = false;
     this.spied = null;
@@ -30,7 +31,7 @@ export class Player {
   }
 
   getSetupSummary() {
-    return { name: this.name, connected: this.connected, prefered: this.role.name };
+    return { name: this.name, connected: this.connected, prefered: this.rolePref };
   }
 
   getRole() {
