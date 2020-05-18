@@ -13,7 +13,7 @@ export class Player {
     this.protected = false;
     this.spied = null;
     this.inventory = [];
-    this.socketId = socket || null;
+    this.socket = socket || null;
     this.connected = true;
   }
 
@@ -60,16 +60,4 @@ export class Player {
     });
     return notClues;
   }
-
-  setSocketID(id) {
-    this.socketId = id;
-  }
-
-  // announce(message) {
-  //   sendMessageToSocket(this.socketId, {
-  //     type: 'announce',
-  //     state: 'add',
-  //     message,
-  //   });
-  // }
 }
