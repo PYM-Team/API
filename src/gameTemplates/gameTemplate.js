@@ -71,8 +71,19 @@ class GameTemplate {
     return this.players;
   }
 
+  getPlayerFromName(name) {
+    return new Promise((resolve, reject) => {
+      this.players.forEach((player) => {
+        if (player.name == name) {
+          resolve(player);
+        }
+      });
+      reject(new Error('No player matching this name'));
+    });
+  }
+
   /**
-   * Add the gameMaster socketId to the game
+   * Add the gameMaster socket to the game
    * @param {Websocket} socket The gameMaster's socket
    */
   addGameMaster(socket) {
@@ -339,17 +350,28 @@ class GameTemplate {
     const data = {
       gameDescription: this.name,
       rolesNames: Object.keys(this.roles),
-      players: playersToSend, // TODO
+      players: playersToSend,
     };
     callback(null, data);
   }
 
   /**
-   * Annonce à tous les joueurs
+   * notification send a message to a player
+   * @param {Player} player The player to send the notification
+   * @param {String} type info, warn, death, announce
+   * @param {String} message The message to display
    */
-  announcement() {
-    // TODO
-    return null;
+  notification(player, type, message) {
+    const content = {
+      type: 'notification',
+      status: 'ok',
+      token: null,
+      data: {
+        type,
+        message,
+      },
+    };
+    sendMessageToSocket(player.socket, content);
   }
 }
 
