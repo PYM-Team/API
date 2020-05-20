@@ -228,7 +228,6 @@ describe('websocket complete game creation and connection testing', () => {
   });
 
   describe('test getMyPlayer', () => {
-    
     before((done) => {
       const content = {
         type: 'connectGame',

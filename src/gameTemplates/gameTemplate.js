@@ -117,7 +117,7 @@ class GameTemplate {
    */
   setPlayerRolePref(player, roleName, callback) {
     if (Object.keys(this.roles).includes(roleName)) {
-      // player.setRole(this.roles[roleName]);
+      player.setRole(this.roles[roleName]); // TODO chang this
       player.setRolePref(roleName);
       callback(null);
       return;
