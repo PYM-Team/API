@@ -33,4 +33,16 @@ describe('Scenario testing', () => {
     }
     done();
   });
+
+  it('should have no objects in le vestibule', (done) => {
+    let place;
+    const action = scenario.actions.find((element) => element.effect == fouillerPiece);
+    scenario.places.forEach((element) => {
+      if (element.name == 'Le vestibule') {
+        place = element;
+      }
+    });
+    expect()(action.effect(place)).to.equal(null);
+    done();
+  });
 });
