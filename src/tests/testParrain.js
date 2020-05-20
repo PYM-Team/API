@@ -36,7 +36,7 @@ describe('Scenario testing', () => {
 
   it('should have no objects in le vestibule', (done) => {
     let place;
-    const action = scenario.actions.find((element) => element.effect == fouillerPiece);
+    const action = scenario.actions.find((element) => element.name == 'Fouiller une pièce');
     scenario.places.forEach((element) => {
       if (element.name == 'Le vestibule') {
         place = element;
