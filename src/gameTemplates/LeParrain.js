@@ -228,6 +228,35 @@ const seProteger = (you) => {
   you.role.actions.find((element) => element.name == 'Se protéger').decreaseUseNb();
 };
 
+// Send
+const fouillerPieceSend = currentGame.choiceGenerator(
+  'Choissisez une pièce que vous voulez fouiller',
+  currentGame.places,
+  1,
+  1,
+);
+const pickpocketSend = currentGame.choiceGenerator(
+  'Choississez un joueur que vous voulez voler',
+);
+const espionnerSend = currentGame.choiceGenerator(
+  'Choississez un joueur que vous voulez espionner',
+);
+const potinsSend = [
+  currentGame.choiceGenerator(
+    'Choississez un joueur dont vous voulez savoir ce qu\'il pense d\'un autre',
+  ),
+  currentGame.choiceGenerator(
+    'Choississez le joueur dont vous voulez qu\'il parle',
+  ),
+];
+const refroidirSend = currentGame.choiceGenerator(
+  'Choissisez le joueur que vous voulez tuer',
+);
+const empoisonnerSend = currentGame.choiceGenerator(
+  'Choississez le joueur que vous voulez empoisonner',
+);
+
+
 // Missions
 const actionsVito = [
   currentGame.addAction('Fouiller une pièce', fouillerPiece, 2),
