@@ -6,7 +6,7 @@ import { Player } from '../gameElements/player';
 import { Mission } from '../gameElements/modules/mission';
 import { Action } from '../gameElements/action';
 
-const currentGame = new GameTemplate('basicMurder');
+const currentGame = new GameTemplate('LeParrain');
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
@@ -14,8 +14,16 @@ function getRandomInt(max) {
 
 // Objects
 // El Sampico
-const PoemeAmour = new GameObject('Poème d\'amour', 'Un long poème dans lequel El Sampico a mis son don pour l’écriture au service de sa plume afin d’y déverser toute l’intensité de son amour pour Carla, la femme du boss.', true);
-const NoteHotel = new GameObject('Note de l\'hôtel', 'Une note de l’hôtel où il a passé la nuit avec Carla le soir du meurtre. Elle aurait été l’alibi parfait si elle ne révélait pas en même temps sa relation secrète et incriminante avec sa dulcinée.', true);
+const PoemeAmour = new GameObject(
+  'Poème d\'amour',
+  'Un long poème dans lequel El Sampico a mis son don pour l’écriture au service de sa plume afin d’y déverser toute l’intensité de son amour pour Carla, la femme du boss.',
+  true,
+);
+const NoteHotel = new GameObject(
+  'Note de l\'hôtel',
+  'Une note de l’hôtel où il a passé la nuit avec Carla le soir du meurtre. Elle aurait été l’alibi parfait si elle ne révélait pas en même temps sa relation secrète et incriminante avec sa dulcinée.',
+  true,
+);
 const PaquetCigarettes1 = new GameObject('Paquet de cigarettes', 'Un paquet presque vide de cigarettes italiennes sans filtre au goût amer. El Sampico ne sait pas quoi faire de ses mains tant qu’elles ne sont pas occupées à tenir une clope. ', false);
 const FlasqueTequila = new GameObject('Flasque de Tequila', 'Un petit remontant pour se donner du courage.', false);
 const Flingue1 = new GameObject('Flingue', 'Pour El Sampico, cette arme est une extension de sa volonté.', false);
@@ -119,19 +127,13 @@ const relationsSebastiano = (
 const fouillerPiece = (you, place) => {
   const a = getRandomInt(2);
   let object;
-  let findableObjects;
-  if (place.name == 'Le vestibule' && a == 0) {
-    you.announce('En regardant le corps du parrain, vous ne trouvez aucune de strangulation ou d\'impacte de balle. Mais la drôle de couleur de son visage et la bave sortant de sa bouche vus font penser à un empoisonnement...');
-    return null;
-  }
-  if (a == 0 && place.getClues.length > 0) {
-    findableObjects = place.getClues();
-    object = findableObjects[Math.floor(Math.random() * findableObjects.length)];
-    const index = place.objects.indexOf(object);
-    place.objects.splice(index, 1);
-  } else if (place.getNotClues.length > 0) {
-    findableObjects = place.getNotClues();
-    object = findableObjects[Math.floor(Math.random() * findableObjects.length)];
+  if (place.name == 'Le vestibule') {
+    if (a == 0) {
+      currentGame.notification(you, 'notification', 'En regardant le corps du parrain, vous ne trouvez aucune de strangulation ou d\'impacte de balle. Mais la drôle de couleur de son visage et la bave sortant de sa bouche vus font penser à un empoisonnement...');
+    }
+    object = null;
+  } else if (place.objects.length > 0) {
+    object = place.objects[Math.floor(Math.random() * place.objects.length)];
     const index = place.objects.indexOf(object);
     place.objects.splice(index, 1);
   } else {
@@ -142,68 +144,73 @@ const fouillerPiece = (you, place) => {
   }
   return object;
 };
-const pickpocket = (_, others) => {
-  if (others[0].protected == true) {
-    others[0].setProtected(false);
+const pickpocket = (you, other) => {
+  if (other.protected == true) {
+    other.setProtected(false);
     return null;
   }
   const a = getRandomInt(3);
   let object;
   let findableObjects;
-  if (a == 0) {
-    findableObjects = others[0].getClues();
+  if (a == 0 && other.inventory.length > 0) {
+    findableObjects = other.getClues();
     object = findableObjects[Math.floor(Math.random() * findableObjects.length)];
-    const index = others[0].inventory.indexOf(object);
-    others[0].inventory.splice(index, 1);
-  }
-  if (a == 1) {
-    findableObjects = others[0].getNotClues();
+    const index = other.inventory.indexOf(object);
+    other.inventory.splice(index, 1);
+  } else if (a == 1 && other.inventory.length > 0) {
+    findableObjects = other.getNotClues();
     object = findableObjects[Math.floor(Math.random() * findableObjects.length)];
-    const index = others[0].inventory.indexOf(object);
-    others[0].inventory.splice(index, 1);
-  }
-  if (a == 2) {
-    others[0].announce('Someone tried to steal you');
+    const index = other.inventory.indexOf(object);
+    other.inventory.splice(index, 1);
+  } else if (a == 2) {
+    other.announce('Someone tried to steal you');
+    object = null;
+  } else {
+    object = null;
   }
   if (you.spied != null) {
     // TODO
   }
   return object;
 };
-const espionnage = (you, others) => {
-  if (others[0].protected == true) {
-    others[0].setProtected(false);
+const espionnage = (you, other) => {
+  if (other.protected == true) {
+    other.setProtected(false);
   } else {
-    others[0].setSpied(you.role.name);
+    other.setSpied(you.role.name);
   }
 };
-const potins = (you, others) => {
-  if (others[0].protected == true) {
-    others[0].setProtected(false);
+const potins = (you, talker, target) => {
+  if (talker.protected == true) {
+    talker.setProtected(false);
   } else {
-    you.announce(others[0].role.relations.get(others[1].role.name));
+    you.announce(talker.role.relations.get(target.role.name));
     if (you.spied != null) {
       // TODO
     }
   }
 };
-const refroidir = (_, others) => {
-  if (others[0].protected == true) {
-    others[0].setProtected(false);
+const refroidir = (you, other) => {
+  if (other.protected == true) {
+    other.setProtected(false);
   } else {
-    others[0].setAlive(false);
-    others[0].announce('You have been killed');
+    const a = getRandomInt(2);
+    if (a == 0) {
+      other.setAlive(false);
+      other.announce('You have been killed');
+    }
+
     if (you.spied != null) {
       // TODO
     }
   }
 };
-const empoisonner = (_, others) => {
-  if (others[0].protected == true) {
-    others[0].setProtected(false);
+const empoisonner = (you, other) => {
+  if (other.protected == true) {
+    other.setProtected(false);
   } else {
-    others[0].setAlive(false);
-    others[0].announce('You have been killed');
+    other.setAlive(false);
+    other.announce('You have been killed');
     if (you.spied != null) {
       // TODO
     }
