@@ -115,9 +115,10 @@ class GameTemplate {
    * @param {String} roleName The roleName to set
    * @param {Function} callback callback error
    */
-  setPlayerRole(player, roleName, callback) {
+  setPlayerRolePref(player, roleName, callback) {
     if (Object.keys(this.roles).includes(roleName)) {
-      player.setRole(this.roles[roleName]);
+      // player.setRole(this.roles[roleName]);
+      player.setRolePref(roleName);
       callback(null);
       return;
     }
@@ -219,7 +220,7 @@ class GameTemplate {
             break;
           case 'setRole':
             response.type = 'setRole';
-            this.setPlayerRole(player, received.data.roleName, (err) => {
+            this.setPlayerRolePref(player, received.data.roleName, (err) => {
               if (err != null) {
                 response.status = 'error';
                 response.data = {
@@ -231,6 +232,7 @@ class GameTemplate {
             });
             break;
           case 'getMyPlayer':
+            response.type = 'getMyPlayer';
             this.getMyPlayer(player, (err, data) => {
               if (err != null) {
                 response.status = 'error';
@@ -348,7 +350,7 @@ class GameTemplate {
       playersToSend.push(player.getSetupSummary());
     });
     const data = {
-      gameDescription: this.name,
+      gameDescription: this.description,
       rolesNames: Object.keys(this.roles),
       players: playersToSend,
     };

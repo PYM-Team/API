@@ -149,7 +149,7 @@ describe('websocket complete game creation and connection testing', () => {
       });
     });
 
-    it('should set the role correctly', (done) => {
+    it('should set the role pref correctly', (done) => {
       const content = {
         type: 'setRole',
         status: 'ok',
@@ -228,6 +228,7 @@ describe('websocket complete game creation and connection testing', () => {
   });
 
   describe('test getMyPlayer', () => {
+    
     before((done) => {
       const content = {
         type: 'connectGame',

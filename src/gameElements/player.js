@@ -30,6 +30,10 @@ export class Player {
     this.spied = a;
   }
 
+  setRolePref(name) {
+    this.rolePref = name;
+  }
+
   getSetupSummary() {
     return { name: this.name, connected: this.connected, prefered: this.rolePref };
   }
