@@ -7,14 +7,19 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "eslint . && mocha --require babel-polyfill --require @babel/register ./tests/*.js",
-    "dev": "nodemon --exec babel-node ./src/app.js",
+    "test": "eslint ./src && mocha --require @babel/polyfill --require @babel/register --timeout 5000 ./src/tests/*.js",
+    "test-no-lint": "mocha --require @babel/polyfill --require @babel/register --timeout 5000 ./src/tests/*.js",
+    "test-ws": "mocha --require @babel/polyfill --require @babel/register --timeout 5000 ./src/tests/testws.js",
+    "test-gt": "mocha --require @babel/polyfill --require @babel/register --timeout 5000 ./src/tests/test.gameTemplate.js",
+    "test-gaetan": "mocha --require @babel/polyfill --require @babel/register --timeout 5000 ./src/tests/testParrain.js",
+    "dev": "nodemon --exec babel-node ./src/index.js",
     "lint": "eslint ./src",
     "lint-fix": "eslint ./src --fix",
     "clean": "rm -rf build && mkdir build",
     "build-babel": "babel -d ./build ./src -s",
     "build": "npm run clean && npm run build-babel",
-    "start": "node ./build/app.js"
+    "start": "node ./build/index.js",
+    "doc": "./node_modules/.bin/esdoc"
   },
   "repository": {
     "type": "git",
@@ -30,17 +35,24 @@
   },
   "homepage": "https://github.com/RPplanner-Team/API#readme",
   "dependencies": {
+    "@hapi/joi": "^17.1.1",
     "@koa/cors": "^2.2.3",
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
     "dotenv": "^8.2.0",
+    "import-modules": "^2.0.0",
+    "jsonwebtoken": "^8.5.1",
     "koa": "^2.11.0",
     "koa-bodyparser": "^4.2.1",
+    "koa-route": "^3.2.0",
     "koa-router": "^8.0.6",
+    "koa-websocket": "^6.0.0",
     "lodash": "^4.17.15",
     "mocha": "^7.0.1",
     "mongoose": "^5.8.11",
-    "socket.io": "^2.3.0"
+    "node-schedule": "^1.3.2",
+    "socket.io": "^2.3.0",
+    "ws": "^7.2.5"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
@@ -50,8 +62,10 @@
     "@babel/preset-env": "^7.8.4",
     "@babel/register": "^7.8.3",
     "babel-eslint": "^10.0.3",
+    "esdoc": "^1.1.0",
+    "esdoc-standard-plugin": "^1.0.0",
     "eslint": "^6.8.0",
-    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-config-airbnb-base": "^14.1.0",
     "eslint-plugin-import": "^2.20.1",
     "nodemon": "^2.0.2"
   }
