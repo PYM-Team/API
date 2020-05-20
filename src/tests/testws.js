@@ -164,10 +164,9 @@ describe('websocket complete game creation and connection testing', () => {
       ws.send(JSON.stringify(content));
 
       ws.once('message', (event) => {
-        expect(event).to.be.a('string');
         const data = JSON.parse(event);
-        expect(data.status).to.equal('ok');
         expect(data.type).to.equal('setRole');
+        expect(data.status).to.equal('ok');
         done();
       });
     });
@@ -204,10 +203,9 @@ describe('websocket complete game creation and connection testing', () => {
       ws.send(JSON.stringify(content));
 
       ws.once('message', (event) => {
-        expect(event).to.be.a('string');
         const data = JSON.parse(event);
-        expect(data.status).to.equal('ok');
         expect(data.type).to.equal('getHomePage');
+        expect(data.status).to.equal('ok');
         expect(data.data).to.have.keys(['characterName', 'characterPhoto', 'characterSummaryRole', 'characterHints', 'scenarioTitle', 'scenarioSummary']);
         done();
       });
@@ -225,8 +223,8 @@ describe('websocket complete game creation and connection testing', () => {
       ws.send(JSON.stringify(content));
 
       ws.once('message', (event) => {
-        expect(event).to.be.a('string');
         const data = JSON.parse(event);
+        expect(data.type).to.be.equal('getHomePage');
         expect(data.status).to.equal('error');
         done();
       });
@@ -242,8 +240,8 @@ describe('websocket complete game creation and connection testing', () => {
       ws.send(JSON.stringify(content));
 
       ws.once('message', (event) => {
-        expect(event).to.be.a('string');
         const data = JSON.parse(event);
+        expect(data.type).to.be.equal('getHomePage');
         expect(data.status).to.equal('error');
         done();
       });
@@ -273,7 +271,7 @@ describe('websocket complete game creation and connection testing', () => {
       });
     });
 
-    it('should respond an ok', (done) => {
+    it('should respond an ok the first player', (done) => {
       const content = {
         type: 'getMyPlayer',
         status: 'ok',
@@ -283,8 +281,8 @@ describe('websocket complete game creation and connection testing', () => {
       ws.send(JSON.stringify(content));
 
       ws.once('message', (event) => {
-        expect(event).to.be.a('string');
         const data = JSON.parse(event);
+        expect(data.type).to.be.equal('getMyPlayer');
         expect(data.status).to.equal('ok');
         expect(data.data).to.have.key('characterRole');
         done();
@@ -301,8 +299,8 @@ describe('websocket complete game creation and connection testing', () => {
       ws.send(JSON.stringify(content));
 
       ws.once('message', (event) => {
-        expect(event).to.be.a('string');
         const data = JSON.parse(event);
+        expect(data.type).to.be.equal('getMyPlayer');
         expect(data.status).to.equal('error');
         expect(data.data.message).to.equal('Player has no role set');
         done();
@@ -321,8 +319,8 @@ describe('websocket complete game creation and connection testing', () => {
       ws.send(JSON.stringify(content));
 
       ws.once('message', (event) => {
-        expect(event).to.be.a('string');
         const data = JSON.parse(event);
+        expect(data.type).to.be.equal('getSetup');
         expect(data.status).to.equal('ok');
         done();
       });

@@ -82,6 +82,16 @@ class GameTemplate {
     });
   }
 
+  getRoleFromName(name) {
+    return new Promise((resolve, reject) => {
+      if (Object.keys(this.roles).includes(name)) {
+        resolve(this.roles[name]);
+      } else {
+        reject(new Error('No role matching this name'));
+      }
+    });
+  }
+
   /**
    * Add the gameMaster socket to the game
    * @param {Websocket} socket The gameMaster's socket
@@ -372,6 +382,22 @@ class GameTemplate {
             response.data = data;
           }
         });
+        break;
+      case 'setPlayerRole':
+        this.getPlayerFromName(received.data.playerName)
+          .then((player) => {
+            this.getRoleFromName(received.data.roleName)
+              .then((role) => {
+                player.setRole(role);
+                // TODO send Reload page
+              })
+              .catch((err) => {
+                // TODO
+              });
+          })
+          .catch((err) => {
+            // TODO
+          });
         break;
       default:
         break;
