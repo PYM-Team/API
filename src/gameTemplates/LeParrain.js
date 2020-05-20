@@ -336,11 +336,11 @@ const sendFouillerPiece = () => currentGame.choiceGenerator(
   1,
 );
 const sendPickpocket = (player) => {
-  const roles = currentGame.getRolesName();
+  const rolesName = currentGame.getRolesName();
   const choices = [];
-  roles.forEach((element) => {
-    if (element.name != player.role.name) {
-      choices.push(element.name);
+  rolesName.forEach((element) => {
+    if (element != player.role.name) {
+      choices.push(element);
     }
   });
   return currentGame.choiceGenerator(
@@ -351,11 +351,11 @@ const sendPickpocket = (player) => {
   );
 };
 const sendEspionner = (player) => {
-  const roles = currentGame.getRolesName();
+  const rolesName = currentGame.getRolesName();
   const choices = [];
-  roles.forEach((element) => {
-    if (element.name != player.role.name) {
-      choices.push(element.name);
+  rolesName.forEach((element) => {
+    if (element != player.role.name) {
+      choices.push(element);
     }
   });
   return currentGame.choiceGenerator(
@@ -366,11 +366,11 @@ const sendEspionner = (player) => {
   );
 };
 const sendPotins = (player) => {
-  const roles = currentGame.getRolesName();
+  const rolesName = currentGame.getRolesName();
   const choices = [];
-  roles.forEach((element) => {
-    if (element.name != player.role.name) {
-      choices.push(element.name);
+  rolesName.forEach((element) => {
+    if (element != player.role.name) {
+      choices.push(element);
     }
   });
   return [
@@ -389,11 +389,11 @@ const sendPotins = (player) => {
   ];
 };
 const sendRefroidir = (player) => {
-  const roles = currentGame.getRolesName();
+  const rolesName = currentGame.getRolesName();
   const choices = [];
-  roles.forEach((element) => {
-    if (element.name != player.role.name) {
-      choices.push(element.name);
+  rolesName.forEach((element) => {
+    if (element != player.role.name) {
+      choices.push(element);
     }
   });
   return currentGame.choiceGenerator(
@@ -404,11 +404,11 @@ const sendRefroidir = (player) => {
   );
 };
 const sendEmpoisonner = (player) => {
-  const roles = currentGame.getRolesName();
+  const rolesName = currentGame.getRolesName();
   const choices = [];
-  roles.forEach((element) => {
-    if (element.name != player.role.name) {
-      choices.push(element.name);
+  rolesName.forEach((element) => {
+    if (element != player.role.name) {
+      choices.push(element);
     }
   });
   return currentGame.choiceGenerator(
