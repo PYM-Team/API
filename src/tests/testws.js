@@ -316,11 +316,53 @@ describe('websocket complete game creation and connection testing', () => {
         token: gmToken,
         data: {},
       };
-      ws.send(JSON.stringify(content));
+      serverws.send(JSON.stringify(content));
+
+      serverws.once('message', (event) => {
+        const data = JSON.parse(event);
+        expect(data.type).to.be.equal('getSetup');
+        expect(data.status).to.equal('ok');
+        done();
+      });
+    });
+  });
+
+  describe('test setPlayerRole', () => {
+    it('should set the player role and respond ok', (done) => {
+      const content = {
+        type: 'setPlayerRole',
+        status: 'ok',
+        token: gmToken,
+        data: {
+          playerName: 'titi',
+          roleName: 'Meurtrier',
+        },
+      };
+      serverws.send(JSON.stringify(content));
+
+      serverws.once('message', (event) => {
+        const data = JSON.parse(event);
+        expect(data.type).to.be.equal('setPlayerRole');
+        expect(data.status).to.equal('ok');
+        done();
+      });
+    });
+
+    it('should set the player role and send relaod page to player', (done) => {
+      const content = {
+        type: 'setPlayerRole',
+        status: 'ok',
+        token: gmToken,
+        data: {
+          playerName: 'titi',
+          roleName: 'Meurtrier',
+        },
+      };
+      serverws.send(JSON.stringify(content));
 
       ws.once('message', (event) => {
         const data = JSON.parse(event);
-        expect(data.type).to.be.equal('getSetup');
+        expect(data.type).to.be.equal('reloadPage');
         expect(data.status).to.equal('ok');
         done();
       });

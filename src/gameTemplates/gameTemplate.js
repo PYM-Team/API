@@ -421,14 +421,15 @@ class GameTemplate {
             this.getRoleFromName(received.data.roleName)
               .then((role) => {
                 player.setRole(role);
-                this.sendOKToGm('setPlayer', {});
+                this.sendOKToGm('setPlayerRole', {});
+                this.sendOKToPlayer(player.socket, 'reloadPage', {});
               })
               .catch((err) => {
-                // TODO
+                this.sendErrorToGm('setPlayerRole', err);
               });
           })
           .catch((err) => {
-            // TODO
+            this.sendErrorToGm('setPlayerRole', err);
           });
         break;
       default:
