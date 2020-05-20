@@ -142,6 +142,7 @@ const fouillerPiece = (you, place) => {
   if (you.spied != null) {
     // TODO
   }
+  you.role.actions.find((element) => element.name == 'Fouiller une pièce').decreaseUseNb();
   return object;
 };
 const pickpocket = (you, other) => {
@@ -171,14 +172,16 @@ const pickpocket = (you, other) => {
   if (you.spied != null) {
     // TODO
   }
+  you.role.actions.find((element) => element.name == 'Pickpocket').decreaseUseNb();
   return object;
 };
-const espionnage = (you, other) => {
+const espionner = (you, other) => {
   if (other.protected == true) {
     other.setProtected(false);
   } else {
     other.setSpied(you.role.name);
   }
+  you.role.actions.find((element) => element.name == 'Espionner').decreaseUseNb();
 };
 const potins = (you, talker, target) => {
   if (talker.protected == true) {
@@ -189,6 +192,7 @@ const potins = (you, talker, target) => {
       // TODO
     }
   }
+  you.role.actions.find((element) => element.name == 'Potins').decreaseUseNb();
 };
 const refroidir = (you, other) => {
   if (other.protected == true) {
@@ -203,6 +207,7 @@ const refroidir = (you, other) => {
     if (you.spied != null) {
       // TODO
     }
+    you.role.actions.find((element) => element.name == 'Refroidir').decreaseUseNb();
   }
 };
 const empoisonner = (you, other) => {
@@ -215,80 +220,118 @@ const empoisonner = (you, other) => {
       // TODO
     }
   }
+  you.role.actions.find((element) => element.name == 'Empoisonner').decreaseUseNb();
 };
 const seProteger = (you) => {
   you.setProtected(true);
   you.announce('You are protected');
+  you.role.actions.find((element) => element.name == 'Se protéger').decreaseUseNb();
 };
 
 // Missions
 const actionsVito = [
-  currentGame.addAction('Fouiller une pièce', fouillerPiece, false, 1),
-  currentGame.addAction('Refroidir', refroidir, false, 1),
-  currentGame.addAction('Pickpocket', pickpocket, false, 1),
+  currentGame.addAction('Fouiller une pièce', fouillerPiece, 2),
+  currentGame.addAction('Refroidir', refroidir, 1),
+  currentGame.addAction('Pickpocket', pickpocket, 3),
 ];
 const missionVito = new Mission(
   'Objectif de Vito Falcaninio',
-  actionsVito,
   'Il voit la mort du parrain comme l’opportunité qu’il attendait depuis trop longtemps. Son objectif est le même que celui de Tomasso, son plus grand rival : hériter de la fortune et du pouvoir de son défunt patron.',
 );
 const actionsCarla = [
-  currentGame.addAction('Fouiller une pièce', fouillerPiece, false, 1),
-  currentGame.addAction('Potins', potins, false, 1),
-  currentGame.addAction('Espionnage', espionnage, false, 1),
+  currentGame.addAction('Fouiller une pièce', fouillerPiece, 2),
+  currentGame.addAction('Potins', potins, 3),
+  currentGame.addAction('Espionner', espionner, 1),
 ];
 const missionCarla = new Mission(
   'Objectif de Carla Gurzio',
-  actionsCarla,
   '20 ans plus jeune que son défunt mari, Carla joue bien la comédie en prétendant être dévastée et furieuse par l’événement tragique. Son réel objectif est de ressortir de cette affaire avec les poches les plus pleines possible. Son amour secret pour le fameux tueur à gage El Sampico la pousse à vouloir le placer comme nouveau parrain. Entre quête de pouvoir et amour coupable, Carla cherche à faire accuser n’importe qui du moment qu’elle et son bien aimé en sortent gagnants ! Malgré tout ça, elle n’a rien à voir dans l’assassinat de son mari et n’est au courant de rien...',
 );
 const actionsPetro = [
-  currentGame.addAction('Empoisonner', empoisonner, false, 1),
-  currentGame.addAction('Potins', potins, false, 1),
-  currentGame.addAction('Fouiller une pièce', fouillerPiece, false, 1),
+  currentGame.addAction('Empoisonner', empoisonner, 1),
+  currentGame.addAction('Potins', potins, 3),
+  currentGame.addAction('Fouiller une pièce', fouillerPiece, 2),
 ];
 const missionPetro = new Mission(
   'Objectif de Petro Francesco',
-  actionsPetro,
   'Il est devenu un ami proche de Tomasso Giorgio au fil des années dans l’objectif de pouvoir garder un oeil sur toutes les activités de la mafia. Don Giorgio commença peu à peu à avoir des doutes sur lui, et le meurtre lui permettra de placer Tomasso Giorgio au pouvoir et de finir de démanteler tout le réseau grâce à toutes les nouvelles informations qu’il pourra obtenir avec la confiance que le nouveau chef aura en lui… C’est lui qui, en suivant le plan machiavélique de Tomasso, a empoisonné la soupe du parrain en utilisant une des drogues volée dans le laboratoire la veille. Il a caché le flacon restant dans le tiroir de la table de chevet de Carla pour la faire accuser. L’argent n’a que peu d\'intérêt à ses yeux, seul le bon déroulement du plan compte et pour cela Tomasso doit devenir le nouveau chef et (bien évidemment) ne pas se faire découvrir.',
 );
 const actionsSebastiano = [
-  currentGame.addAction('Fouiller une pièce', fouillerPiece, false, 1),
-  currentGame.addAction('Empoisonner', empoisonner, false, 1),
-  currentGame.addAction('Pickpocket', pickpocket, false, 1),
+  currentGame.addAction('Fouiller une pièce', fouillerPiece, 2),
+  currentGame.addAction('Empoisonner', empoisonner, 1),
+  currentGame.addAction('Pickpocket', pickpocket, 3),
 ];
 const missionSebastiano = new Mission(
   'Objectif de Sebastiano Pechetto',
-  actionsSebastiano,
   'Sauver sa peau ! Il n’a pas tué le parrain, mais il sait que c’est l’un des produits de son laboratoire qui a servi à l’empoisonner. Il ne sait pas qui a pu lui subtiliser cet ingrédient.',
 );
 const actionsTommaso = [
-  currentGame.addAction('Fouiller une pièce', fouillerPiece, false, 1),
-  currentGame.addAction('Se protéger', seProteger, true),
-  currentGame.addAction('Espionnage', espionnage, false, 1),
+  currentGame.addAction('Fouiller une pièce', fouillerPiece, 2),
+  currentGame.addAction('Se protéger', seProteger, 1),
+  currentGame.addAction('Espionner', espionner, 1),
 ];
 const missionTommaso = new Mission(
   'Objectif de Tommaso Giorgio',
-  actionsTommaso,
   'L’objectif de Tommaso est simple : prendre la place de son défunt père. L’héritage se faisait trop attendre, Tomasso a préféré accélérer les choses en demandant à son acolyte Petro Francesco de tuer son père et de cacher l’arme du crime.',
 );
 const actionsSampico = [
-  currentGame.addAction('Refroidir', refroidir, false, 1),
-  currentGame.addAction('Se protéger', seProteger, true),
-  currentGame.addAction('Fouiller une pièce', fouillerPiece, false, 1),
+  currentGame.addAction('Refroidir', refroidir, 1),
+  currentGame.addAction('Se protéger', seProteger, 1),
+  currentGame.addAction('Fouiller une pièce', fouillerPiece, 2),
 ];
 const missionSampico = new Mission(
   'Objectif de El Sampico',
-  actionsSampico,
   'La mort du parrain s’annonce pour El Sampico comme une double opportunité : la place du boss est libre et sa femme est enfin seule ! Éperdument amoureux de Carla Gurzio, il va lui déclarer sa flamme pendant la soirée à l’aide d’un poème. Il ne sait pas si Carla est impliqué dans la mort de son mari, mais la protège à tout prix si elle vient à être l’objet de suspicions. Sachant que sa relation avec la veuve pourrait le rendre suspect du crime, il saura rester discret.',
 );
 
 // Create roles in the game
-currentGame.addRole('Vito Falcaninio', 'le bras droit', missionVito, basicObjectsFalcaninio, relationsVito);
-currentGame.addRole('Carla Gurzio', 'la femme du parrain', missionCarla, basicObjectsCarla, relationsCarla);
-currentGame.addRole('Petro Francesco', 'l\'infiltré de la police locale', missionPetro, basicObjectsFrancesco, relationsPetro);
-currentGame.addRole('Sebastiano Pechetto', 'dit le “Chimiste”, responsable des labos de synthèse de drogue', missionSebastiano, basicObjectsSebastiano, relationsSebastiano);
-currentGame.addRole('Tommaso-Giorgio', 'fils du parrain', missionTommaso, basicObjectsTommaso, relationsTommaso);
-currentGame.addRole('"El Sampico"', 'le meilleur tueur à gage', missionSampico, basicObjectsSampico, relationsSampico);
+currentGame.addRole(
+  'Vito Falcaninio',
+  'le bras droit',
+  missionVito,
+  basicObjectsFalcaninio,
+  relationsVito,
+  actionsVito,
+);
+currentGame.addRole(
+  'Carla Gurzio',
+  'la femme du parrain',
+  missionCarla,
+  basicObjectsCarla,
+  relationsCarla,
+  actionsCarla,
+);
+currentGame.addRole(
+  'Petro Francesco',
+  'l\'infiltré de la police locale',
+  missionPetro,
+  basicObjectsFrancesco,
+  relationsPetro,
+  actionsPetro,
+);
+currentGame.addRole(
+  'Sebastiano Pechetto',
+  'dit le “Chimiste”, responsable des labos de synthèse de drogue',
+  missionSebastiano,
+  basicObjectsSebastiano,
+  relationsSebastiano,
+  actionsSebastiano,
+);
+currentGame.addRole(
+  'Tommaso-Giorgio',
+  'fils du parrain',
+  missionTommaso,
+  basicObjectsTommaso,
+  relationsTommaso,
+  actionsTommaso,
+);
+currentGame.addRole(
+  '"El Sampico"',
+  'le meilleur tueur à gage',
+  missionSampico,
+  basicObjectsSampico,
+  relationsSampico,
+  actionsSampico,
+);
 
 export default currentGame;
