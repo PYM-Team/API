@@ -353,6 +353,28 @@ class GameTemplate {
               }
             });
             break;
+          case 'makeAction':
+            // TODO recup l'action
+            if (player.role == null) {
+              this.sendErrorToPlayer(websocket, 'makeAction', 'The specified player has no role');
+            } else {
+              let noAction = true;
+              if (player.role.actions != null) {
+                player.role.actions.forEach((action) => {
+                  if (action.name == received.data.actionName) {
+                    noAction = false;
+                    const data = {
+                      choices: action.send,
+                    };
+                    this.sendOKToPlayer(websocket, 'makeAction', data);
+                  }
+                });
+              }
+              if (noAction) {
+                this.sendErrorToPlayer(websocket, 'makeAction', 'The specified player has not this action');
+              }
+            }
+            break;
           case 'getMyActions':
           // TODO
             break;

@@ -368,4 +368,26 @@ describe('websocket complete game creation and connection testing', () => {
       });
     });
   });
+
+  describe('test actions', () => {
+    it('should handle the action and respond makeAction', (done) => {
+      const content = {
+        type: 'makeAction',
+        status: 'ok',
+        token,
+        data: {
+          actionName: 'Tuer',
+        },
+      };
+      ws.send(JSON.stringify(content));
+
+      ws.once('message', (event) => {
+        const data = JSON.parse(event);
+        expect(data.type).to.be.equal('makeAction');
+        expect(data.status).to.equal('ok');
+        // TODO
+        done();
+      });
+    });
+  });
 });
