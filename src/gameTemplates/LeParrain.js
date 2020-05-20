@@ -24,45 +24,145 @@ const NoteHotel = new GameObject(
   'Une note de l’hôtel où il a passé la nuit avec Carla le soir du meurtre. Elle aurait été l’alibi parfait si elle ne révélait pas en même temps sa relation secrète et incriminante avec sa dulcinée.',
   true,
 );
-const PaquetCigarettes1 = new GameObject('Paquet de cigarettes', 'Un paquet presque vide de cigarettes italiennes sans filtre au goût amer. El Sampico ne sait pas quoi faire de ses mains tant qu’elles ne sont pas occupées à tenir une clope. ', false);
-const FlasqueTequila = new GameObject('Flasque de Tequila', 'Un petit remontant pour se donner du courage.', false);
-const Flingue1 = new GameObject('Flingue', 'Pour El Sampico, cette arme est une extension de sa volonté.', false);
-const SouFetiche = new GameObject('Sou fétiche', 'Un peso brillant lui rappelant sa terre natale, le Mexique.', false);
+const PaquetCigarettes1 = new GameObject(
+  'Paquet de cigarettes',
+  'Un paquet presque vide de cigarettes italiennes sans filtre au goût amer. El Sampico ne sait pas quoi faire de ses mains tant qu’elles ne sont pas occupées à tenir une clope. ',
+  false,
+);
+const FlasqueTequila = new GameObject(
+  'Flasque de Tequila',
+  'Un petit remontant pour se donner du courage.',
+  false,
+);
+const Flingue1 = new GameObject(
+  'Flingue',
+  'Pour El Sampico,cette arme est une extension de sa volonté.',
+  false,
+);
+const SouFetiche = new GameObject(
+  'Sou fétiche',
+  'Un peso brillant lui rappelant sa terre natale, le Mexique.',
+  false,
+);
 const basicObjectsSampico = [PoemeAmour, NoteHotel, PaquetCigarettes1, FlasqueTequila, Flingue1,
   SouFetiche];
 // Petro Francesco
-const PaquetCigarettes2 = new GameObject('Paquet de cigarettes', 'Déjà à moitié vide en début de soirée, de la marque italienne Fortuna.', false);
-const Briquet = new GameObject('Briquet', 'Un vieux briquet en acier noir, lourdement usé par l’utilisation quotidienne de son propriétaire.', false);
-const LunettesSoleil = new GameObject('Paire de lunettes de soleil de rechange', 'Une paire de lunettes rondes et sombres', false);
-const BlocNote = new GameObject('Bloc-note', 'Un bloc notes avec plein de notes griffonnées incompréhensibles, à part pour les noms de toutes les personnes de la soirée !', false);
-const Menottes = new GameObject('Paire de menottes', 'Une simple paire de menottes', true);
+const PaquetCigarettes2 = new GameObject(
+  'Paquet de cigarettes',
+  'Déjà à moitié vide en début de soirée,de la marque italienne Fortuna.',
+  false,
+);
+const Briquet = new GameObject(
+  'Briquet',
+  'Un vieux briquet en acier noir, lourdement usé par l’utilisation quotidienne de son propriétaire.',
+  false,
+);
+const LunettesSoleil = new GameObject(
+  'Paire de lunettes de soleil de rechange',
+  'Une paire de lunettes rondes et sombres',
+  false,
+);
+const BlocNote = new GameObject(
+  'Bloc-note',
+  'Un bloc notes avec plein de notes griffonnées incompréhensibles, à part pour les noms de toutes les personnes de la soirée !',
+  false,
+);
+const Menottes = new GameObject(
+  'Paire de menottes',
+  'Une simple paire de menottes',
+  true,
+);
 const basicObjectsFrancesco = [PaquetCigarettes2, Briquet, LunettesSoleil, BlocNote, Menottes];
 // Vito Falcaninio
-const LettreParrain = new GameObject('La lettre du parrain', 'Cette lettre signée du parrain exprime ses doutes sur son entourage direct. C’est elle qui pousse Vito a réunir tout ce beau monde ce soir', true);
-const Cigare = new GameObject('Un cigare allumé', '“Jamais sans mon cubain. J’en ai besoin pour réfléchir, et réfléchir je fais que ça.”', false);
-const Flingue2 = new GameObject('Flingue', 'Comme le couteau du boucher ou la plume de l’écrivain : l’outil de travail.', false);
+const LettreParrain = new GameObject(
+  'La lettre du parrain',
+  'Cette lettre signée du parrain exprime ses doutes sur son entourage direct. C’est elle qui pousse Vito a réunir tout ce beau monde ce soir',
+  true,
+);
+const Cigare = new GameObject(
+  'Un cigare allumé',
+  '“Jamais sans mon cubain. J’en ai besoin pour réfléchir, et réfléchir je fais que ça.”',
+  false,
+);
+const Flingue2 = new GameObject(
+  'Flingue',
+  'Comme le couteau du boucher ou la plume de l’écrivain : l’outil de travail.',
+  false,
+);
 const basicObjectsFalcaninio = [LettreParrain, Cigare, Flingue2];
 // Tommaso-Giorgio
-const Addition = new GameObject('Addition de restaurant', 'Ce petit bout de papier indique que Tomasso était au restaurant au moment où le parrain a été assassiné. D’après le prix et le menu, il semble qu’il y soit allé tout seul.', true);
-const MontreGousset = new GameObject('Montre à gousset', 'Une jolie montre gravée qui vaut sûrement une fortune.', false);
-const Chevaliere = new GameObject('Une chevalière en argent', 'Une imposante bague en argent sous la forme d’un serpent qui se mord la queue.', false);
+const Addition = new GameObject(
+  'Addition de restaurant',
+  'Ce petit bout de papier indique que Tomasso était au restaurant au moment où le parrain a été assassiné. D’après le prix et le menu, il semble qu’il y soit allé tout seul.',
+  true,
+);
+const MontreGousset = new GameObject(
+  'Montre à gousset',
+  'Une jolie montre gravée qui vaut sûrement une fortune.',
+  false,
+);
+const Chevaliere = new GameObject(
+  'Une chevalière en argent',
+  'Une imposante bague en argent sous la forme d’un serpent qui se mord la queue.',
+  false,
+);
 const basicObjectsTommaso = [Addition, MontreGousset, Chevaliere];
 // Carla Gurzio
-const Photographie = new GameObject('Photographie de El Sampico', 'Dans le portefeuille de Carla se trouve une magnifique photographie noir et blanc du tueur à gages Mexicain. Sa moustache foisonnante rayonne de par son sourire chaleureux. La photographie semble usée par le temps mais reste malgré tout en bon état.', true);
-const FlasqueParfum = new GameObject('Flasque de parfum', 'Une petite fiole de parfum à la rose de couleur vive.', false);
-const Peigne = new GameObject('Peigne en or', 'Magnifique pièce en or gravé en forme de petit peigne. Semble avoir été utilisé à de nombreuse reprise.', false);
-const Carnet = new GameObject('Carnet', 'Un carnet de note à la couverture en cuir de crocodile et coloré rouge vif. Il est presque vide et on peut y lire quelques date importante et rendez-vous sans grand intérêt avec des personnalités qui ne vous disent rien… On y trouve aussi quelques numéros de téléphone.', false);
+const Photographie = new GameObject(
+  'Photographie de El Sampico',
+  'Dans le portefeuille de Carla se trouve une magnifique photographie noir et blanc du tueur à gages Mexicain. Sa moustache foisonnante rayonne de par son sourire chaleureux. La photographie semble usée par le temps mais reste malgré tout en bon état.',
+  true,
+);
+const FlasqueParfum = new GameObject(
+  'Flasque de parfum',
+  'Une petite fiole de parfum à la rose de couleur vive.',
+  false,
+);
+const Peigne = new GameObject(
+  'Peigne en or',
+  'Magnifique pièce en or gravé en forme de petit peigne. Semble avoir été utilisé à de nombreuse reprise.',
+  false,
+);
+const Carnet = new GameObject(
+  'Carnet',
+  'Un carnet de note à la couverture en cuir de crocodile et coloré rouge vif. Il est presque vide et on peut y lire quelques date importante et rendez-vous sans grand intérêt avec des personnalités qui ne vous disent rien… On y trouve aussi quelques numéros de téléphone.',
+  false,
+);
 const basicObjectsCarla = [Photographie, FlasqueParfum, Peigne, Carnet];
 // Sebastiano Pechetto
-const RapportMorgue = new GameObject('Rapport de la morgue', 'Ce rapport indique que la parrain a été empoisonné.', true);
-const GantsLatex = new GameObject('Une paire de gants en latex', 'Une vieille paire de gants tachés.', false);
-const Cocaine = new GameObject('Cocaïne', 'Une petit sachet transparent de 2 grammes de cocaïne. De quoi se donner un bon  coup de fouet.', false);
+const RapportMorgue = new GameObject(
+  'Rapport de la morgue',
+  'Ce rapport indique que la parrain a été empoisonné.',
+  true,
+);
+const GantsLatex = new GameObject(
+  'Une paire de gants en latex',
+  'Une vieille paire de gants tachés.',
+  false,
+);
+const Cocaine = new GameObject(
+  'Cocaïne',
+  'Une petit sachet transparent de 2 grammes de cocaïne. De quoi se donner un bon  coup de fouet.',
+  false,
+);
 const basicObjectsSebastiano = [RapportMorgue, GantsLatex, Cocaine];
 
 // Places
-const Poison1 = new GameObject('Fiole de poison', 'Une fiole avec une tête de mort dessus dissimulée dans la table à chevet de Carla Gurzio. Cela ressemble à s\'y méprendre à du poison', true);
-const Poison2 = new GameObject('Fiole de Poison', 'Une fiole avec une tête de mort dessus. Pas étonnant de trouver ce genre de produits dangereux dans un laboratoire', false);
-const Antidote = new GameObject('Antidote', 'Un antidote, sûrement efficace contre l\'empoisonnement', false);
+const Poison1 = new GameObject(
+  'Fiole de poison',
+  'Une fiole avec une tête de mort dessus dissimulée dans la table à chevet de Carla Gurzio. Cela ressemble à s\'y méprendre à du poison',
+  true,
+);
+const Poison2 = new GameObject(
+  'Fiole de Poison',
+  'Une fiole avec une tête de mort dessus. Pas étonnant de trouver ce genre de produits dangereux dans un laboratoire',
+  false,
+);
+const Antidote = new GameObject(
+  'Antidote',
+  'Un antidote, sûrement efficace contre l\'empoisonnement',
+  false,
+);
 currentGame.addPlace('La chambre du parrain', 'La chambre du parrain et de sa femme Carla Gurzio', [Poison1]);
 currentGame.addPlace('Le laboratoire du chimiste', 'Le laboratoire où travail Sebastiano Pechetto', [Poison2, Antidote, Antidote]);
 currentGame.addPlace('Le vestibule', 'C\'est ici que repose le corps du parrain', []);
@@ -229,85 +329,160 @@ const seProteger = (you) => {
 };
 
 // Send
-const fouillerPieceSend = currentGame.choiceGenerator(
+const sendFouillerPiece = () => currentGame.choiceGenerator(
   'Choissisez une pièce que vous voulez fouiller',
   currentGame.places,
   1,
   1,
 );
-const pickpocketSend = currentGame.choiceGenerator(
-  'Choississez un joueur que vous voulez voler',
-);
-const espionnerSend = currentGame.choiceGenerator(
-  'Choississez un joueur que vous voulez espionner',
-);
-const potinsSend = [
-  currentGame.choiceGenerator(
-    'Choississez un joueur dont vous voulez savoir ce qu\'il pense d\'un autre',
-  ),
-  currentGame.choiceGenerator(
-    'Choississez le joueur dont vous voulez qu\'il parle',
-  ),
+const sendPickpocket = (player) => {
+  const roles = currentGame.getRolesName();
+  const choices = [];
+  roles.forEach((element) => {
+    if (element.name != player.role.name) {
+      choices.push(element.name);
+    }
+  });
+  return currentGame.choiceGenerator(
+    'Choississez un joueur que vous voulez voler',
+    choices,
+    1,
+    1,
+  );
+};
+const sendEspionner = (player) => {
+  const roles = currentGame.getRolesName();
+  const choices = [];
+  roles.forEach((element) => {
+    if (element.name != player.role.name) {
+      choices.push(element.name);
+    }
+  });
+  return currentGame.choiceGenerator(
+    'Choississez un joueur que vous voulez espionner',
+    choices,
+    1,
+    1,
+  );
+};
+const sendPotins = (player) => {
+  const roles = currentGame.getRolesName();
+  const choices = [];
+  roles.forEach((element) => {
+    if (element.name != player.role.name) {
+      choices.push(element.name);
+    }
+  });
+  return [
+    currentGame.choiceGenerator(
+      'Choississez un joueur dont vous voulez savoir ce qu\'il pense d\'un autre',
+      choices,
+      1,
+      1,
+    ),
+    currentGame.choiceGenerator(
+      'Choississez le joueur dont vous voulez qu\'il parle',
+      choices,
+      1,
+      1,
+    ),
+  ];
+};
+const sendRefroidir = (player) => {
+  const roles = currentGame.getRolesName();
+  const choices = [];
+  roles.forEach((element) => {
+    if (element.name != player.role.name) {
+      choices.push(element.name);
+    }
+  });
+  return currentGame.choiceGenerator(
+    'Choissisez le joueur que vous voulez tuer',
+    choices,
+    1,
+    1,
+  );
+};
+const sendEmpoisonner = (player) => {
+  const roles = currentGame.getRolesName();
+  const choices = [];
+  roles.forEach((element) => {
+    if (element.name != player.role.name) {
+      choices.push(element.name);
+    }
+  });
+  return currentGame.choiceGenerator(
+    'Choississez le joueur que vous voulez empoisonner',
+    choices,
+    1,
+    1,
+  );
+};
+const actionFouillerPiece = currentGame.addAction('Fouiller une pièce', fouillerPiece, 2, sendFouillerPiece);
+const actionPickpocket = currentGame.addAction('Pickpocket', pickpocket, 3, sendPickpocket);
+const actionEspionner = currentGame.addAction('Espionner', espionner, 1, sendEspionner);
+const actionPotins = currentGame.addAction('Potins', potins, 3, sendPotins);
+const actionRefroidir = currentGame.addAction('Refroidir', refroidir, 1, sendRefroidir);
+const actionEmpoisonner = currentGame.addAction('Empoisonner', empoisonner, 1, sendEmpoisonner);
+const actionSeProteger = currentGame.addAction('Se protéger', seProteger, 1);
+// Vito
+const actionsVito = [
+  actionFouillerPiece,
+  actionRefroidir,
+  actionPickpocket,
 ];
-const refroidirSend = currentGame.choiceGenerator(
-  'Choissisez le joueur que vous voulez tuer',
-);
-const empoisonnerSend = currentGame.choiceGenerator(
-  'Choississez le joueur que vous voulez empoisonner',
-);
-
+// Carla
+const actionsCarla = [
+  actionFouillerPiece,
+  actionPotins,
+  actionEspionner,
+];
+// Petro
+const actionsPetro = [
+  actionEmpoisonner,
+  actionPotins,
+  actionFouillerPiece,
+];
+// Sebastiano
+const actionsSebastiano = [
+  actionFouillerPiece,
+  actionEmpoisonner,
+  actionPickpocket,
+];
+// Tommaso
+const actionsTommaso = [
+  actionFouillerPiece,
+  actionSeProteger,
+  actionEspionner,
+];
+// Sampico
+const actionsSampico = [
+  actionRefroidir,
+  actionSeProteger,
+  actionFouillerPiece,
+];
 
 // Missions
-const actionsVito = [
-  currentGame.addAction('Fouiller une pièce', fouillerPiece, 2),
-  currentGame.addAction('Refroidir', refroidir, 1),
-  currentGame.addAction('Pickpocket', pickpocket, 3),
-];
 const missionVito = new Mission(
   'Objectif de Vito Falcaninio',
   'Il voit la mort du parrain comme l’opportunité qu’il attendait depuis trop longtemps. Son objectif est le même que celui de Tomasso, son plus grand rival : hériter de la fortune et du pouvoir de son défunt patron.',
 );
-const actionsCarla = [
-  currentGame.addAction('Fouiller une pièce', fouillerPiece, 2),
-  currentGame.addAction('Potins', potins, 3),
-  currentGame.addAction('Espionner', espionner, 1),
-];
 const missionCarla = new Mission(
   'Objectif de Carla Gurzio',
   '20 ans plus jeune que son défunt mari, Carla joue bien la comédie en prétendant être dévastée et furieuse par l’événement tragique. Son réel objectif est de ressortir de cette affaire avec les poches les plus pleines possible. Son amour secret pour le fameux tueur à gage El Sampico la pousse à vouloir le placer comme nouveau parrain. Entre quête de pouvoir et amour coupable, Carla cherche à faire accuser n’importe qui du moment qu’elle et son bien aimé en sortent gagnants ! Malgré tout ça, elle n’a rien à voir dans l’assassinat de son mari et n’est au courant de rien...',
 );
-const actionsPetro = [
-  currentGame.addAction('Empoisonner', empoisonner, 1),
-  currentGame.addAction('Potins', potins, 3),
-  currentGame.addAction('Fouiller une pièce', fouillerPiece, 2),
-];
 const missionPetro = new Mission(
   'Objectif de Petro Francesco',
   'Il est devenu un ami proche de Tomasso Giorgio au fil des années dans l’objectif de pouvoir garder un oeil sur toutes les activités de la mafia. Don Giorgio commença peu à peu à avoir des doutes sur lui, et le meurtre lui permettra de placer Tomasso Giorgio au pouvoir et de finir de démanteler tout le réseau grâce à toutes les nouvelles informations qu’il pourra obtenir avec la confiance que le nouveau chef aura en lui… C’est lui qui, en suivant le plan machiavélique de Tomasso, a empoisonné la soupe du parrain en utilisant une des drogues volée dans le laboratoire la veille. Il a caché le flacon restant dans le tiroir de la table de chevet de Carla pour la faire accuser. L’argent n’a que peu d\'intérêt à ses yeux, seul le bon déroulement du plan compte et pour cela Tomasso doit devenir le nouveau chef et (bien évidemment) ne pas se faire découvrir.',
 );
-const actionsSebastiano = [
-  currentGame.addAction('Fouiller une pièce', fouillerPiece, 2),
-  currentGame.addAction('Empoisonner', empoisonner, 1),
-  currentGame.addAction('Pickpocket', pickpocket, 3),
-];
 const missionSebastiano = new Mission(
   'Objectif de Sebastiano Pechetto',
   'Sauver sa peau ! Il n’a pas tué le parrain, mais il sait que c’est l’un des produits de son laboratoire qui a servi à l’empoisonner. Il ne sait pas qui a pu lui subtiliser cet ingrédient.',
 );
-const actionsTommaso = [
-  currentGame.addAction('Fouiller une pièce', fouillerPiece, 2),
-  currentGame.addAction('Se protéger', seProteger, 1),
-  currentGame.addAction('Espionner', espionner, 1),
-];
 const missionTommaso = new Mission(
   'Objectif de Tommaso Giorgio',
   'L’objectif de Tommaso est simple : prendre la place de son défunt père. L’héritage se faisait trop attendre, Tomasso a préféré accélérer les choses en demandant à son acolyte Petro Francesco de tuer son père et de cacher l’arme du crime.',
 );
-const actionsSampico = [
-  currentGame.addAction('Refroidir', refroidir, 1),
-  currentGame.addAction('Se protéger', seProteger, 1),
-  currentGame.addAction('Fouiller une pièce', fouillerPiece, 2),
-];
 const missionSampico = new Mission(
   'Objectif de El Sampico',
   'La mort du parrain s’annonce pour El Sampico comme une double opportunité : la place du boss est libre et sa femme est enfin seule ! Éperdument amoureux de Carla Gurzio, il va lui déclarer sa flamme pendant la soirée à l’aide d’un poème. Il ne sait pas si Carla est impliqué dans la mort de son mari, mais la protège à tout prix si elle vient à être l’objet de suspicions. Sachant que sa relation avec la veuve pourrait le rendre suspect du crime, il saura rester discret.',
