@@ -320,50 +320,36 @@ class GameTemplate {
  * @param {Object} received all the data received with the request
  */
   handlePlayerUpdate(websocket, received, tokenPayload) {
-  // TODO: identify the player who made the request
-    let response = { status: 'ok', token: null };
     let error = true;
     this.players.forEach((player) => {
       error = false;
       if (player.name == tokenPayload.user && player.password == tokenPayload.pass) {
         switch (received.type) {
           case 'getHomePage':
-            response.type = 'getHomePage';
             this.getHomePage(player, (err, data) => {
               if (err != null) {
-                response.status = 'error';
-                response.data = {
-                  message: err,
-                };
+                this.sendErrorToPlayer(websocket, 'getHomePage', err);
               } else {
-                response.data = data;
+                this.sendOKToPlayer(websocket, 'getHomePage', data);
               }
             });
             break;
           case 'setRole':
-            response.type = 'setRole';
             this.setPlayerRolePref(player, received.data.roleName, (err) => {
               if (err != null) {
-                response.status = 'error';
-                response.data = {
-                  message: err,
-                };
+                this.sendErrorToPlayer(websocket, 'setRole', err);
               } else {
-                response.data = {};
+                this.sendOKToPlayer(websocket, 'setRole', {});
                 this.sendSetupUpdate();
               }
             });
             break;
           case 'getMyPlayer':
-            response.type = 'getMyPlayer';
             this.getMyPlayer(player, (err, data) => {
               if (err != null) {
-                response.status = 'error';
-                response.data = {
-                  message: err,
-                };
+                this.sendErrorToPlayer(websocket, 'getMyPlayer', err);
               } else {
-                response.data = data;
+                this.sendOKToPlayer(websocket, 'getMyPlayer', data);
               }
             });
             break;
@@ -388,19 +374,10 @@ class GameTemplate {
           default:
             break;
         }
-        sendMessageToSocket(websocket, response);
       }
     });
     if (error) {
-      response = {
-        type: received.type,
-        status: 'error',
-        token: null,
-        data: {
-          message: 'unable to find player',
-        },
-      };
-      sendMessageToSocket(websocket, response);
+      this.sendErrorToPlayer(websocket, received.type, 'unable to find the player');
     }
   }
 
