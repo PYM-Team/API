@@ -13,7 +13,7 @@ describe('Simple String Test', () => {
 });
 
 describe('websocket complete game creation and connection testing', () => {
-  let ws;
+  let ws; let serverws;
   let server;
   const PORT = process.env.PORT || 1337;
 
@@ -27,7 +27,10 @@ describe('websocket complete game creation and connection testing', () => {
     server = app.listen(PORT, () => {
       ws = new Websocket(`ws://localhost:${PORT}`);
       ws.on('open', () => {
-        done();
+        serverws = new Websocket(`ws://localhost:${PORT}`);
+        serverws.on('open', () => {
+          done();
+        });
       });
     });
   });
@@ -35,6 +38,7 @@ describe('websocket complete game creation and connection testing', () => {
   after((done) => {
     server.close();
     ws.close();
+    serverws.close();
     done();
   });
 
@@ -48,10 +52,9 @@ describe('websocket complete game creation and connection testing', () => {
       ws.send(JSON.stringify(content));
 
       ws.once('message', (event) => {
-        expect(event).to.be.a('String');
         const data = JSON.parse(event);
-        expect(data.status).equal('ok');
         expect(data.type).equal('pong');
+        expect(data.status).equal('ok');
         done();
       });
     });
@@ -67,15 +70,16 @@ describe('websocket complete game creation and connection testing', () => {
           templateName: 'basicMurder',
         },
       };
-      ws.send(JSON.stringify(content));
+      serverws.send(JSON.stringify(content));
 
-      ws.once('message', (event) => {
-        expect(event).to.be.a('String');
+      serverws.once('message', (event) => {
         const data = JSON.parse(event);
-        expect(data.status).equal('ok');
         expect(data.type).equal('createGame');
+        expect(data.status).equal('ok');
+
         gameId = data.data.gameId;
         gmToken = data.data.token;
+
         done();
       });
     });
@@ -94,10 +98,9 @@ describe('websocket complete game creation and connection testing', () => {
       ws.send(JSON.stringify(content));
 
       ws.once('message', (event) => {
-        expect(event).to.be.a('String');
         const data = JSON.parse(event);
-        expect(data.status).equal('ok');
         expect(data.type).equal('testId');
+        expect(data.status).equal('ok');
         done();
       });
     });
@@ -114,10 +117,9 @@ describe('websocket complete game creation and connection testing', () => {
       ws.send(JSON.stringify(content));
 
       ws.once('message', (event) => {
-        expect(event).to.be.a('String');
         const data = JSON.parse(event);
-        expect(data.status).equal('error');
         expect(data.type).equal('testId');
+        expect(data.status).equal('error');
         done();
       });
     });
@@ -138,13 +140,14 @@ describe('websocket complete game creation and connection testing', () => {
       ws.send(JSON.stringify(content));
 
       ws.once('message', (event) => {
-        expect(event).to.be.a('string');
         const data = JSON.parse(event);
-        expect(data.status).to.equal('ok');
         expect(data.type).to.equal('connectGame');
+        expect(data.status).to.equal('ok');
         expect(data.data).to.have.keys(['token', 'roles']);
         expect(data.data.roles).to.be.an('array');
+
         token = data.data.token;
+
         done();
       });
     });
@@ -165,6 +168,26 @@ describe('websocket complete game creation and connection testing', () => {
         const data = JSON.parse(event);
         expect(data.status).to.equal('ok');
         expect(data.type).to.equal('setRole');
+        done();
+      });
+    });
+
+    it('should send update to gameMaster', (done) => {
+      const content = {
+        type: 'setRole',
+        status: 'ok',
+        token,
+        data: {
+          roleName: 'Meurtrier',
+        },
+      };
+      ws.send(JSON.stringify(content));
+
+      serverws.once('message', (event) => {
+        const data = JSON.parse(event);
+        expect(data.type).to.equal('updatePlayers');
+        expect(data.status).to.equal('ok');
+        expect(data.data).to.have.key('players');
         done();
       });
     });

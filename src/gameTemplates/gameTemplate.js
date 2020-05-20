@@ -193,6 +193,21 @@ class GameTemplate {
   }
 
   /**
+   * @param {String} message The message of the choice
+   * @param {Array} poss The array of possibilities
+   * @param {Number} min The minimum of elements to choose
+   * @param {Number} max The maximum of elements to choose
+   */
+  choiceGenerator(message, poss, min, max) {
+    return {
+      message,
+      possibilities: poss,
+      min,
+      max,
+    };
+  }
+
+  /**
  * handle Websocket request from the player
  * @param {Websocket} websocket the sender websocket
  * @param {Object} received all the data received with the request
@@ -228,6 +243,7 @@ class GameTemplate {
                 };
               } else {
                 response.data = {};
+                this.sendSetupUpdate();
               }
             });
             break;
@@ -322,6 +338,25 @@ class GameTemplate {
   //   };
   //   callback(null, data);
   // }
+
+  /**
+   * Send update of connected players to the socket
+   */
+  sendSetupUpdate() {
+    const playersToSend = [];
+    this.players.forEach((player) => {
+      playersToSend.push(player.getSetupSummary());
+    });
+    const content = {
+      type: 'updatePlayers',
+      status: 'ok',
+      token: null,
+      data: {
+        players: playersToSend,
+      },
+    };
+    sendMessageToSocket(this.gameMasterSocket, content);
+  }
 
   handleGmUpdate(websocket, received) {
     const response = { type: received.type, status: 'ok' };
