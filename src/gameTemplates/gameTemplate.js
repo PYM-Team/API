@@ -59,16 +59,22 @@ class GameTemplate {
     };
   }
 
-  /**
-   * set the game's id
-   * @param {Number} gameId the game's id
-   */
-  setGameId(gameId) {
-    this.gameId = gameId;
-  }
+  // ############################## GETTERS #######################################
 
   getPlayers() {
     return this.players;
+  }
+
+  getRolesName() {
+    return Object.keys(this.roles);
+  }
+
+  getPlayersName() {
+    let playersName;
+    this.players.forEach((player) => {
+      playersName.push(player.name);
+    });
+    return playersName;
   }
 
   getPlayerFromName(name) {
@@ -91,6 +97,55 @@ class GameTemplate {
       }
     });
   }
+
+  /**
+   * Get the GM socket
+   */
+  getGameMaster() {
+    return this.gameMasterSocket;
+  }
+
+  /**
+   * Return how many players are in the game
+   */
+  howManyPlayers() {
+    return this.players.length;
+  }
+
+  /**
+   * Return how many roles are set
+   */
+  howManyRoles() {
+    return this.roles.length;
+  }
+
+  // ############################## SETTERS #######################################
+
+  /**
+   * set the game's id
+   * @param {Number} gameId the game's id
+   */
+  setGameId(gameId) {
+    this.gameId = gameId;
+  }
+
+  /**
+   * Set player's role from a player
+   * @param {Object} tokenPayload the decoded token
+   * @param {String} roleName The roleName to set
+   * @param {Function} callback callback error
+   */
+  setPlayerRolePref(player, roleName, callback) {
+    if (Object.keys(this.roles).includes(roleName)) {
+      player.setRole(this.roles[roleName]); // TODO chang this
+      player.setRolePref(roleName);
+      callback(null);
+      return;
+    }
+    callback('No role matching role name');
+  }
+
+  // ################################# ADDERS #####################################
 
   /**
    * Add the gameMaster socket to the game
@@ -117,43 +172,6 @@ class GameTemplate {
   addPlayer(name, pass, socket) {
     const p = new Player(name, pass, socket);
     this.players.push(p);
-  }
-
-  /**
-   * Set player's role from a player
-   * @param {Object} tokenPayload the decoded token
-   * @param {String} roleName The roleName to set
-   * @param {Function} callback callback error
-   */
-  setPlayerRolePref(player, roleName, callback) {
-    if (Object.keys(this.roles).includes(roleName)) {
-      player.setRole(this.roles[roleName]); // TODO chang this
-      player.setRolePref(roleName);
-      callback(null);
-      return;
-    }
-    callback('No role matching role name');
-  }
-
-  /**
-   * Get the GM socket
-   */
-  getGameMaster() {
-    return this.gameMasterSocket;
-  }
-
-  /**
-   * Return how many players are in the game
-   */
-  howManyPlayers() {
-    return this.players.length;
-  }
-
-  /**
-   * Return how many roles are set
-   */
-  howManyRoles() {
-    return this.roles.length;
   }
 
   /**
@@ -208,6 +226,10 @@ class GameTemplate {
    * @param {Number} min The minimum of elements to choose
    * @param {Number} max The maximum of elements to choose
    */
+
+
+  // ################################ UTILS ########################################
+
   choiceGenerator(message, poss, min, max) {
     return {
       message,
@@ -218,12 +240,87 @@ class GameTemplate {
   }
 
   /**
+   * Liste des informations a donner au player pour qu'il affiche sa homepage dans l'appli
+   * @param {Player} player le player qui a demandé sa homePage
+   */
+  getHomePage(player, callback) {
+    if (player.role == null) {
+      callback('Player has no role set', null);
+      return;
+    }
+    const data = {
+      characterName: player.role.name,
+      characterPhoto: null,
+      characterSummaryRole: player.role.summary,
+      characterHints: player.inventory,
+      scenarioTitle: this.name,
+      scenarioSummary: this.summary,
+    };
+    callback(null, data);
+  }
+
+  getMyPlayer(player, callback) {
+    if (player.role == null) {
+      callback('Player has no role set', null);
+      return;
+    }
+    const data = {
+      characterRole: player.role,
+    };
+    callback(null, data);
+  }
+
+  /**
+   * Send update of connected players to the socket
+   */
+  sendSetupUpdate() {
+    const playersToSend = [];
+    this.players.forEach((player) => {
+      playersToSend.push(player.getSetupSummary());
+    });
+    const content = {
+      type: 'updatePlayers',
+      status: 'ok',
+      token: null,
+      data: {
+        players: playersToSend,
+      },
+    };
+    sendMessageToSocket(this.gameMasterSocket, content);
+  }
+
+  getSetup(callback) {
+    const playersToSend = [];
+    this.players.forEach((player) => {
+      playersToSend.push(player.getSetupSummary());
+    });
+    const data = {
+      gameDescription: this.description,
+      rolesNames: Object.keys(this.roles),
+      players: playersToSend,
+    };
+    callback(null, data);
+  }
+
+  /**
+   * notification send a message to a player
+   * @param {Player} player The player to send the notification
+   * @param {String} type info, warn, death, announce
+   * @param {String} message The message to display
+   */
+  notification(player, type, message) {
+    this.sendOKToPlayer(player.socket, 'notification', { type, message });
+  }
+
+  // ############################## HANDLERS ######################################
+
+  /**
  * handle Websocket request from the player
  * @param {Websocket} websocket the sender websocket
  * @param {Object} received all the data received with the request
  */
   handlePlayerUpdate(websocket, received, tokenPayload) {
-    // TODO: identify the player who made the request
+  // TODO: identify the player who made the request
     let response = { status: 'ok', token: null };
     let error = true;
     this.players.forEach((player) => {
@@ -271,22 +368,22 @@ class GameTemplate {
             });
             break;
           case 'getMyActions':
-            // TODO
+          // TODO
             break;
           case 'getEventPage':
-            // TODO
+          // TODO
             break;
           case 'getPlayersPage':
-            // TODO
+          // TODO
             break;
           case 'getPlayerData':
-            // TODO
+          // TODO
             break;
           case 'getMyInventoryPage':
-            // TODO
+          // TODO
             break;
           case 'getMyObjectPage':
-            // TODO
+          // TODO
             break;
           default:
             break;
@@ -307,79 +404,14 @@ class GameTemplate {
     }
   }
 
-  /**
-   * Liste des informations a donner au player pour qu'il affiche sa homepage dans l'appli
-   * @param {Player} player le player qui a demandé sa homePage
-   */
-  getHomePage(player, callback) {
-    if (player.role == null) {
-      callback('Player has no role set', null);
-      return;
-    }
-    const data = {
-      characterName: player.role.name,
-      characterPhoto: null,
-      characterSummaryRole: player.role.summary,
-      characterHints: player.inventory,
-      scenarioTitle: this.name,
-      scenarioSummary: this.summary,
-    };
-    callback(null, data);
-  }
-
-  getMyPlayer(player, callback) {
-    if (player.role == null) {
-      callback('Player has no role set', null);
-      return;
-    }
-    const data = {
-      characterRole: player.role,
-    };
-    callback(null, data);
-  }
-
-  // getMyActions(player, callback) {
-  //   if (player.role == null) {
-  //     callback('Player has no role set', null);
-  //     return;
-  //   }
-  //   const data = {
-  //     characterRole: player.role,
-  //   };
-  //   callback(null, data);
-  // }
-
-  /**
-   * Send update of connected players to the socket
-   */
-  sendSetupUpdate() {
-    const playersToSend = [];
-    this.players.forEach((player) => {
-      playersToSend.push(player.getSetupSummary());
-    });
-    const content = {
-      type: 'updatePlayers',
-      status: 'ok',
-      token: null,
-      data: {
-        players: playersToSend,
-      },
-    };
-    sendMessageToSocket(this.gameMasterSocket, content);
-  }
-
   handleGmUpdate(websocket, received) {
-    const response = { type: received.type, status: 'ok' };
     switch (received.type) {
       case 'getSetup':
         this.getSetup((err, data) => {
           if (err != null) {
-            response.status = 'error';
-            response.data = {
-              message: err,
-            };
+            this.sendErrorToGm('getSetup', err);
           } else {
-            response.data = data;
+            this.sendOKToGm('getSetup', data);
           }
         });
         break;
@@ -389,7 +421,7 @@ class GameTemplate {
             this.getRoleFromName(received.data.roleName)
               .then((role) => {
                 player.setRole(role);
-                // TODO send Reload page
+                this.sendOKToGm('setPlayer', {});
               })
               .catch((err) => {
                 // TODO
@@ -402,39 +434,52 @@ class GameTemplate {
       default:
         break;
     }
-    sendMessageToSocket(websocket, response);
   }
 
-  getSetup(callback) {
-    const playersToSend = [];
-    this.players.forEach((player) => {
-      playersToSend.push(player.getSetupSummary());
-    });
-    const data = {
-      gameDescription: this.description,
-      rolesNames: Object.keys(this.roles),
-      players: playersToSend,
-    };
-    callback(null, data);
-  }
+  // ################################ SENDERS #################################
 
-  /**
-   * notification send a message to a player
-   * @param {Player} player The player to send the notification
-   * @param {String} type info, warn, death, announce
-   * @param {String} message The message to display
-   */
-  notification(player, type, message) {
+  sendOKToPlayer(socket, type, data) {
     const content = {
-      type: 'notification',
+      type,
       status: 'ok',
       token: null,
+      data,
+    };
+    sendMessageToSocket(socket, content);
+  }
+
+  sendErrorToPlayer(socket, type, message) {
+    const content = {
+      type,
+      status: 'error',
+      token: 'null',
       data: {
-        type,
         message,
       },
     };
-    sendMessageToSocket(player.socket, content);
+    sendMessageToSocket(socket, content);
+  }
+
+  sendOKToGm(type, data) {
+    const content = {
+      type,
+      status: 'ok',
+      token: null,
+      data,
+    };
+    sendMessageToSocket(this.gameMasterSocket, content);
+  }
+
+  sendErrorToGm(type, message) {
+    const content = {
+      type,
+      status: 'error',
+      token: 'null',
+      data: {
+        message,
+      },
+    };
+    sendMessageToSocket(this.gameMasterSocket, content);
   }
 }
 
