@@ -4,10 +4,13 @@
  * @param
  */
 export class Action {
-  constructor(name, effect, affectYourself, affectOthers) {
+  constructor(name, effect, useNb) {
     this.name = name || '';
     this.effect = effect || null;
-    this.affectYourself = affectYourself || false;
-    this.affectOthers = affectOthers || 0;
+    this.useNb = useNb || null;
+  }
+
+  decreaseUseNb(dec) {
+    this.useNb -= dec;
   }
 }
