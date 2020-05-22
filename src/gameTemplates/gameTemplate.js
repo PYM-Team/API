@@ -215,7 +215,9 @@ class GameTemplate {
    * @param {int} affectOthers How many other players are affected
    */
   addAction(name, effect, useNb, send) {
-    return this.actions.push(new Action(name, effect, useNb, send));
+    const action = new Action(name, effect, useNb, send);
+    this.actions.push(action);
+    return action;
   }
 
   /**

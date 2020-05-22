@@ -229,7 +229,7 @@ const fouillerPiece = (you, place) => {
   let object;
   if (place.name == 'Le vestibule') {
     if (a == 0) {
-      currentGame.notification(you, 'notification', 'En regardant le corps du parrain, vous ne trouvez aucune de strangulation ou d\'impacte de balle. Mais la drôle de couleur de son visage et la bave sortant de sa bouche vus font penser à un empoisonnement...');
+      currentGame.notification(you, 'info', 'En regardant le corps du parrain, vous ne trouvez aucune de strangulation ou d\'impacte de balle. Mais la drôle de couleur de son visage et la bave sortant de sa bouche vus font penser à un empoisonnement...');
     }
     object = null;
   } else if (place.objects.length > 0) {

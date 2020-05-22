@@ -1,10 +1,37 @@
 /* eslint-disable no-undef */
 import { expect } from 'chai';
 import { GameObject } from '../gameElements/gameObject';
+import { Player } from '../gameElements/player';
+import app from '../app';
 
+const Websocket = require('ws');
 const Parrain = require('../gameTemplates/LeParrain');
 
 describe('Scenario testing', () => {
+  let ws; let serverws;
+  let server;
+  const PORT = process.env.PORT || 1337;
+
+
+  before((done) => {
+    // start the server
+    server = app.listen(PORT, () => {
+      ws = new Websocket(`ws://localhost:${PORT}`);
+      ws.on('open', () => {
+        serverws = new Websocket(`ws://localhost:${PORT}`);
+        serverws.on('open', () => {
+          done();
+        });
+      });
+    });
+  });
+
+  after((done) => {
+    server.close();
+    ws.close();
+    serverws.close();
+    done();
+  });
   const scenario = Parrain.default;
 
   it('should update the players array', (done) => {
@@ -34,15 +61,14 @@ describe('Scenario testing', () => {
     done();
   });
 
-  it('should have no objects in le vestibule', (done) => {
-    let place;
+  it('should have proper results with action Fouiller une pièce', (done) => {
+    const place1 = scenario.places.find((element) => element.name == 'Le vestibule');
+    const player = new Player('toto', null, ws);
+    player.setRole(Object.values(scenario.roles).find((element) => element.name == 'Vito Falcaninio'));
     const action = scenario.actions.find((element) => element.name == 'Fouiller une pièce');
-    scenario.places.forEach((element) => {
-      if (element.name == 'Le vestibule') {
-        place = element;
-      }
-    });
-    expect()(action.effect(place)).to.equal(null);
+    expect(action.effect(player, place1)).to.equal(null);
+    expect(player.role.actions.find((element) => element.name == 'Fouiller une pièce').useNb).to.equal(1);
+    const place2 = scenario.places.find((element) => element.name == 'La chambre du parrain');
     done();
   });
 });

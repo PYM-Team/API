@@ -11,7 +11,7 @@ export class Action {
     this.send = send || null;
   }
 
-  decreaseUseNb(dec) {
-    this.useNb -= dec;
+  decreaseUseNb() {
+    this.useNb -= 1;
   }
 }
