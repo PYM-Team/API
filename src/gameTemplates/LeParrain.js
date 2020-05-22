@@ -301,7 +301,7 @@ const refroidir = (you, other) => {
     const a = getRandomInt(2);
     if (a == 0) {
       other.setAlive(false);
-      other.announce('You have been killed');
+      currentGame.notification(you, 'info', 'You have been killed');
     }
 
     if (you.spied != null) {
@@ -324,17 +324,17 @@ const empoisonner = (you, other) => {
 };
 const seProteger = (you) => {
   you.setProtected(true);
-  you.announce('You are protected');
+  currentGame.notification(you, 'info', 'You are protected');
   you.role.actions.find((element) => element.name == 'Se protéger').decreaseUseNb();
 };
 
 // Send
-const sendFouillerPiece = (game) => game.choiceGenerator(
+const sendFouillerPiece = (game) => [game.choiceGenerator(
   'Choissisez une pièce que vous voulez fouiller',
   game.places,
   1,
   1,
-);
+)];
 const sendPickpocket = (game, player) => {
   const rolesName = game.getRolesName();
   const choices = [];
@@ -343,12 +343,12 @@ const sendPickpocket = (game, player) => {
       choices.push(element);
     }
   });
-  return game.choiceGenerator(
+  return [game.choiceGenerator(
     'Choississez un joueur que vous voulez voler',
     choices,
     1,
     1,
-  );
+  )];
 };
 const sendEspionner = (game, player) => {
   const rolesName = game.getRolesName();
@@ -358,12 +358,12 @@ const sendEspionner = (game, player) => {
       choices.push(element);
     }
   });
-  return game.choiceGenerator(
+  return [game.choiceGenerator(
     'Choississez un joueur que vous voulez espionner',
     choices,
     1,
     1,
-  );
+  )];
 };
 const sendPotins = (game, player) => {
   const rolesName = game.getRolesName();
@@ -396,12 +396,12 @@ const sendRefroidir = (game, player) => {
       choices.push(element);
     }
   });
-  return game.choiceGenerator(
+  return [game.choiceGenerator(
     'Choissisez le joueur que vous voulez tuer',
     choices,
     1,
     1,
-  );
+  )];
 };
 const sendEmpoisonner = (game, player) => {
   const rolesName = game.getRolesName();
@@ -411,12 +411,12 @@ const sendEmpoisonner = (game, player) => {
       choices.push(element);
     }
   });
-  return game.choiceGenerator(
+  return [game.choiceGenerator(
     'Choississez le joueur que vous voulez empoisonner',
     choices,
     1,
     1,
-  );
+  )];
 };
 const actionFouillerPiece = currentGame.addAction('Fouiller une pièce', fouillerPiece, 2, sendFouillerPiece);
 const actionPickpocket = currentGame.addAction('Pickpocket', pickpocket, 3, sendPickpocket);
