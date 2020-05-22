@@ -4,6 +4,7 @@
 import importModules from 'import-modules';
 import Joi from '@hapi/joi';
 import jwt from 'jsonwebtoken';
+import lodash from 'lodash';
 
 const schema = Joi.object({
   type: Joi.string().alphanum().required(),
@@ -76,7 +77,8 @@ function createGame(websocket, data) {
       sendError(websocket, 'createGame', 'Could not generate the token');
       return;
     }
-    games[newId] = gameTemplates[data.templateName].default;
+    games[newId] = lodash.cloneDeep(gameTemplates[data.templateName].default);
+    // games[newId] = gameTemplates[data.templateName].default;
     games[newId].addGameMaster(websocket);
     const content = {
       type: 'createGame',
