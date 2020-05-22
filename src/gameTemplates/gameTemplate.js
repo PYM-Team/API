@@ -142,7 +142,7 @@ class GameTemplate {
       callback(null);
       return;
     }
-    callback('No role matching role name');
+    callback(new Error('No role matching role name'));
   }
 
   // ################################# ADDERS #####################################
@@ -245,7 +245,7 @@ class GameTemplate {
    */
   getHomePage(player, callback) {
     if (player.role == null) {
-      callback('Player has no role set', null);
+      callback(new Error('Player has no role set'), null);
       return;
     }
     const data = {
@@ -261,7 +261,7 @@ class GameTemplate {
 
   getMyPlayer(player, callback) {
     if (player.role == null) {
-      callback('Player has no role set', null);
+      callback(new Error('Player has no role set'), null);
       return;
     }
     const data = {
@@ -328,7 +328,7 @@ class GameTemplate {
           case 'getHomePage':
             this.getHomePage(player, (err, data) => {
               if (err != null) {
-                this.sendErrorToPlayer(websocket, 'getHomePage', err);
+                this.sendErrorToPlayer(websocket, 'getHomePage', err.message);
               } else {
                 this.sendOKToPlayer(websocket, 'getHomePage', data);
               }
@@ -337,7 +337,7 @@ class GameTemplate {
           case 'setRole':
             this.setPlayerRolePref(player, received.data.roleName, (err) => {
               if (err != null) {
-                this.sendErrorToPlayer(websocket, 'setRole', err);
+                this.sendErrorToPlayer(websocket, 'setRole', err.message);
               } else {
                 this.sendOKToPlayer(websocket, 'setRole', {});
                 this.sendSetupUpdate();
@@ -347,7 +347,7 @@ class GameTemplate {
           case 'getMyPlayer':
             this.getMyPlayer(player, (err, data) => {
               if (err != null) {
-                this.sendErrorToPlayer(websocket, 'getMyPlayer', err);
+                this.sendErrorToPlayer(websocket, 'getMyPlayer', err.message);
               } else {
                 this.sendOKToPlayer(websocket, 'getMyPlayer', data);
               }
@@ -408,7 +408,7 @@ class GameTemplate {
       case 'getSetup':
         this.getSetup((err, data) => {
           if (err != null) {
-            this.sendErrorToGm('getSetup', err);
+            this.sendErrorToGm('getSetup', err.message);
           } else {
             this.sendOKToGm('getSetup', data);
           }
@@ -424,11 +424,11 @@ class GameTemplate {
                 this.sendOKToPlayer(player.socket, 'reloadPage', {});
               })
               .catch((err) => {
-                this.sendErrorToGm('setPlayerRole', err);
+                this.sendErrorToGm('setPlayerRole', err.message);
               });
           })
           .catch((err) => {
-            this.sendErrorToGm('setPlayerRole', err);
+            this.sendErrorToGm('setPlayerRole', err.message);
           });
         break;
       default:
