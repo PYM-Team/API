@@ -257,11 +257,21 @@ export const websockified = (ctx) => {
 };
 
 export const sendMessageToSocket = (websocket, content) => {
-  websocket.send(JSON.stringify(content));
+  try {
+    websocket.send(JSON.stringify(content));
+  } catch {
+    return new Error('caonnt send');
+  }
+  return null;
 };
 
 export const sendMessageToPlayers = (gameId, content) => {
-  this.games[gameId].getPlayers().forEach((p) => {
-    p.websocket.send(JSON.stringify(content));
-  });
+  try {
+    this.games[gameId].getPlayers().forEach((p) => {
+      p.websocket.send(JSON.stringify(content));
+    });
+  } catch {
+    return new Error('cannot send');
+  }
+  return null;
 };
