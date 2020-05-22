@@ -182,8 +182,16 @@ class GameTemplate {
    * @param {Array} basicObjects Basic objects of the role
    * @param {Map} relations The relations between this role and the others
    */
-  addRole(name, desc, mission, basicObjects, relations) {
-    this.roles[name] = new Role(name, desc, mission, basicObjects, relations);
+  addRole(name, desc, mission, basicObjects, relations, actions, actionPoints) {
+    this.roles[name] = new Role(
+      name,
+      desc,
+      mission,
+      basicObjects,
+      relations,
+      actions,
+      actionPoints,
+    );
     return this.roles[name];
   }
 
@@ -206,8 +214,8 @@ class GameTemplate {
    * @param {boolean} affectYourself Is this action affecting yourself ?
    * @param {int} affectOthers How many other players are affected
    */
-  addAction(name, effect, affectYourself, affectOthers) {
-    return this.actions.push(new Action(name, effect, affectYourself, affectOthers));
+  addAction(name, effect, useNb, send) {
+    return this.actions.push(new Action(name, effect, useNb, send));
   }
 
   /**
