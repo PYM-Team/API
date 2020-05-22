@@ -230,16 +230,14 @@ class GameTemplate {
     return this.places.push(new Place(name, description, objects));
   }
 
+  // ################################ UTILS ########################################
+
   /**
    * @param {String} message The message of the choice
    * @param {Array} poss The array of possibilities
    * @param {Number} min The minimum of elements to choose
    * @param {Number} max The maximum of elements to choose
    */
-
-
-  // ################################ UTILS ########################################
-
   choiceGenerator(message, poss, min, max) {
     return {
       message,
@@ -373,8 +371,15 @@ class GameTemplate {
                 player.role.actions.forEach((action) => {
                   if (action.name == received.data.actionName) {
                     noAction = false;
+                    let choices = [];
+                    try {
+                      choices = action.send(this, player);
+                    } catch {
+                      this.sendErrorToPlayer(websocket, 'makeAction', 'Scenario error in action send attribute');
+                      return;
+                    }
                     const data = {
-                      choices: action.send,
+                      choices,
                     };
                     this.sendOKToPlayer(websocket, 'makeAction', data);
                   }
