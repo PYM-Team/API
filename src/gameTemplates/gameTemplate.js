@@ -366,7 +366,6 @@ class GameTemplate {
             });
             break;
           case 'makeAction':
-            // TODO recup l'action
             if (player.role == null) {
               this.sendErrorToPlayer(websocket, 'makeAction', 'The specified player has no role');
             } else {
@@ -386,6 +385,30 @@ class GameTemplate {
                       choices,
                     };
                     this.sendOKToPlayer(websocket, 'makeAction', data);
+                  }
+                });
+              }
+              if (noAction) {
+                this.sendErrorToPlayer(websocket, 'makeAction', 'The specified player has not this action');
+              }
+            }
+            break;
+          case 'actionResult':
+            if (player.role == null) {
+              this.sendErrorToPlayer(websocket, 'makeAction', 'The specified player has no role');
+            } else {
+              let noAction = true;
+              if (player.role.actions != null) {
+                player.role.actions.forEach((action) => {
+                  if (action.name == received.data.actionName) {
+                    noAction = false;
+                    try {
+                      action.effect(this, player, received.data.choices);
+                    } catch {
+                      this.sendErrorToPlayer(websocket, 'actionResult', 'Could not trigger the effect');
+                      return;
+                    }
+                    this.sendOKToPlayer(websocket, 'actionResult', {});
                   }
                 });
               }
