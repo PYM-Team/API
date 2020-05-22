@@ -301,7 +301,7 @@ const refroidir = (you, other) => {
     const a = getRandomInt(2);
     if (a == 0) {
       other.setAlive(false);
-      other.announce('You have been killed');
+      currentGame.notification(you, 'info', 'You have been killed');
     }
 
     if (you.spied != null) {
@@ -324,7 +324,7 @@ const empoisonner = (you, other) => {
 };
 const seProteger = (you) => {
   you.setProtected(true);
-  you.announce('You are protected');
+  currentGame.notification(you, 'info', 'You are protected');
   you.role.actions.find((element) => element.name == 'Se protéger').decreaseUseNb();
 };
 

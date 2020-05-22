@@ -71,4 +71,23 @@ describe('Scenario testing', () => {
     const place2 = scenario.places.find((element) => element.name == 'La chambre du parrain');
     done();
   });
+
+  it('should have proper results with action Se protéger', (done) => {
+    const player = new Player('toto', null, ws);
+    player.setRole(Object.values(scenario.roles).find((element) => element.name == '"El Sampico"'));
+    const action = scenario.actions.find((element) => element.name == 'Se protéger');
+    action.effect(player);
+    expect(player.protected).to.equal(true);
+    done();
+  });
+
+  it('should have proper results with action Refroidir', (done) => {
+    const player1 = new Player('toto', null, ws);
+    const player2 = new Player('tata', null, ws);
+    player1.setRole(Object.values(scenario.roles).find((element) => element.name == '"El Sampico"'));
+    const action = scenario.actions.find((element) => element.name == 'Refroidir');
+    action.effect(player1, player2);
+    expect(player2.alive).to.equal(false);
+    done();
+  });
 });
