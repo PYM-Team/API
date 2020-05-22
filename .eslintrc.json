@@ -20,6 +20,7 @@
         "prefer-const": 1,
         "comma-dangle" :1,
         "spaced-comment": 1,
-        "eqeqeq": 0
+        "eqeqeq": 0,
+        "linebreak-style": 0
     }
 }
