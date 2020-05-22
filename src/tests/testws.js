@@ -383,9 +383,11 @@ describe('websocket complete game creation and connection testing', () => {
 
       ws.once('message', (event) => {
         const data = JSON.parse(event);
-        expect(data.type).to.be.equal('makeAction');
+        expect(data.type).to.equal('makeAction');
         expect(data.status).to.equal('ok');
-        // TODO
+        expect(data.data).to.have.key('choices');
+        expect(data.data.choices).to.be.an('array');
+        expect(data.data.choices[0].possibilities).to.includes('titi');
         done();
       });
     });

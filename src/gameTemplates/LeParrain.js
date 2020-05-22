@@ -329,44 +329,44 @@ const seProteger = (you) => {
 };
 
 // Send
-const sendFouillerPiece = () => currentGame.choiceGenerator(
+const sendFouillerPiece = (game) => game.choiceGenerator(
   'Choissisez une pièce que vous voulez fouiller',
-  currentGame.places,
+  game.places,
   1,
   1,
 );
-const sendPickpocket = (player) => {
-  const rolesName = currentGame.getRolesName();
+const sendPickpocket = (game, player) => {
+  const rolesName = game.getRolesName();
   const choices = [];
   rolesName.forEach((element) => {
     if (element != player.role.name) {
       choices.push(element);
     }
   });
-  return currentGame.choiceGenerator(
+  return game.choiceGenerator(
     'Choississez un joueur que vous voulez voler',
     choices,
     1,
     1,
   );
 };
-const sendEspionner = (player) => {
-  const rolesName = currentGame.getRolesName();
+const sendEspionner = (game, player) => {
+  const rolesName = game.getRolesName();
   const choices = [];
   rolesName.forEach((element) => {
     if (element != player.role.name) {
       choices.push(element);
     }
   });
-  return currentGame.choiceGenerator(
+  return game.choiceGenerator(
     'Choississez un joueur que vous voulez espionner',
     choices,
     1,
     1,
   );
 };
-const sendPotins = (player) => {
-  const rolesName = currentGame.getRolesName();
+const sendPotins = (game, player) => {
+  const rolesName = game.getRolesName();
   const choices = [];
   rolesName.forEach((element) => {
     if (element != player.role.name) {
@@ -374,13 +374,13 @@ const sendPotins = (player) => {
     }
   });
   return [
-    currentGame.choiceGenerator(
+    game.choiceGenerator(
       'Choississez un joueur dont vous voulez savoir ce qu\'il pense d\'un autre',
       choices,
       1,
       1,
     ),
-    currentGame.choiceGenerator(
+    game.choiceGenerator(
       'Choississez le joueur dont vous voulez qu\'il parle',
       choices,
       1,
@@ -388,30 +388,30 @@ const sendPotins = (player) => {
     ),
   ];
 };
-const sendRefroidir = (player) => {
-  const rolesName = currentGame.getRolesName();
+const sendRefroidir = (game, player) => {
+  const rolesName = game.getRolesName();
   const choices = [];
   rolesName.forEach((element) => {
     if (element != player.role.name) {
       choices.push(element);
     }
   });
-  return currentGame.choiceGenerator(
+  return game.choiceGenerator(
     'Choissisez le joueur que vous voulez tuer',
     choices,
     1,
     1,
   );
 };
-const sendEmpoisonner = (player) => {
-  const rolesName = currentGame.getRolesName();
+const sendEmpoisonner = (game, player) => {
+  const rolesName = game.getRolesName();
   const choices = [];
   rolesName.forEach((element) => {
     if (element != player.role.name) {
       choices.push(element);
     }
   });
-  return currentGame.choiceGenerator(
+  return game.choiceGenerator(
     'Choississez le joueur que vous voulez empoisonner',
     choices,
     1,
