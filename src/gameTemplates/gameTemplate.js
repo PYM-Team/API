@@ -203,7 +203,9 @@ class GameTemplate {
    * @param {String} desc The missions description
    */
   addMission(name, action, roleName, desc) {
-    return this.missions.push(new Mission(name, action, this.roles[roleName], desc));
+    const mission = new Mission(name, action, this.roles[roleName], desc);
+    this.missions.push(mission);
+    return mission;
   }
 
   /**
@@ -227,7 +229,9 @@ class GameTemplate {
    * @param {Array} objects Place's list of objects that the players can find
    */
   addPlace(name, description, objects) {
-    return this.places.push(new Place(name, description, objects));
+    const place = new Place(name, description, objects);
+    this.places.push(place);
+    return place;
   }
 
   /**
