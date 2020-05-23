@@ -117,12 +117,12 @@ function gmReconnectGame(websocket, data) {
           gameId: validData.value.gameId,
         }, 'secret', (err, token) => {
           if (err != null) {
-            sendError(websocket, 'createGame', 'Could not generate the token');
+            sendError(websocket, 'gmReconnectGame', 'Could not generate the token');
             return;
           }
           games[validData.value.gameId].addGameMaster(websocket);
           const content = {
-            type: 'createGame',
+            type: 'gmReconnectGame',
             status: 'ok',
             token: null,
             data: {
@@ -134,7 +134,7 @@ function gmReconnectGame(websocket, data) {
       }
     });
     if (error) {
-      sendError(websocket, 'createGame', 'No player with this name in the game');
+      sendError(websocket, 'gmReconnectGame', 'No player with this name in the game');
     }
   }
 }
