@@ -136,6 +136,8 @@ function gmReconnectGame(websocket, data) {
     if (error) {
       sendError(websocket, 'gmReconnectGame', 'No player with this name in the game');
     }
+  } else {
+    sendError(websocket, 'gmReconnectGame', 'The gameId provided is incorrect');
   }
 }
 

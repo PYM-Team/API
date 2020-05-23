@@ -523,7 +523,7 @@ describe('websocket complete game creation and connection testing', () => {
         status: 'ok',
         token: null,
         data: {
-          gameId,
+          gameId: parseInt(gameId, 10),
           playerName: 'toto',
         },
       };
