@@ -495,4 +495,45 @@ describe('websocket complete game creation and connection testing', () => {
       });
     });
   });
+
+  describe('test reconnection', () => {
+    it('should return the new token', (done) => {
+      const content = {
+        type: 'gmReconnectGame',
+        status: 'ok',
+        token: null,
+        data: {
+          gameId,
+          playerName: 'toto',
+        },
+      };
+      serverws.send(JSON.stringify(content));
+
+      serverws.once('message', (event) => {
+        const data = JSON.parse(event);
+        expect(data.type).to.equal('createGame');
+        expect(data.status).to.equal('ok');
+        expect(data.data.token).to.be.a('string');
+        gmToken = data.data.token;
+        done();
+      });
+    });
+
+    it('should accept the new token', (done) => {
+      const content = {
+        type: 'getSetup',
+        status: 'ok',
+        token: gmToken,
+        data: {},
+      };
+      serverws.send(JSON.stringify(content));
+
+      serverws.once('message', (event) => {
+        const data = JSON.parse(event);
+        expect(data.type).to.be.equal('getSetup');
+        expect(data.status).to.equal('ok');
+        done();
+      });
+    });
+  });
 });
