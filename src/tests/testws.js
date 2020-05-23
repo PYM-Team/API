@@ -392,4 +392,28 @@ describe('websocket complete game creation and connection testing', () => {
       });
     });
   });
+
+  describe('test announce', () => {
+    it('should announce every players', (done) => {
+      const content = {
+        type: 'announce',
+        status: 'ok',
+        token: gmToken,
+        data: {
+          message: 'This is an announce !',
+        },
+      };
+      serverws.send(JSON.stringify(content));
+
+      ws.once('message', (event) => {
+        const data = JSON.parse(event);
+        expect(data.type).to.equal('notification');
+        expect(data.status).to.equal('ok');
+        expect(data.data).to.have.keys(['message', 'type']);
+        expect(data.data.type).to.equal('announce');
+        expect(data.data.message).to.be.a('string');
+        done();
+      });
+    });
+  });
 });

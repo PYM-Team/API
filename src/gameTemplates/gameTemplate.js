@@ -473,6 +473,12 @@ class GameTemplate {
             this.sendErrorToGm('setPlayerRole', err.message);
           });
         break;
+      case 'announce': // TODO: error handling ?
+        this.players.forEach((p) => {
+          this.notification(p, 'announce', received.data.message);
+        });
+        this.sendOKToGm('announce', {});
+        break;
       default:
         break;
     }
