@@ -91,6 +91,17 @@ class GameTemplate {
     });
   }
 
+  getPlayerFromRoleName(roleName) {
+    return new Promise((resolve, reject) => {
+      this.players.forEach((player) => {
+        if (player.role.name == roleName) {
+          resolve(player);
+        }
+      });
+      reject(new Error('No player matching this role name'));
+    });
+  }
+
   getRoleFromName(name) {
     return new Promise((resolve, reject) => {
       if (Object.keys(this.roles).includes(name)) {

@@ -275,56 +275,78 @@ const pickpocket = (you, other) => {
   you.role.actions.find((element) => element.name == 'Pickpocket').decreaseUseNb();
   return object;
 };
-const espionner = (you, other) => {
-  if (other.protected == true) {
-    other.setProtected(false);
-  } else {
-    other.setSpied(you.role.name);
-  }
-  you.role.actions.find((element) => element.name == 'Espionner').decreaseUseNb();
+const espionner = (game, you, result) => {
+  game.getPlayerFromRoleName(result[0][0])
+    .then((player) => {
+      if (player.protected == true) {
+        player.setProtected(false);
+      } else {
+        player.setSpied(you.role.name);
+      }
+      you.role.actions.find((element) => element.name == 'Espionner').decreaseUseNb();
+    });
 };
-const potins = (you, talker, target) => {
-  if (talker.protected == true) {
-    talker.setProtected(false);
+const potins = (game, you, result) => {
+  const res = [game.getPlayerFromRoleName(result[0][0]), game.getPlayerFromRoleName(result[1][0])];
+  if (res[1].protected == true) {
+    res[1].setProtected(false);
   } else {
-    you.announce(talker.role.relations.get(target.role.name));
+    game.notification(you, 'info', `Voici ce que pense ${res[0].role.name} de ${res[1].role.name}`);
+    game.notification(you, 'info', res[0].role.relations.get(res[1].role.name));
     if (you.spied != null) {
-      // TODO
+      game.getPlayerFromRoleName(you.spied)
+        .then((spy) => {
+          game.notification(spy, 'info', `Vous avez trouvé ${you.role.name} en train de faire bavarder avec ${res[0].role.name} sur ${res[0].role.name}, et voici ce que vous entendez`);
+          game.notification(spy, 'info', res[0].role.relations.get(res[1].role.name));
+        });
     }
   }
   you.role.actions.find((element) => element.name == 'Potins').decreaseUseNb();
 };
-const refroidir = (you, other) => {
-  if (other.protected == true) {
-    other.setProtected(false);
-  } else {
-    const a = getRandomInt(2);
-    if (a == 0) {
-      other.setAlive(false);
-      currentGame.notification(you, 'info', 'You have been killed');
-    }
-
-    if (you.spied != null) {
-      // TODO
-    }
-    you.role.actions.find((element) => element.name == 'Refroidir').decreaseUseNb();
-  }
+const refroidir = (game, you, result) => {
+  game.getPlayerFromRoleName(result[0][0])
+    .then((player) => {
+      if (player.protected == true) {
+        player.setProtected(false);
+      } else {
+        const a = getRandomInt(2);
+        if (a == 0) {
+          player.setAlive(false);
+          currentGame.notification(you, 'info', `You have killed ${player.role.name}`);
+          currentGame.notification(player, 'death', `You have been killed by ${you.role.name}`);
+        }
+        if (you.spied != null) {
+          game.getPlayerFromRoleName(you.spied)
+            .then((spy) => {
+              game.notification(spy, 'info', `Vous avez trouvé ${you.role.name} en train de d'essayer de tuer ${player.role.name}`);
+            });
+        }
+        you.role.actions.find((element) => element.name == 'Refroidir').decreaseUseNb();
+      }
+    });
 };
-const empoisonner = (you, other) => {
-  if (other.protected == true) {
-    other.setProtected(false);
-  } else {
-    other.setAlive(false);
-    other.announce('You have been killed');
-    if (you.spied != null) {
-      // TODO
-    }
-  }
-  you.role.actions.find((element) => element.name == 'Empoisonner').decreaseUseNb();
+const empoisonner = (game, you, result) => {
+  game.getPlayerFromRoleName(result[0][0])
+    .then((player) => {
+      if (player.protected == true) {
+        player.setProtected(false);
+      } else {
+        player.setAlive(false);
+        game.notification(you, 'info', `Vous avez empoisonné avec brio ${player.role.name}`);
+        game.notification(player, 'info', 'Vous avez été empoisonné, si vous ne trouvez pas d\'antidote à temps, vous mourrez');
+        if (you.spied != null) {
+          game.getPlayerFromRoleName(you.spied)
+            .then((spy) => {
+              game.notification(spy, 'info', `Vous avez trouvé ${you.role.name} en train de d'essayer d'empoisonner ${player.role.name}`);
+            });
+        }
+      }
+      you.role.actions.find((element) => element.name == 'Empoisonner').decreaseUseNb();
+    });
 };
-const seProteger = (you) => {
+const seProteger = (game, you) => {
   you.setProtected(true);
-  currentGame.notification(you, 'info', 'You are protected');
+  game.notification(you, 'info', 'You are protected');
   you.role.actions.find((element) => element.name == 'Se protéger').decreaseUseNb();
 };
 
