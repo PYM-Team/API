@@ -25,41 +25,41 @@ class GameTemplate {
     this.players = [];
     this.missions = []; // mission is still there in legacy purpose
     this.gameMasterSocket = null;
-    this.functions = {
-      /**
-      * Change game started property to true
-      */
-      startGame: () => {
-        if (this.started) {
-          // TODO
-        } else if (this.howManyRoles() !== this.howManyPlayers()) {
-          // TODO
-        } else {
-          this.assignRoles();
-          this.started = true;
-          this.players.forEach((player) => {
-            const content = {
-              role: player.role,
-              name: player.name,
-              alive: player.alive,
-            };
-            sendMessageToSocket(player.socket, content);
-          });
-        }
-      },
+    this.functions = {};
+  }
 
-      /**
-       * Change game started property to false
-       */
-      stopGame: () => {
-        if (this.started) {
-          // TODO: send update to players
-          this.started = false;
-        } else {
-          // TODO
-        }
-      },
-    };
+  /**
+  * Change game started property to false
+  */
+  stopGame() {
+    if (this.started) {
+      // TODO: send update to players
+      this.started = false;
+    } else {
+      // TODO
+    }
+  }
+
+  /**
+  * Change game started property to true
+  */
+  startGame() {
+    if (this.started) {
+      // TODO
+    } else if (this.howManyRoles() !== this.howManyPlayers()) {
+      // TODO
+    } else {
+      this.assignRoles();
+      this.started = true;
+      this.players.forEach((player) => {
+        const content = {
+          role: player.role,
+          name: player.name,
+          alive: player.alive,
+        };
+        sendMessageToSocket(player.socket, content);
+      });
+    }
   }
 
   // ############################## GETTERS #######################################
@@ -490,6 +490,10 @@ class GameTemplate {
       case 'resume':
         this.paused = false;
         this.sendOKToGm('resume', { currentTime: this.currentTime });
+        break;
+      case 'startGame':
+        this.startGame();
+        this.sendOKToGm('startGame', {});
         break;
       default:
         break;

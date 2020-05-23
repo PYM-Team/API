@@ -437,7 +437,7 @@ describe('websocket complete game creation and connection testing', () => {
   });
 
   describe('test pause', () => {
-    it('should send a return', (done) => {
+    it('should return ok', (done) => {
       const content = {
         type: 'pause',
         status: 'ok',
@@ -472,6 +472,25 @@ describe('websocket complete game creation and connection testing', () => {
         expect(data.type).to.equal('resume');
         expect(data.status).to.equal('ok');
         expect(data.data.currentTime).to.equal(20000);
+        done();
+      });
+    });
+  });
+
+  describe('test startGame', () => {
+    it('should return ok', (done) => {
+      const content = {
+        type: 'startGame',
+        status: 'ok',
+        token: gmToken,
+        data: {},
+      };
+      serverws.send(JSON.stringify(content));
+
+      serverws.once('message', (event) => {
+        const data = JSON.parse(event);
+        expect(data.type).to.equal('startGame');
+        expect(data.status).to.equal('ok');
         done();
       });
     });
