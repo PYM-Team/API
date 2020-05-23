@@ -94,23 +94,35 @@ function createGame(websocket, data) {
 }
 
 function gmReconnectGame(websocket, data) {
-  // TODO data validation
-  if (Object.keys(games).includes(data.gameId.toString())) {
+  const dataSchema = Joi.object({
+    gameId: Joi.alternatives(
+      Joi.string().alphanum(),
+      Joi.number().integer().min(100000).max(999999),
+    ),
+    playerName: Joi.string().alphanum(),
+  });
+
+  const validData = dataSchema.validate(data);
+  if (validData.error != null) {
+    sendError('Data sent is not valid');
+    return;
+  }
+  if (Object.keys(games).includes(validData.value.gameId.toString())) {
     let error = true;
-    games[data.gameId].players.forEach((player) => {
-      if (player.name == data.playerName) {
+    games[validData.value.gameId].players.forEach((player) => {
+      if (player.name == validData.value.playerName) {
         error = false;
         jwt.sign({
           entity: 'gameMaster',
-          gameId: data.gameId,
+          gameId: validData.value.gameId,
         }, 'secret', (err, token) => {
           if (err != null) {
-            sendError(websocket, 'createGame', 'Could not generate the token');
+            sendError(websocket, 'gmReconnectGame', 'Could not generate the token');
             return;
           }
-          games[data.gameId].addGameMaster(websocket);
+          games[validData.value.gameId].addGameMaster(websocket);
           const content = {
-            type: 'createGame',
+            type: 'gmReconnectGame',
             status: 'ok',
             token: null,
             data: {
@@ -122,14 +134,13 @@ function gmReconnectGame(websocket, data) {
       }
     });
     if (error) {
-      sendError(websocket, 'createGame', 'No player with this name in the game');
+      sendError(websocket, 'gmReconnectGame', 'No player with this name in the game');
     }
   }
 }
 
 function connectGame(websocket, data) {
   // if game still exist
-  // TODO data validation
   const dataSchema = Joi.object({
     gameId: Joi.alternatives(
       Joi.string().alphanum(),
