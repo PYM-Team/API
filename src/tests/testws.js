@@ -394,7 +394,7 @@ describe('websocket complete game creation and connection testing', () => {
   });
 
   describe('test announce', () => {
-    it('should announce every players', (done) => {
+    it('should announce first player', (done) => {
       const content = {
         type: 'announce',
         status: 'ok',
@@ -412,6 +412,66 @@ describe('websocket complete game creation and connection testing', () => {
         expect(data.data).to.have.keys(['message', 'type']);
         expect(data.data.type).to.equal('announce');
         expect(data.data.message).to.be.a('string');
+        done();
+      });
+    });
+
+    it('should send back to server', (done) => {
+      const content = {
+        type: 'announce',
+        status: 'ok',
+        token: gmToken,
+        data: {
+          message: 'This is an announce !',
+        },
+      };
+      serverws.send(JSON.stringify(content));
+
+      serverws.once('message', (event) => {
+        const data = JSON.parse(event);
+        expect(data.type).to.equal('announce');
+        expect(data.status).to.equal('ok');
+        done();
+      });
+    });
+  });
+
+  describe('test pause', () => {
+    it('should send a return', (done) => {
+      const content = {
+        type: 'pause',
+        status: 'ok',
+        token: gmToken,
+        data: {
+          currentTime: 20000,
+        },
+      };
+      serverws.send(JSON.stringify(content));
+
+      serverws.once('message', (event) => {
+        const data = JSON.parse(event);
+        expect(data.type).to.equal('pause');
+        expect(data.status).to.equal('ok');
+        done();
+      });
+    });
+  });
+
+  describe('test resume', () => {
+    it('should return the currentTime when paused', (done) => {
+      const content = {
+        type: 'resume',
+        status: 'ok',
+        token: gmToken,
+        data: {},
+      };
+      serverws.send(JSON.stringify(content));
+
+      serverws.once('message', (event) => {
+        const data = JSON.parse(event);
+        expect(data.type).to.equal('resume');
+        expect(data.status).to.equal('ok');
+        expect(data.data.currentTime).to.equal(20000);
         done();
       });
     });

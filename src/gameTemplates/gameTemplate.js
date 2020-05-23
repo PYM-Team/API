@@ -16,6 +16,9 @@ class GameTemplate {
     this.description = null;
     this.gameId = null;
     this.started = false;
+    this.paused = false;
+    this.totalDuration = null;
+    this.currentTime = null;
     this.actions = [];
     this.roles = {};
     this.places = [];
@@ -478,6 +481,15 @@ class GameTemplate {
           this.notification(p, 'announce', received.data.message);
         });
         this.sendOKToGm('announce', {});
+        break;
+      case 'pause':
+        this.paused = true;
+        this.currentTime = received.data.currentTime;
+        this.sendOKToGm('pause', {});
+        break;
+      case 'resume':
+        this.paused = false;
+        this.sendOKToGm('resume', { currentTime: this.currentTime });
         break;
       default:
         break;
