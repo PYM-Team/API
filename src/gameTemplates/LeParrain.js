@@ -224,12 +224,12 @@ const relationsSebastiano = (
  * @param {*} _
  * @param {*} place prend en argument l'objet Place qui correspond à la pièce voulant être fouillée
  */
-const fouillerPiece = (you, place) => {
+const fouillerPiece = (game, you, place) => {
   const a = getRandomInt(2);
   let object;
   if (place.name == 'Le vestibule') {
     if (a == 0) {
-      currentGame.notification(you, 'info', 'En regardant le corps du parrain, vous ne trouvez aucune de strangulation ou d\'impacte de balle. Mais la drôle de couleur de son visage et la bave sortant de sa bouche vus font penser à un empoisonnement...');
+      game.notification(you, 'info', 'En regardant le corps du parrain, vous ne trouvez aucune de strangulation ou d\'impacte de balle. Mais la drôle de couleur de son visage et la bave sortant de sa bouche vus font penser à un empoisonnement...');
     }
     object = null;
   } else if (place.objects.length > 0) {
@@ -245,35 +245,43 @@ const fouillerPiece = (you, place) => {
   you.role.actions.find((element) => element.name == 'Fouiller une pièce').decreaseUseNb();
   return object;
 };
-const pickpocket = (you, other) => {
-  if (other.protected == true) {
-    other.setProtected(false);
-    return null;
-  }
-  const a = getRandomInt(3);
-  let object;
-  let findableObjects;
-  if (a == 0 && other.inventory.length > 0) {
-    findableObjects = other.getClues();
-    object = findableObjects[Math.floor(Math.random() * findableObjects.length)];
-    const index = other.inventory.indexOf(object);
-    other.inventory.splice(index, 1);
-  } else if (a == 1 && other.inventory.length > 0) {
-    findableObjects = other.getNotClues();
-    object = findableObjects[Math.floor(Math.random() * findableObjects.length)];
-    const index = other.inventory.indexOf(object);
-    other.inventory.splice(index, 1);
-  } else if (a == 2) {
-    other.announce('Someone tried to steal you');
-    object = null;
-  } else {
-    object = null;
-  }
-  if (you.spied != null) {
-    // TODO
-  }
-  you.role.actions.find((element) => element.name == 'Pickpocket').decreaseUseNb();
-  return object;
+const pickpocket = (game, you, result) => {
+  game.getPlayerFromRoleName(result[0][0])
+    .then((player) => {
+      if (player.protected == true) {
+        player.setProtected(false);
+      }
+      const a = getRandomInt(3);
+      let object = null;
+      let findableObjects;
+      if (a == 0 && player.getClues().length > 0) {
+        findableObjects = player.getClues();
+        object = findableObjects[Math.floor(Math.random() * findableObjects.length)];
+        const index = player.inventory.indexOf(object);
+        player.inventory.splice(index, 1);
+        game.notification(you, 'info', `Vous avez trouvez un objet intéressant dans les poches de ${player.role.name} : ${object.name}`);
+      } else if ((a == 1 && player.inventory.length > 0) || player.getClues().length == 0) {
+        findableObjects = player.getNotClues();
+        object = findableObjects[Math.floor(Math.random() * findableObjects.length)];
+        const index = player.inventory.indexOf(object);
+        player.inventory.splice(index, 1);
+        game.notification(you, 'info', `Vous avez trouvez un objet peu interessant dans les poches de ${player.role.name} : ${object.name}`);
+      } else if (a == 2) {
+        game.notification(player, 'warn', `${you.role.name} a essayé de vous faire les poches`);
+        game.notification(you, 'warn', `Vous avez été repérer en essayent de voler ${player.role.name}`);
+      } else {
+        game.notification(you, 'info', `Vous n'avez rien trouvé dans les poches de ${player.role.name}`);
+      }
+      if (you.spied != null) {
+        game.getPlayerFromRoleName(you.spied)
+          .then((spy) => {
+            if (object != null) {
+              game.notification(spy, 'info', `Vous avez aperçu volez ${object.name}`);
+            }
+          });
+      }
+      you.role.actions.find((element) => element.name == 'Pickpocket').decreaseUseNb();
+    });
 };
 const espionner = (game, you, result) => {
   game.getPlayerFromRoleName(result[0][0])
