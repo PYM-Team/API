@@ -112,6 +112,17 @@ class GameTemplate {
     });
   }
 
+  getPlaceFromName(name) {
+    return new Promise((resolve, reject) => {
+      this.places.forEach((place) => {
+        if (place.name == name) {
+          resolve(place);
+        }
+      });
+      reject(new Error('No player matching this role name'));
+    });
+  }
+
   /**
    * Get the GM socket
    */
