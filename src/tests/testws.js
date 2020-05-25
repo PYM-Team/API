@@ -558,7 +558,7 @@ describe('websocket complete game creation and connection testing', () => {
   });
 
   describe('test getPlayersPage', () => {
-    it('should return ok', (done) => {
+    it('should return the list of the roles name', (done) => {
       const content = {
         type: 'getPlayersPage',
         status: 'ok',
@@ -593,6 +593,25 @@ describe('websocket complete game creation and connection testing', () => {
         expect(data.type).to.equal('getOverview');
         expect(data.status).to.equal('ok');
         expect(data.data).to.have.keys(['gameDescription', 'gameId', 'globalDuration', 'remainingDuration', 'players']);
+        done();
+      });
+    });
+  });
+  describe('test getMyInventoryPage', () => {
+    it('should return the list of the names of the objects', (done) => {
+      const content = {
+        type: 'getMyInventoryPage',
+        status: 'ok',
+        token,
+        data: {},
+      };
+      ws.send(JSON.stringify(content));
+
+      ws.once('message', (event) => {
+        const data = JSON.parse(event);
+        expect(data.type).to.equal('getMyInventoryPage');
+        expect(data.status).to.equal('ok');
+        expect(data.data.characterObject).to.be.an('array');
         done();
       });
     });

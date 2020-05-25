@@ -307,6 +307,9 @@ class GameTemplate {
     callback(null, data);
   }
 
+  /**
+   * Send the list of the roles names
+   */
   getPlayersPage() {
     return new Promise((resolve, reject) => {
       const playersName = [];
@@ -315,6 +318,16 @@ class GameTemplate {
       });
       resolve(playersName);
       reject(new Error('A problem occured'));
+    });
+  }
+
+  getMyInventoryPage(player) {
+    return new Promise((resolve) => {
+      const myInventory = [];
+      player.inventory.forEach((object) => {
+        myInventory.push(object.name);
+      });
+      resolve(myInventory);
     });
   }
 
@@ -496,7 +509,13 @@ class GameTemplate {
             // TODO
             break;
           case 'getMyInventoryPage':
-            // TODO
+            this.getMyInventoryPage(player)
+              .then((playersObjects) => {
+                const data = {
+                  characterObject: playersObjects,
+                };
+                this.sendOKToPlayer(websocket, 'getMyInventoryPage', data);
+              });
             break;
           case 'getMyObjectPage':
             // TODO

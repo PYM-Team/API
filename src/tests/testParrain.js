@@ -5,7 +5,7 @@ import { Player } from '../gameElements/player';
 import app from '../app';
 
 const Websocket = require('ws');
-const Parrain = require('../gameTemplates/LeParrain');
+const Parrain = require('../gameTemplates/working/LeParrain');
 
 describe('Scenario testing', () => {
   let ws; let serverws;
