@@ -362,7 +362,7 @@ class GameTemplate {
       const data = {
         gameDescription: this.description,
         gameId: this.gameId,
-        globalDuration: this.globalDuration,
+        globalDuration: this.totalDuration,
         remainingDuration: this.currentTime,
         players: playersToSend,
       };
