@@ -26,6 +26,7 @@ class GameTemplate {
     this.missions = []; // mission is still there in legacy purpose
     this.gameMasterSocket = null;
     this.functions = {};
+    this.status = 'setup';
   }
 
   /**
@@ -121,6 +122,10 @@ class GameTemplate {
       });
       reject(new Error('No player matching this role name'));
     });
+  }
+
+  getStatus() {
+    return this.status();
   }
 
   /**
@@ -351,6 +356,7 @@ class GameTemplate {
   }
 
   getSetup(callback) {
+    this.status = 'overview';
     const playersToSend = [];
     this.players.forEach((player) => {
       playersToSend.push(player.getSetupSummary());

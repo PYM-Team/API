@@ -127,6 +127,7 @@ function gmReconnectGame(websocket, data) {
             token: null,
             data: {
               token,
+              status: games[validData.value.gameId].getStatus(),
             },
           };
           websocket.send(JSON.stringify(content));
