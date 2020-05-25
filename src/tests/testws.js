@@ -556,4 +556,26 @@ describe('websocket complete game creation and connection testing', () => {
       });
     });
   });
+
+  describe('test getPlayersPage', () => {
+    it('should return ok', (done) => {
+      const content = {
+        type: 'getPlayersPage',
+        status: 'ok',
+        token,
+        data: {},
+      };
+      ws.send(JSON.stringify(content));
+
+      ws.once('message', (event) => {
+        const data = JSON.parse(event);
+        expect(data.type).to.equal('getPlayersPage');
+        expect(data.status).to.equal('ok');
+        expect(data.data.charactersName).to.be.an('array');
+        expect(data.data.charactersName[0]).to.equal('Meurtrier');
+        expect(data.data.charactersPhotos).to.equal(null);
+        done();
+      });
+    });
+  });
 });
