@@ -329,8 +329,20 @@ const refroidir = (game, you, result) => {
         const a = getRandomInt(2);
         if (a == 0) {
           player.setAlive(false);
-          currentGame.notification(you, 'info', `You have killed ${player.role.name}`);
-          currentGame.notification(player, 'death', `You have been killed by ${you.role.name}`);
+          game.notification(you, 'info', `Vous avez tué ${player.role.name}`);
+          game.notification(player, 'death', `Vous avez été tué par ${you.role.name}`);
+          game.players.forEach((element) => {
+            if (element != you && element != player) {
+              game.notification(element, 'info', `${you.role.name} a tué ${player.role.name}`);
+            }
+          });
+        } else {
+          game.notification(you, 'info', `Vous n'avez pas réussi à tuer ${player.role.name}`);
+          game.players.forEach((element) => {
+            if (element != you && element != player) {
+              game.notification(element, 'info', `${you.role.name} a essayé de tuer ${player.role.name}, sans succès`);
+            }
+          });
         }
         if (you.spied != null) {
           game.getPlayerFromRoleName(you.spied)
@@ -354,7 +366,7 @@ const empoisonner = (game, you, result) => {
         if (you.spied != null) {
           game.getPlayerFromRoleName(you.spied)
             .then((spy) => {
-              game.notification(spy, 'info', `Vous avez trouvé ${you.role.name} en train de d'essayer d'empoisonner ${player.role.name}`);
+              game.notification(spy, 'info', `Vous avez trouvé ${you.role.name} en train d'essayer d'empoisonner ${player.role.name}`);
             });
         }
       }
