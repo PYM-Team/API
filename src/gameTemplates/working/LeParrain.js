@@ -1,10 +1,10 @@
-import GameTemplate from './gameTemplate';
-import { GameObject } from '../gameElements/gameObject';
-import { Place } from '../gameElements/place';
-import { Role } from '../gameElements/role';
-import { Player } from '../gameElements/player';
-import { Mission } from '../gameElements/modules/mission';
-import { Action } from '../gameElements/action';
+import GameTemplate from '../gameTemplate';
+import { GameObject } from '../../gameElements/gameObject';
+import { Place } from '../../gameElements/place';
+import { Role } from '../../gameElements/role';
+import { Player } from '../../gameElements/player';
+import { Mission } from '../../gameElements/modules/mission';
+import { Action } from '../../gameElements/action';
 
 const currentGame = new GameTemplate('LeParrain');
 
