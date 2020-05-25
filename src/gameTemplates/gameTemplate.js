@@ -329,6 +329,26 @@ class GameTemplate {
   }
 
   /**
+   * Return the getOverview data
+   */
+  getOverview() {
+    return new Promise((resolve) => {
+      const playersToSend = [];
+      this.players.forEach((p) => {
+        playersToSend.push(p.getOverviewSummary());
+      });
+      const data = {
+        gameDescription: this.description,
+        gameId: this.gameId,
+        globalDuration: this.globalDuration,
+        remainingDuration: this.currentTime,
+        players: playersToSend,
+      };
+      resolve(data);
+    });
+  }
+
+  /**
    * notification send a message to a player
    * @param {Player} player The player to send the notification
    * @param {String} type info, warn, death, announce
@@ -505,6 +525,10 @@ class GameTemplate {
       case 'startGame':
         this.startGame();
         this.sendOKToGm('startGame', {});
+        break;
+      case 'getOverview':
+        this.getOverview()
+          .then((data) => { this.sendOKToGm('getOverview', data); });
         break;
       default:
         break;

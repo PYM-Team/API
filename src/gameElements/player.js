@@ -38,6 +38,10 @@ export class Player {
     return { name: this.name, connected: this.connected, prefered: this.rolePref };
   }
 
+  getOverviewSummary() {
+    return { name: this.role.name, connected: this.connected, role: this.role };
+  }
+
   getRole() {
     return this.role.description;
   }
