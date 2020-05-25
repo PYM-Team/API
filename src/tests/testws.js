@@ -578,4 +578,23 @@ describe('websocket complete game creation and connection testing', () => {
       });
     });
   });
+  describe('test getOverview', () => {
+    it('should return the correct elements', (done) => {
+      const content = {
+        type: 'getOverview',
+        status: 'ok',
+        token: gmToken,
+        data: {},
+      };
+      serverws.send(JSON.stringify(content));
+
+      serverws.once('message', (event) => {
+        const data = JSON.parse(event);
+        expect(data.type).to.equal('getOverview');
+        expect(data.status).to.equal('ok');
+        expect(data.data).to.have.keys(['gameDescription', 'gameId', 'globalDuration', 'remainingDuration', 'players']);
+        done();
+      });
+    });
+  });
 });
