@@ -112,6 +112,17 @@ class GameTemplate {
     });
   }
 
+  getPlaceFromName(name) {
+    return new Promise((resolve, reject) => {
+      this.places.forEach((place) => {
+        if (place.name == name) {
+          resolve(place);
+        }
+      });
+      reject(new Error('No player matching this role name'));
+    });
+  }
+
   /**
    * Get the GM socket
    */
@@ -296,6 +307,17 @@ class GameTemplate {
     callback(null, data);
   }
 
+  getPlayersPage() {
+    return new Promise((resolve, reject) => {
+      const playersName = [];
+      this.players.forEach((player) => {
+        playersName.push(player.role.name);
+      });
+      resolve(playersName);
+      reject(new Error('A problem occured'));
+    });
+  }
+
   /**
    * Send update of connected players to the socket
    */
@@ -452,22 +474,32 @@ class GameTemplate {
             }
             break;
           case 'getMyActions':
-          // TODO
+            // TODO
             break;
           case 'getEventPage':
-          // TODO
+            // TODO
             break;
           case 'getPlayersPage':
-          // TODO
+            this.getPlayersPage()
+              .then((playersName) => {
+                const data = {
+                  charactersName: playersName,
+                  charactersPhotos: null,
+                };
+                this.sendOKToPlayer(websocket, 'getPlayersPage', data);
+              })
+              .catch((err) => {
+                this.sendErrorToPlayer(websocket, 'getPlayersPage', err);
+              });
             break;
           case 'getPlayerData':
-          // TODO
+            // TODO
             break;
           case 'getMyInventoryPage':
-          // TODO
+            // TODO
             break;
           case 'getMyObjectPage':
-          // TODO
+            // TODO
             break;
           default:
             break;
