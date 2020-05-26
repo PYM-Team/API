@@ -359,7 +359,6 @@ class GameTemplate {
   }
 
   getSetup(callback) {
-    this.status = 'overview';
     const playersToSend = [];
     this.players.forEach((player) => {
       playersToSend.push(player.getSetupSummary());
@@ -388,6 +387,7 @@ class GameTemplate {
         remainingDuration: this.currentTime,
         players: playersToSend,
       };
+      this.status = 'overview';
       resolve(data);
     });
   }
