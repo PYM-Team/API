@@ -103,6 +103,7 @@ export class Player {
    */
   setRole(role) {
     this.role = role;
+    this.inventory = role.basicObjects;
   }
 
   /**

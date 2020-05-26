@@ -414,7 +414,7 @@ describe('websocket complete game creation and connection testing', () => {
         expect(data.status).to.equal('ok');
         expect(data.data).to.have.key('choices');
         expect(data.data.choices).to.be.an('array');
-        expect(data.data.choices[0].possibilities).to.includes('titi');
+        expect(data.data.choices[0].possibilities).to.includes('Carla Gurzio');
         done();
       });
     });
@@ -638,7 +638,7 @@ describe('websocket complete game creation and connection testing', () => {
         expect(data.type).to.equal('getPlayersPage');
         expect(data.status).to.equal('ok');
         expect(data.data.charactersName).to.be.an('array');
-        expect(data.data.charactersName[0]).to.equal('Meurtrier');
+        expect(data.data.charactersName[0]).to.equal('Vito Falcaninio');
         expect(data.data.charactersPhotos).to.equal(null);
         done();
       });
@@ -678,6 +678,25 @@ describe('websocket complete game creation and connection testing', () => {
         expect(data.type).to.equal('getMyInventoryPage');
         expect(data.status).to.equal('ok');
         expect(data.data.characterObject).to.be.an('array');
+        done();
+      });
+    });
+  });
+
+  describe('test getMg', () => {
+    it('should return a biiiiig array', (done) => {
+      const content = {
+        type: 'getMg',
+        status: 'ok',
+        token: gmToken,
+        data: {},
+      };
+      serverws.send(JSON.stringify(content));
+
+      serverws.once('message', (event) => {
+        const data = JSON.parse(event);
+        expect(data.type).to.equal('getMg');
+        console.log(data.data.players);
         done();
       });
     });

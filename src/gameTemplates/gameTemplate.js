@@ -395,16 +395,17 @@ class GameTemplate {
   }
 
   getMasterPage() { // TODO
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const data = {};
       data.events = [];
       this.events.forEach((e) => {
         data.events.push(e.getSummary());
       });
-      const playersToSend = [];
+      data.players = [];
       this.players.forEach((p) => {
-        playersToSend.push(p.getMgSummary());
+        data.players.push(p.getMgSummary());
       });
+      resolve(data);
     });
   }
 
@@ -614,7 +615,8 @@ class GameTemplate {
           .catch((err) => this.sendErrorToGm('save', err.message));
         break;
       case 'getMg':
-        this.getMasterPage();
+        this.getMasterPage()
+          .then((data) => this.sendOKToGm('getMg', data));
         // TODO
         break;
       default:
