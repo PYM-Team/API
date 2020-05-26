@@ -125,7 +125,7 @@ class GameTemplate {
   }
 
   getStatus() {
-    return this.status();
+    return this.status;
   }
 
   /**
@@ -564,7 +564,7 @@ class GameTemplate {
             this.sendErrorToGm('setPlayerRole', err.message);
           });
         break;
-      case 'announce': // TODO: error handling ?
+      case 'announce':
         this.players.forEach((p) => {
           this.notification(p, 'announce', received.data.message);
         });

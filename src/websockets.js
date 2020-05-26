@@ -104,7 +104,7 @@ function gmReconnectGame(websocket, data) {
 
   const validData = dataSchema.validate(data);
   if (validData.error != null) {
-    sendError('Data sent is not valid');
+    sendError(websocket, 'gmReconnectGame', 'Data sent is not valid');
     return;
   }
   if (Object.keys(games).includes(validData.value.gameId.toString())) {
@@ -121,13 +121,14 @@ function gmReconnectGame(websocket, data) {
             return;
           }
           games[validData.value.gameId].addGameMaster(websocket);
+          const status = games[validData.value.gameId].getStatus();
           const content = {
             type: 'gmReconnectGame',
             status: 'ok',
             token: null,
             data: {
               token,
-              status: games[validData.value.gameId].getStatus(),
+              status,
             },
           };
           websocket.send(JSON.stringify(content));
