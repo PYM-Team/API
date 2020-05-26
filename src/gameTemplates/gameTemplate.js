@@ -150,6 +150,22 @@ class GameTemplate {
   // ############################## SETTERS #######################################
 
   /**
+   * Set the description
+   * @param {String} d the description
+   */
+  setDescription(d) {
+    this.description = d;
+  }
+
+  /**
+   * Set the summary
+   * @param {String} s The summary
+   */
+  setSummary(s) {
+    this.summary = s;
+  }
+
+  /**
    * set the game's id
    * @param {Number} gameId the game's id
    */
@@ -248,6 +264,17 @@ class GameTemplate {
     const action = new Action(name, effect, useNb, send);
     this.actions.push(action);
     return action;
+  }
+
+  /**
+   * @param {String} name the event name
+   * @param {Number} timer between 0 and 1 the percentage of the total duration
+   * @param {String} message the message to send to players
+   */
+  addEvent(name, timer, message) {
+    const ann = new Announcement(name, timer, message);
+    this.events.push(ann);
+    return ann;
   }
 
   /**

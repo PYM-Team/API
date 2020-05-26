@@ -684,7 +684,7 @@ describe('websocket complete game creation and connection testing', () => {
   });
 
   describe('test getMg', () => {
-    it('should return a biiiiig array', (done) => {
+    it('should return a biiiiig object', (done) => {
       const content = {
         type: 'getMg',
         status: 'ok',
@@ -696,7 +696,6 @@ describe('websocket complete game creation and connection testing', () => {
       serverws.once('message', (event) => {
         const data = JSON.parse(event);
         expect(data.type).to.equal('getMg');
-        console.log(data.data.players);
         done();
       });
     });

@@ -8,6 +8,26 @@ import { Action } from '../../gameElements/action';
 
 const currentGame = new GameTemplate('LeParrain');
 
+let desc = 'Cette enquête se déroule dans les années 30, en plein coeur de la mafia italienne. Le parrain Don Giorgio a été assassiné. ';
+desc += 'Qui a pu commettre une telle atrocité ? Qui va hériter de son empire et de sa fortune ? Toutes ces questions trouveront leur réponse ce soir.';
+currentGame.setDescription(desc);
+
+currentGame.setSummary('Don Giorgio, baron de la drogue et parrain de la pègre locale, a rendu l\'âme. A qui profite le crime ? ');
+
+// Events
+
+currentGame.addEvent(
+  'Mort du parrain',
+  0,
+  'Le parrrain est mort ! C\'est chaud frère',
+);
+
+currentGame.addEvent(
+  'Resurrection du parrain',
+  1,
+  'Comme jesus tout est bien qui finit bien',
+);
+
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
