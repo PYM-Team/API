@@ -34,10 +34,13 @@ class GameTemplate {
   */
   stopGame() {
     if (this.started) {
-      // TODO: send update to players
+      this.players.forEach((p) => {
+        this.notification(p, 'warn', 'La partie est finie !');
+      });
       this.started = false;
+      this.sendOKToGm('stopGame', {});
     } else {
-      // TODO
+      this.sendErrorToGm('stopGame', 'The game has not even been started !');
     }
   }
 
@@ -46,20 +49,13 @@ class GameTemplate {
   */
   startGame() {
     if (this.started) {
-      // TODO
-    } else if (this.howManyRoles() !== this.howManyPlayers()) {
-      // TODO
+      this.sendErrorToGm('startGame', 'The game has already been started');
     } else {
-      this.assignRoles();
       this.started = true;
-      this.players.forEach((player) => {
-        const content = {
-          role: player.role,
-          name: player.name,
-          alive: player.alive,
-        };
-        sendMessageToSocket(player.socket, content);
+      this.players.forEach((p) => {
+        this.notification(p, 'info', 'La partie commence !');
       });
+      this.sendOKToGm('startGame', {});
     }
   }
 
@@ -265,6 +261,13 @@ class GameTemplate {
   }
 
   // ################################ UTILS ########################################
+
+  save() {
+    return new Promise((resolve) => {
+      resolve();
+      // reject(new Error('Error while saving'));
+    });
+  }
 
   /**
    * @param {String} message The message of the choice
@@ -581,11 +584,18 @@ class GameTemplate {
         break;
       case 'startGame':
         this.startGame();
-        this.sendOKToGm('startGame', {});
+        break;
+      case 'stopGame':
+        this.stopGame();
         break;
       case 'getOverview':
         this.getOverview()
           .then((data) => { this.sendOKToGm('getOverview', data); });
+        break;
+      case 'save':
+        this.save()
+          .then(this.sendOKToGm('save', {}))
+          .catch((err) => this.sendErrorToGm('save', err.message));
         break;
       default:
         break;

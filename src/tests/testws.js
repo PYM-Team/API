@@ -496,6 +496,44 @@ describe('websocket complete game creation and connection testing', () => {
     });
   });
 
+  describe('test stopGame', () => {
+    it('should return ok', (done) => {
+      const content = {
+        type: 'stopGame',
+        status: 'ok',
+        token: gmToken,
+        data: {},
+      };
+      serverws.send(JSON.stringify(content));
+
+      serverws.once('message', (event) => {
+        const data = JSON.parse(event);
+        expect(data.type).to.equal('stopGame');
+        expect(data.status).to.equal('ok');
+        done();
+      });
+    });
+  });
+
+  describe('test save', () => {
+    it('should return ok', (done) => {
+      const content = {
+        type: 'save',
+        status: 'ok',
+        token: gmToken,
+        data: {},
+      };
+      serverws.send(JSON.stringify(content));
+
+      serverws.once('message', (event) => {
+        const data = JSON.parse(event);
+        expect(data.type).to.equal('save');
+        expect(data.status).to.equal('ok');
+        done();
+      });
+    });
+  });
+
   describe('test reconnection', () => {
     it('should return an error', (done) => {
       const content = {
@@ -534,6 +572,7 @@ describe('websocket complete game creation and connection testing', () => {
         expect(data.type).to.equal('gmReconnectGame');
         expect(data.status).to.equal('ok');
         expect(data.data.token).to.be.a('string');
+        expect(data.data.status).to.not.equal(null);
         gmToken = data.data.token;
         done();
       });

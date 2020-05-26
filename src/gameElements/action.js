@@ -4,11 +4,12 @@
  * @param
  */
 export class Action {
-  constructor(name, effect, useNb, send) {
+  constructor(name, effect, useNb, send, possible) {
     this.name = name || '';
     this.effect = effect || null;
     this.useNb = useNb || null;
     this.send = send || null;
+    this.possible = possible || null;
   }
 
   decreaseUseNb() {

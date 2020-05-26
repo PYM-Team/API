@@ -457,13 +457,96 @@ const sendEmpoisonner = (game, player) => {
     1,
   )];
 };
-const actionFouillerPiece = currentGame.addAction('Fouiller une pièce', fouillerPiece, 2, sendFouillerPiece);
-const actionPickpocket = currentGame.addAction('Pickpocket', pickpocket, 3, sendPickpocket);
-const actionEspionner = currentGame.addAction('Espionner', espionner, 1, sendEspionner);
-const actionPotins = currentGame.addAction('Potins', potins, 3, sendPotins);
-const actionRefroidir = currentGame.addAction('Refroidir', refroidir, 1, sendRefroidir);
-const actionEmpoisonner = currentGame.addAction('Empoisonner', empoisonner, 1, sendEmpoisonner);
-const actionSeProteger = currentGame.addAction('Se protéger', seProteger, 1);
+
+const possibleFouillePiece = (game, player) => {
+  player.role.getActionFromName('Fouiller une pièce')
+    .then((action) => {
+      if (action.nbUse > 0) {
+        return true;
+      }
+      return false;
+    })
+    .catch((err) => err);
+};
+
+const possiblePickpocket = (game, player) => {
+  player.role.getActionFromName('Pickpocket')
+    .then((action) => {
+      if (action.nbUse > 0) {
+        return true;
+      }
+      return false;
+    })
+    .catch((err) => err);
+};
+
+const possibleEspionner = (game, player) => {
+  player.role.getActionFromName('Espionner')
+    .then((action) => {
+      if (action.nbUse > 0) {
+        return true;
+      }
+      return false;
+    })
+    .catch((err) => err);
+};
+
+const possiblePotins = (game, player) => {
+  player.role.getActionFromName('Potins')
+    .then((action) => {
+      if (action.nbUse > 0) {
+        return true;
+      }
+      return false;
+    })
+    .catch((err) => err);
+};
+
+const possibleRefroidir = (game, player) => {
+  player.role.getActionFromName('Refroidir')
+    .then((action) => {
+      if (action.nbUse > 0) {
+        return true;
+      }
+      return false;
+    })
+    .catch((err) => err);
+};
+
+const possibleEmpoisonner = (game, player) => {
+  player.role.getActionFromName('Empoisonner')
+    .then((action) => {
+      if (action.nbUse > 0) {
+        player.inventory.forEach((o) => {
+          if (o.name == 'Poison1' || o.name == 'Poison2') {
+            return true;
+          }
+          return false;
+        });
+      }
+      return false;
+    })
+    .catch((err) => err);
+};
+
+const possibleSeProteger = (game, player) => {
+  player.role.getActionFromName('Se protéger')
+    .then((action) => {
+      if (action.nbUse > 0) {
+        return true;
+      }
+      return false;
+    })
+    .catch((err) => err);
+};
+
+const actionFouillerPiece = currentGame.addAction('Fouiller une pièce', fouillerPiece, 2, sendFouillerPiece, possibleFouillePiece);
+const actionPickpocket = currentGame.addAction('Pickpocket', pickpocket, 3, sendPickpocket, possiblePickpocket);
+const actionEspionner = currentGame.addAction('Espionner', espionner, 1, sendEspionner, possibleEspionner);
+const actionPotins = currentGame.addAction('Potins', potins, 3, sendPotins, possiblePotins);
+const actionRefroidir = currentGame.addAction('Refroidir', refroidir, 1, sendRefroidir, possibleRefroidir);
+const actionEmpoisonner = currentGame.addAction('Empoisonner', empoisonner, 1, sendEmpoisonner, possibleEmpoisonner);
+const actionSeProteger = currentGame.addAction('Se protéger', seProteger, 1, possibleSeProteger);
 // Vito
 const actionsVito = [
   actionFouillerPiece,
