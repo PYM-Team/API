@@ -38,6 +38,7 @@ class GameTemplate {
         this.notification(p, 'warn', 'La partie est finie !');
       });
       this.started = false;
+      this.status = 'finish';
       this.sendOKToGm('stopGame', {});
     } else {
       this.sendErrorToGm('stopGame', 'The game has not even been started !');
@@ -392,6 +393,12 @@ class GameTemplate {
     });
   }
 
+  getMasterPage() {
+    return new Promise((resolve, reject) => {
+      
+    });
+  }
+
   /**
    * notification send a message to a player
    * @param {Player} player The player to send the notification
@@ -597,7 +604,11 @@ class GameTemplate {
           .then(this.sendOKToGm('save', {}))
           .catch((err) => this.sendErrorToGm('save', err.message));
         break;
+      case 'getMasterPage':
+        this.getMasterPage();
+        break;
       default:
+        this.sendErrorToGm(received.type, 'This function does not exist');
         break;
     }
   }
