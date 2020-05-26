@@ -202,15 +202,23 @@ function connectGame(websocket, data) {
 }
 
 function getTemplatesPage(websocket) {
-  const templatesToSend = [];
-  Object.values(gameTemplates).forEach((t) => {
-    const template = t.default;
-    templatesToSend.push({
-      name: template.name,
-      summary: template.summary,
-      description: template.description,
-    });
-  });
+  const templatesToSend = [
+    { name: 'LeParrain', summary: "Don Giorgio, baron de la drogue et parrain de la pègre locale, a rendu l'âme. A qui profite le crime ?", description: 'Cette enquête se déroule dans les années 30, en plein coeur de la mafia italienne. Le parrain Don Giorgio a été assassiné. Qui a pu commettre une telle atrocité ? Qui va hériter de son empire et de sa fortune ? Toutes ces questions trouveront leur réponse ce soir.' },
+    { name: 'Intrigues à la cour du roi', summary: 'GameOfTrones mais en mieux !', description: 'A VENIR' },
+    { name: 'En pleine guerre froide', summary: 'Devenez un espion américain perdu en terre communiste', description: 'A VENIR' },
+    { name: 'Bagarre de saloon', summary: 'Des flingues et des tequillas. Une bonne soirée vous attends', description: 'A VENIR' },
+    { name: 'Mariage compromis', summary: "Votre vie n'est pas assez triste ? Testez alors ce scénario plein de trahisons et de drama", description: 'A VENIR' },
+    { name: 'Panique à la discothèque', summary: 'Enquêtes et affros. Thriller passionant dans une boite de nuit disco des années 80', description: 'A VENIR' },
+  ];
+  // const templatesToSend = [];
+  // Object.values(gameTemplates).forEach((t) => {
+  //   const template = t.default;
+  //   templatesToSend.push({
+  //     name: template.name,
+  //     summary: template.summary,
+  //     description: template.description,
+  //   });
+  // });
 
   const content = {
     type: 'getTemplatesPage',
