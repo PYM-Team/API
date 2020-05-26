@@ -1,5 +1,8 @@
+/* eslint-disable max-len */
+/* eslint-disable no-unused-vars */
 /* eslint-disable global-require */
 /* eslint-disable no-undef */
+
 import { expect } from 'chai';
 import app from '../app';
 
@@ -55,6 +58,30 @@ describe('websocket complete game creation and connection testing', () => {
         const data = JSON.parse(event);
         expect(data.type).equal('pong');
         expect(data.status).equal('ok');
+        done();
+      });
+    });
+  });
+
+  describe('handle the getHomePage Request', () => {
+    it('should return the templates', (done) => {
+      const content = {
+        type: 'getTemplatesPage',
+        status: 'ok',
+        token: null,
+        data: {},
+      };
+
+      serverws.send(JSON.stringify(content));
+
+      serverws.once('message', (event) => {
+        const data = JSON.parse(event);
+        expect(data.type).to.equal('getTemplatesPage');
+        expect(data.status).to.equal('ok');
+        expect(data.data).to.have.key('templates');
+        expect(data.data.templates).to.be.an('array');
+        expect(data.data.templates[0]).to.have.keys(['name', 'description', 'summary']);
+        expect(data.data.templates[0].name).to.be.a('string');
         done();
       });
     });

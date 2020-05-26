@@ -201,6 +201,28 @@ function connectGame(websocket, data) {
   }
 }
 
+function getTemplatesPage(websocket) {
+  const templatesToSend = [];
+  Object.values(gameTemplates).forEach((t) => {
+    const template = t.default;
+    templatesToSend.push({
+      name: template.name,
+      summary: template.summary,
+      description: template.description,
+    });
+  });
+
+  const content = {
+    type: 'getTemplatesPage',
+    status: 'ok',
+    token: null,
+    data: {
+      templates: templatesToSend,
+    },
+  };
+  websocket.send(JSON.stringify(content));
+}
+
 function ping(websocket) {
   const content = {
     type: 'pong',
@@ -243,6 +265,9 @@ export const websockified = (ctx) => {
         break;
       case 'connectGame':
         connectGame(ctx.websocket, valid.value.data);
+        break;
+      case 'getTemplatesPage':
+        getTemplatesPage(ctx.websocket, valid.value.data);
         break;
       default:
         if (valid.value.token == null) {
