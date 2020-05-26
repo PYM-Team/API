@@ -94,7 +94,7 @@ describe('websocket complete game creation and connection testing', () => {
         status: 'ok',
         token: null,
         data: {
-          templateName: 'basicMurder',
+          templateName: 'LeParrain',
         },
       };
       serverws.send(JSON.stringify(content));
@@ -185,7 +185,7 @@ describe('websocket complete game creation and connection testing', () => {
         status: 'ok',
         token,
         data: {
-          roleName: 'Meurtrier',
+          roleName: 'Vito Falcaninio',
         },
       };
       ws.send(JSON.stringify(content));
@@ -204,7 +204,7 @@ describe('websocket complete game creation and connection testing', () => {
         status: 'ok',
         token,
         data: {
-          roleName: 'Meurtrier',
+          roleName: 'Vito Falcaninio',
         },
       };
       ws.send(JSON.stringify(content));
@@ -362,7 +362,7 @@ describe('websocket complete game creation and connection testing', () => {
         token: gmToken,
         data: {
           playerName: 'titi',
-          roleName: 'Meurtrier',
+          roleName: 'Vito Falcaninio',
         },
       };
       serverws.send(JSON.stringify(content));
@@ -382,7 +382,7 @@ describe('websocket complete game creation and connection testing', () => {
         token: gmToken,
         data: {
           playerName: 'titi',
-          roleName: 'Meurtrier',
+          roleName: 'Vito Falcaninio',
         },
       };
       serverws.send(JSON.stringify(content));
@@ -403,7 +403,7 @@ describe('websocket complete game creation and connection testing', () => {
         status: 'ok',
         token,
         data: {
-          actionName: 'Tuer',
+          actionName: 'Refroidir',
         },
       };
       ws.send(JSON.stringify(content));

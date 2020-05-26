@@ -5,7 +5,7 @@ import { Player } from '../gameElements/player';
 import { Mission } from '../gameElements/modules/mission';
 import { Action } from '../gameElements/action';
 import { Place } from '../gameElements/place';
-
+import { Announcement } from '../gameElements/announcement';
 
 import { sendMessageToSocket } from '../websockets';
 
@@ -20,6 +20,7 @@ class GameTemplate {
     this.totalDuration = null;
     this.currentTime = null;
     this.actions = [];
+    this.events = []; // annoucements
     this.roles = {};
     this.places = [];
     this.players = [];
@@ -393,9 +394,17 @@ class GameTemplate {
     });
   }
 
-  getMasterPage() {
+  getMasterPage() { // TODO
     return new Promise((resolve, reject) => {
-      
+      const data = {};
+      data.events = [];
+      this.events.forEach((e) => {
+        data.events.push(e.getSummary());
+      });
+      const playersToSend = [];
+      this.players.forEach((p) => {
+        playersToSend.push(p.getMgSummary());
+      });
     });
   }
 
@@ -604,8 +613,9 @@ class GameTemplate {
           .then(this.sendOKToGm('save', {}))
           .catch((err) => this.sendErrorToGm('save', err.message));
         break;
-      case 'getMasterPage':
+      case 'getMg':
         this.getMasterPage();
+        // TODO
         break;
       default:
         this.sendErrorToGm(received.type, 'This function does not exist');

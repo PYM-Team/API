@@ -15,4 +15,10 @@ export class Action {
   decreaseUseNb() {
     this.useNb -= 1;
   }
+
+  getActionSummary(game, player) {
+    const { poss, err } = this.possible(game, player);
+    // TODO: description de l'action
+    return { possible: poss, errorMessage: err, description: null };
+  }
 }
