@@ -302,6 +302,10 @@ export const websockified = (ctx) => {
             sendError(ctx.websocket, valid.value.type, 'Could not verify the token');
             return;
           }
+          if (!Object.keys(games).includes(payload.gameId)) {
+            sendError('this gameId does not exist boy...');
+            return;
+          }
           switch (payload.entity) {
             case 'player':
               games[payload.gameId].handlePlayerUpdate(ctx.websocket, valid.value, payload);
