@@ -717,6 +717,8 @@ describe('websocket complete game creation and connection testing', () => {
       });
     });
   });
+  describe('test getObjectPage', () => {
+  });
 
   describe('test getMyActions', () => {
     it('should return the list of actions', (done) => {

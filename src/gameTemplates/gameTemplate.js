@@ -416,6 +416,12 @@ class GameTemplate {
     });
   }
 
+  getPlayerData(player) {
+    return new Promise((resolve) => {
+      resolve();
+    });
+  }
+
   getMyInventoryPage(player) {
     return new Promise((resolve) => {
       const myInventory = [];
@@ -423,6 +429,17 @@ class GameTemplate {
         myInventory.push(object.name);
       });
       resolve(myInventory);
+    });
+  }
+
+  getObjectPage(player, objectName) {
+    return new Promise((resolve, reject) => {
+      const object = player.getObjectFromName(objectName);
+      if (object != null) {
+        resolve(object.description);
+      } else {
+        reject(new Error('The player doesn\'t have this object in his inventory'));
+      }
     });
   }
 
@@ -639,7 +656,8 @@ class GameTemplate {
               });
             break;
           case 'getPlayerData':
-            // TODO
+            this.getPlayerData(player)
+              .then();
             break;
           case 'getMyInventoryPage':
             this.getMyInventoryPage(player)
@@ -650,8 +668,15 @@ class GameTemplate {
                 this.sendOKToPlayer(websocket, 'getMyInventoryPage', data);
               });
             break;
-          case 'getMyObjectPage':
-            // TODO
+          case 'getObjectPage':
+            this.getObjectPage(player, received.data.objectName)
+              .then((objectDescription) => {
+                const data = {
+                  objectPhoto: null,
+                  characterObject: objectDescription,
+                };
+                this.sendOKToPlayer(websocket, 'getObjectPage', data);
+              });
             break;
           default:
             break;
