@@ -429,7 +429,6 @@ class GameTemplate {
 
   getPlayerData(player, playerRoleName) {
     return new Promise((resolve) => {
-      console.log(player.role.name);
       resolve([playerRoleName, player.role.relations[playerRoleName]]);
     });
   }
