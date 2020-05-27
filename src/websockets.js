@@ -303,7 +303,7 @@ export const websockified = (ctx) => {
             return;
           }
           if (!Object.keys(games).includes(payload.gameId)) {
-            sendError('this gameId does not exist boy...');
+            sendError(ctx.websocket, valid.value.type, 'this gameId does not exist boy...');
             return;
           }
           switch (payload.entity) {
