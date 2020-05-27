@@ -15,7 +15,6 @@ class GameTemplate {
     this.name = name || null;
     this.summary = null;
     this.description = null;
-    this.gameId = null;
     this.started = false;
     this.paused = false;
     this.totalDuration = null;
@@ -225,14 +224,6 @@ class GameTemplate {
    */
   setSummary(s) {
     this.summary = s;
-  }
-
-  /**
-   * set the game's id
-   * @param {Number} gameId the game's id
-   */
-  setGameId(gameId) {
-    this.gameId = gameId;
   }
 
   /**
@@ -520,7 +511,7 @@ class GameTemplate {
       });
       const data = {
         gameDescription: this.description,
-        gameId: this.gameId,
+        gameId: this.name,
         globalDuration: this.totalDuration,
         remainingDuration: this.currentTime,
         players: playersToSend,
