@@ -131,8 +131,4 @@ export class Player {
     });
     return notClues;
   }
-
-  getObjectFromName(objectName) {
-    return this.inventory.find((object) => object.name == objectName);
-  }
 }

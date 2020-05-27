@@ -717,6 +717,27 @@ describe('websocket complete game creation and connection testing', () => {
     });
   });
   describe('test getObjectPage', () => {
+    it('should return the description of the object', (done) => {
+      const content = {
+        type: 'getObjectPage',
+        status: 'ok',
+        token,
+        data: {
+          objectName: 'La lettre du parrain',
+        },
+      };
+      ws.send(JSON.stringify(content));
+
+      ws.once('message', (event) => {
+        const data = JSON.parse(event);
+        expect(data.type).to.equal('getObjectPage');
+        expect(data.status).to.equal('ok');
+        expect(data.data.objectDescription).to.be.an('string');
+        expect(data.data.objectDescription).to.equal('Cette lettre signée du parrain exprime ses doutes sur son entourage direct. C’est elle qui pousse Vito a réunir tout ce beau monde ce soir');
+        expect(data.data.objectPhoto).to.equal(null);
+        done();
+      });
+    });
   });
 
   describe('test getMyActions', () => {
