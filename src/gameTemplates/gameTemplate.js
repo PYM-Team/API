@@ -521,7 +521,7 @@ class GameTemplate {
     });
   }
 
-  getMasterPage() { // TODO
+  getMasterPage() {
     return new Promise((resolve) => {
       const data = {};
       data.events = [];
@@ -764,7 +764,6 @@ class GameTemplate {
       case 'getMg':
         this.getMasterPage()
           .then((data) => this.sendOKToGm('getMg', data));
-        // TODO
         break;
       default:
         this.sendErrorToGm(received.type, 'This function does not exist');

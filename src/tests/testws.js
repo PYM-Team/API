@@ -803,7 +803,7 @@ describe('websocket complete game creation and connection testing', () => {
         expect(data.data.characterRole).to.be.an('string');
         expect(data.data.characterThoughts).to.be.an('string');
         expect(data.data.characterRole).to.equal('Sebastiano Pechetto');
-        expect(data.data.characterThoughts).to.equal('Un atout indispensable. Je ne peux tout simplement pas être en mauvais termes avec lui si je veux gérer une mafia digne de ce nom.')
+        expect(data.data.characterThoughts).to.equal('Un atout indispensable. Je ne peux tout simplement pas être en mauvais termes avec lui si je veux gérer une mafia digne de ce nom.');
         done();
       });
     });
