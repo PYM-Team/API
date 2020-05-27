@@ -326,7 +326,7 @@ class GameTemplate {
       characterName: player.role.name,
       characterPhoto: null,
       characterSummaryRole: player.role.summary,
-      characterHints: player.inventory,
+      characterHints: player.inventory.filter((o) => o.isClue()),
       scenarioTitle: this.name,
       scenarioSummary: this.summary,
     };

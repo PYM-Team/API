@@ -9,4 +9,8 @@ export class GameObject {
     this.desciption = description || null;
     this.clue = clue || null;
   }
+
+  isClue() {
+    return this.clue;
+  }
 }

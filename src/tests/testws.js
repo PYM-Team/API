@@ -233,7 +233,19 @@ describe('websocket complete game creation and connection testing', () => {
         const data = JSON.parse(event);
         expect(data.type).to.equal('getHomePage');
         expect(data.status).to.equal('ok');
-        expect(data.data).to.have.keys(['characterName', 'characterPhoto', 'characterSummaryRole', 'characterHints', 'scenarioTitle', 'scenarioSummary']);
+        expect(data.data).to.have.keys(
+          ['characterName',
+            'characterPhoto',
+            'characterSummaryRole',
+            'characterHints',
+            'scenarioTitle',
+            'scenarioSummary',
+          ],
+        );
+        expect(data.data.characterHints).to.be.an('array');
+        data.data.characterHints.forEach((hint) => {
+          expect(hint.clue).to.equal(true);
+        });
         done();
       });
     });
