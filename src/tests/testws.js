@@ -173,6 +173,7 @@ describe('websocket complete game creation and connection testing', () => {
         expect(data.status).to.equal('ok');
         expect(data.data).to.have.keys(['token', 'roles']);
         expect(data.data.roles).to.be.an('array');
+        expect(data.data.roles[0]).to.have.keys(['name', 'summary', 'image']);
 
         token = data.data.token;
 
