@@ -182,26 +182,46 @@ function connectGame(websocket, data) {
         sendError(websocket, 'connectGame', 'Error while generating the JWT');
         return;
       }
-      games[validData.value.gameId].addPlayer(validData.value.username, validData.value.password, websocket);
-      const rolesToSend = [];
-      Object.keys(games[validData.value.gameId].roles).forEach((roleName) => {
-        const r = {
-          name: roleName,
-          summary: games[validData.value.gameId].roles[roleName].summary,
-          image: imageTest,
-        };
-        rolesToSend.push(r);
-      });
-      const content = {
-        type: 'connectGame',
-        status: 'ok',
-        token: null,
-        data: {
-          token,
-          roles: rolesToSend,
-        },
-      };
-      websocket.send(JSON.stringify(content));
+      games[validData.value.gameId].getPlayerFromName(validData.value.username)
+        .then((player) => {
+          if (player.pass == validData.value.password) {
+            // Felicitation c'est une reconnection
+            const content = {
+              type: 'connectGame',
+              status: 'ok',
+              token: null,
+              data: {
+                token,
+                roles: null,
+              },
+            };
+            websocket.send(JSON.stringify(content));
+          } else {
+            sendError(websocket, 'connectGame', 'This player already exist with an other password');
+          }
+        })
+        .catch(() => {
+          games[validData.value.gameId].addPlayer(validData.value.username, validData.value.password, websocket);
+          const rolesToSend = [];
+          Object.keys(games[validData.value.gameId].roles).forEach((roleName) => {
+            const r = {
+              name: roleName,
+              summary: games[validData.value.gameId].roles[roleName].summary,
+              image: imageTest,
+            };
+            rolesToSend.push(r);
+          });
+          const content = {
+            type: 'connectGame',
+            status: 'ok',
+            token: null,
+            data: {
+              token,
+              roles: rolesToSend,
+            },
+          };
+          websocket.send(JSON.stringify(content));
+        });
     });
   } else {
     const content = {
