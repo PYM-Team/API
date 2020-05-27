@@ -1,11 +1,12 @@
 /* eslint-disable class-methods-use-this */
 
+import schedule from 'node-schedule';
 import { Role } from '../gameElements/role';
 import { Player } from '../gameElements/player';
 import { Mission } from '../gameElements/modules/mission';
 import { Action } from '../gameElements/action';
 import { Place } from '../gameElements/place';
-
+import { Announcement } from '../gameElements/announcement';
 
 import { sendMessageToSocket } from '../websockets';
 
@@ -20,12 +21,54 @@ class GameTemplate {
     this.totalDuration = null;
     this.currentTime = null;
     this.actions = [];
+    this.events = []; // annoucements
+    this.triggers = {};
     this.roles = {};
     this.places = [];
     this.players = [];
     this.missions = []; // mission is still there in legacy purpose
     this.gameMasterSocket = null;
     this.functions = {};
+    this.status = 'setup';
+  }
+
+  /**
+   * set Every annoucements triggers
+   */
+  setTriggers() {
+    if (this.totalDuration != null) {
+      this.events.filter((e) => !e.hasBeenTriggered()).forEach((event) => {
+        const triggerTime = this.totalDuration * event.timer;
+        if (this.currentTime >= triggerTime) {
+          this.triggerEvent(event);
+        } else {
+          const trigDate = new Date(Date.now() + (triggerTime - this.currentTime) * 1000);
+          this.triggers[event.name] = schedule.scheduleJob(trigDate, () => {
+            this.triggerEvent(event);
+          });
+        }
+      });
+    }
+  }
+
+  /**
+   * cancel all the triggers
+   */
+  cancelTriggers() {
+    Object.values(this.triggers).forEach((trig) => {
+      trig.cancel();
+    });
+  }
+
+  /**
+   * trigger the specified event
+   * @param {Announcement} event the event
+   */
+  triggerEvent(event) {
+    this.players.forEach((p) => {
+      this.notification(p, 'announce', event.description);
+    });
+    event.setTriggered(true);
   }
 
   /**
@@ -33,10 +76,15 @@ class GameTemplate {
   */
   stopGame() {
     if (this.started) {
-      // TODO: send update to players
+      this.players.forEach((p) => {
+        this.notification(p, 'warn', 'La partie est finie !');
+      });
       this.started = false;
+      this.status = 'finish';
+      this.cancelTriggers();
+      this.sendOKToGm('stopGame', {});
     } else {
-      // TODO
+      this.sendErrorToGm('stopGame', 'The game has not even been started !');
     }
   }
 
@@ -45,20 +93,15 @@ class GameTemplate {
   */
   startGame() {
     if (this.started) {
-      // TODO
-    } else if (this.howManyRoles() !== this.howManyPlayers()) {
-      // TODO
+      this.sendErrorToGm('startGame', 'The game has already been started');
     } else {
-      this.assignRoles();
+      this.initTime();
       this.started = true;
-      this.players.forEach((player) => {
-        const content = {
-          role: player.role,
-          name: player.name,
-          alive: player.alive,
-        };
-        sendMessageToSocket(player.socket, content);
+      this.setTriggers();
+      this.players.forEach((p) => {
+        this.notification(p, 'info', 'La partie commence !');
       });
+      this.sendOKToGm('startGame', {});
     }
   }
 
@@ -123,6 +166,10 @@ class GameTemplate {
     });
   }
 
+  getStatus() {
+    return this.status;
+  }
+
   /**
    * Get the GM socket
    */
@@ -145,6 +192,29 @@ class GameTemplate {
   }
 
   // ############################## SETTERS #######################################
+
+  /**
+   * set the game duration
+   */
+  setDuration(d) {
+    this.totalDuration = d;
+  }
+
+  /**
+   * Set the description
+   * @param {String} d the description
+   */
+  setDescription(d) {
+    this.description = d;
+  }
+
+  /**
+   * Set the summary
+   * @param {String} s The summary
+   */
+  setSummary(s) {
+    this.summary = s;
+  }
 
   /**
    * set the game's id
@@ -241,10 +311,21 @@ class GameTemplate {
    * @param {boolean} affectYourself Is this action affecting yourself ?
    * @param {int} affectOthers How many other players are affected
    */
-  addAction(name, effect, useNb, send) {
-    const action = new Action(name, effect, useNb, send);
+  addAction(name, effect, useNb, send, possible) {
+    const action = new Action(name, effect, useNb, send, possible);
     this.actions.push(action);
     return action;
+  }
+
+  /**
+   * @param {String} name the event name
+   * @param {Number} timer between 0 and 1 the percentage of the total duration
+   * @param {String} message the message to send to players
+   */
+  addEvent(name, timer, message) {
+    const ann = new Announcement(name, timer, message);
+    this.events.push(ann);
+    return ann;
   }
 
   /**
@@ -260,6 +341,20 @@ class GameTemplate {
   }
 
   // ################################ UTILS ########################################
+
+  /**
+   * initialise currentTime to 0
+   */
+  initTime() {
+    this.currentTime = 0;
+  }
+
+  save() {
+    return new Promise((resolve) => {
+      resolve();
+      // reject(new Error('Error while saving'));
+    });
+  }
 
   /**
    * @param {String} message The message of the choice
@@ -289,7 +384,7 @@ class GameTemplate {
       characterName: player.role.name,
       characterPhoto: null,
       characterSummaryRole: player.role.summary,
-      characterHints: player.inventory,
+      characterHints: player.inventory.filter((o) => o.isClue()),
       scenarioTitle: this.name,
       scenarioSummary: this.summary,
     };
@@ -323,8 +418,7 @@ class GameTemplate {
 
   getPlayerData(player) {
     return new Promise((resolve) => {
-      player.role.relations
-      resolve(player.role.name, );
+      resolve();
     });
   }
 
@@ -346,6 +440,27 @@ class GameTemplate {
       } else {
         reject(new Error('The player doesn\'t have this object in his inventory'));
       }
+    });
+  }
+
+  /**
+   * Get description of the player's actions
+   */
+  getMyActions(player) {
+    return new Promise((resolve) => {
+      const data = {};
+      let itemProcessed = 0;
+      data.characterActions = {};
+      player.role.actions.forEach((action) => {
+        action.getSummary(this, player)
+          .then((summary) => {
+            data.characterActions[action.name] = summary;
+            itemProcessed += 1;
+            if (itemProcessed == player.role.actions.length) {
+              resolve(data);
+            }
+          });
+      });
     });
   }
 
@@ -397,6 +512,22 @@ class GameTemplate {
         remainingDuration: this.currentTime,
         players: playersToSend,
       };
+      this.status = 'overview';
+      resolve(data);
+    });
+  }
+
+  getMasterPage() { // TODO
+    return new Promise((resolve) => {
+      const data = {};
+      data.events = [];
+      this.events.forEach((e) => {
+        data.events.push(e.getSummary());
+      });
+      data.players = [];
+      this.players.forEach((p) => {
+        data.players.push(p.getMgSummary());
+      });
       resolve(data);
     });
   }
@@ -505,10 +636,11 @@ class GameTemplate {
             }
             break;
           case 'getMyActions':
-            // TODO
+            this.getMyActions(player)
+              .then((data) => this.sendOKToPlayer(websocket, 'getMyActions', data));
             break;
-          case 'getEventPage':
-            // TODO
+          case 'getEventsPage':
+            this.sendOKToPlayer(websocket, 'getEventsPage', { events: this.events.filter((e) => e.hasBeenTriggered()) });
             break;
           case 'getPlayersPage':
             this.getPlayersPage()
@@ -584,7 +716,7 @@ class GameTemplate {
             this.sendErrorToGm('setPlayerRole', err.message);
           });
         break;
-      case 'announce': // TODO: error handling ?
+      case 'announce':
         this.players.forEach((p) => {
           this.notification(p, 'announce', received.data.message);
         });
@@ -593,21 +725,36 @@ class GameTemplate {
       case 'pause':
         this.paused = true;
         this.currentTime = received.data.currentTime;
+        this.cancelTriggers();
         this.sendOKToGm('pause', {});
         break;
       case 'resume':
         this.paused = false;
+        this.setTriggers();
         this.sendOKToGm('resume', { currentTime: this.currentTime });
         break;
       case 'startGame':
         this.startGame();
-        this.sendOKToGm('startGame', {});
+        break;
+      case 'stopGame':
+        this.stopGame();
         break;
       case 'getOverview':
         this.getOverview()
           .then((data) => { this.sendOKToGm('getOverview', data); });
         break;
+      case 'save':
+        this.save()
+          .then(this.sendOKToGm('save', {}))
+          .catch((err) => this.sendErrorToGm('save', err.message));
+        break;
+      case 'getMg':
+        this.getMasterPage()
+          .then((data) => this.sendOKToGm('getMg', data));
+        // TODO
+        break;
       default:
+        this.sendErrorToGm(received.type, 'This function does not exist');
         break;
     }
   }

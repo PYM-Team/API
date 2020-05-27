@@ -59,6 +59,19 @@ function testId(websocket, data) {
  * @param {Object} data The data parsed from the request
  */
 function createGame(websocket, data) {
+  const dataSchema = Joi.object({
+    templateName: Joi.string().alphanum().required(),
+    duration: Joi.alternatives(
+      Joi.string().alphanum(),
+      Joi.number().integer(),
+    ).required(),
+  }).unknown();
+
+  const validData = dataSchema.validate(data);
+  if (validData.error != null) {
+    sendError(websocket, 'createGame', 'Data sent is not valid');
+    return;
+  }
   // finding a non-existant game id
   let newId = 0;
   do {
@@ -78,6 +91,7 @@ function createGame(websocket, data) {
       return;
     }
     games[newId] = lodash.cloneDeep(gameTemplates[data.templateName].default);
+    games[newId].setDuration(validData.value.duration);
     // games[newId] = gameTemplates[data.templateName].default;
     games[newId].addGameMaster(websocket);
     const content = {
@@ -104,7 +118,7 @@ function gmReconnectGame(websocket, data) {
 
   const validData = dataSchema.validate(data);
   if (validData.error != null) {
-    sendError('Data sent is not valid');
+    sendError(websocket, 'gmReconnectGame', 'Data sent is not valid');
     return;
   }
   if (Object.keys(games).includes(validData.value.gameId.toString())) {
@@ -121,12 +135,14 @@ function gmReconnectGame(websocket, data) {
             return;
           }
           games[validData.value.gameId].addGameMaster(websocket);
+          const status = games[validData.value.gameId].getStatus();
           const content = {
             type: 'gmReconnectGame',
             status: 'ok',
             token: null,
             data: {
               token,
+              status,
             },
           };
           websocket.send(JSON.stringify(content));
@@ -199,6 +215,36 @@ function connectGame(websocket, data) {
   }
 }
 
+function getTemplatesPage(websocket) {
+  const templatesToSend = [
+    { name: 'LeParrain', summary: "Don Giorgio, baron de la drogue et parrain de la pègre locale, a rendu l'âme. A qui profite le crime ?", description: 'Cette enquête se déroule dans les années 30, en plein coeur de la mafia italienne. Le parrain Don Giorgio a été assassiné. Qui a pu commettre une telle atrocité ? Qui va hériter de son empire et de sa fortune ? Toutes ces questions trouveront leur réponse ce soir.' },
+    { name: 'Intrigues à la cour du roi', summary: 'GameOfTrones mais en mieux !', description: 'A VENIR' },
+    { name: 'En pleine guerre froide', summary: 'Devenez un espion américain perdu en terre communiste', description: 'A VENIR' },
+    { name: 'Bagarre de saloon', summary: 'Des flingues et des tequillas. Une bonne soirée vous attends', description: 'A VENIR' },
+    { name: 'Mariage compromis', summary: "Votre vie n'est pas assez triste ? Testez alors ce scénario plein de trahisons et de drama", description: 'A VENIR' },
+    { name: 'Panique à la discothèque', summary: 'Enquêtes et affros. Thriller passionant dans une boite de nuit disco des années 80', description: 'A VENIR' },
+  ];
+  // const templatesToSend = [];
+  // Object.values(gameTemplates).forEach((t) => {
+  //   const template = t.default;
+  //   templatesToSend.push({
+  //     name: template.name,
+  //     summary: template.summary,
+  //     description: template.description,
+  //   });
+  // });
+
+  const content = {
+    type: 'getTemplatesPage',
+    status: 'ok',
+    token: null,
+    data: {
+      templates: templatesToSend,
+    },
+  };
+  websocket.send(JSON.stringify(content));
+}
+
 function ping(websocket) {
   const content = {
     type: 'pong',
@@ -242,6 +288,9 @@ export const websockified = (ctx) => {
       case 'connectGame':
         connectGame(ctx.websocket, valid.value.data);
         break;
+      case 'getTemplatesPage':
+        getTemplatesPage(ctx.websocket, valid.value.data);
+        break;
       default:
         if (valid.value.token == null) {
           sendError(ctx.websocket, valid.value.type, 'You need to specify a token !');
@@ -273,7 +322,7 @@ export const sendMessageToSocket = (websocket, content) => {
   try {
     websocket.send(JSON.stringify(content));
   } catch {
-    return new Error('caonnt send');
+    return new Error('cannot send');
   }
   return null;
 };

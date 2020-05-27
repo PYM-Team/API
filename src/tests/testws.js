@@ -1,5 +1,8 @@
+/* eslint-disable max-len */
+/* eslint-disable no-unused-vars */
 /* eslint-disable global-require */
 /* eslint-disable no-undef */
+
 import { expect } from 'chai';
 import app from '../app';
 
@@ -60,6 +63,30 @@ describe('websocket complete game creation and connection testing', () => {
     });
   });
 
+  describe('handle the getHomePage Request', () => {
+    it('should return the templates', (done) => {
+      const content = {
+        type: 'getTemplatesPage',
+        status: 'ok',
+        token: null,
+        data: {},
+      };
+
+      serverws.send(JSON.stringify(content));
+
+      serverws.once('message', (event) => {
+        const data = JSON.parse(event);
+        expect(data.type).to.equal('getTemplatesPage');
+        expect(data.status).to.equal('ok');
+        expect(data.data).to.have.key('templates');
+        expect(data.data.templates).to.be.an('array');
+        expect(data.data.templates[0]).to.have.keys(['name', 'description', 'summary']);
+        expect(data.data.templates[0].name).to.be.a('string');
+        done();
+      });
+    });
+  });
+
   describe('handle correctly the game creation', () => {
     it('should answer the creation message for a gameCreation request', (done) => {
       const content = {
@@ -67,7 +94,8 @@ describe('websocket complete game creation and connection testing', () => {
         status: 'ok',
         token: null,
         data: {
-          templateName: 'basicMurder',
+          templateName: 'LeParrain',
+          duration: 3600,
         },
       };
       serverws.send(JSON.stringify(content));
@@ -158,7 +186,7 @@ describe('websocket complete game creation and connection testing', () => {
         status: 'ok',
         token,
         data: {
-          roleName: 'Meurtrier',
+          roleName: 'Vito Falcaninio',
         },
       };
       ws.send(JSON.stringify(content));
@@ -177,7 +205,7 @@ describe('websocket complete game creation and connection testing', () => {
         status: 'ok',
         token,
         data: {
-          roleName: 'Meurtrier',
+          roleName: 'Vito Falcaninio',
         },
       };
       ws.send(JSON.stringify(content));
@@ -206,7 +234,19 @@ describe('websocket complete game creation and connection testing', () => {
         const data = JSON.parse(event);
         expect(data.type).to.equal('getHomePage');
         expect(data.status).to.equal('ok');
-        expect(data.data).to.have.keys(['characterName', 'characterPhoto', 'characterSummaryRole', 'characterHints', 'scenarioTitle', 'scenarioSummary']);
+        expect(data.data).to.have.keys(
+          ['characterName',
+            'characterPhoto',
+            'characterSummaryRole',
+            'characterHints',
+            'scenarioTitle',
+            'scenarioSummary',
+          ],
+        );
+        expect(data.data.characterHints).to.be.an('array');
+        data.data.characterHints.forEach((hint) => {
+          expect(hint.clue).to.equal(true);
+        });
         done();
       });
     });
@@ -243,6 +283,26 @@ describe('websocket complete game creation and connection testing', () => {
         const data = JSON.parse(event);
         expect(data.type).to.be.equal('getHomePage');
         expect(data.status).to.equal('error');
+        done();
+      });
+    });
+  });
+
+  describe('Player wants the event page', () => {
+    it('should respond an ok and the first event (triggered on gameStart)', (done) => {
+      const content = {
+        type: 'getEventsPage',
+        status: 'ok',
+        token,
+        data: {},
+      };
+      ws.send(JSON.stringify(content));
+
+      ws.once('message', (event) => {
+        const data = JSON.parse(event);
+        expect(data.type).to.equal('getEventsPage');
+        expect(data.status).to.equal('ok');
+        expect(data.data).to.have.key('events');
         done();
       });
     });
@@ -335,7 +395,7 @@ describe('websocket complete game creation and connection testing', () => {
         token: gmToken,
         data: {
           playerName: 'titi',
-          roleName: 'Meurtrier',
+          roleName: 'Vito Falcaninio',
         },
       };
       serverws.send(JSON.stringify(content));
@@ -348,14 +408,14 @@ describe('websocket complete game creation and connection testing', () => {
       });
     });
 
-    it('should set the player role and send relaod page to player', (done) => {
+    it('should set the player role and send reload page to player', (done) => {
       const content = {
         type: 'setPlayerRole',
         status: 'ok',
         token: gmToken,
         data: {
           playerName: 'titi',
-          roleName: 'Meurtrier',
+          roleName: 'Vito Falcaninio',
         },
       };
       serverws.send(JSON.stringify(content));
@@ -369,14 +429,14 @@ describe('websocket complete game creation and connection testing', () => {
     });
   });
 
-  describe('test actions', () => {
+  describe('test makeActions', () => {
     it('should handle the action and respond makeAction', (done) => {
       const content = {
         type: 'makeAction',
         status: 'ok',
         token,
         data: {
-          actionName: 'Tuer',
+          actionName: 'Refroidir',
         },
       };
       ws.send(JSON.stringify(content));
@@ -387,7 +447,7 @@ describe('websocket complete game creation and connection testing', () => {
         expect(data.status).to.equal('ok');
         expect(data.data).to.have.key('choices');
         expect(data.data.choices).to.be.an('array');
-        expect(data.data.choices[0].possibilities).to.includes('titi');
+        expect(data.data.choices[0].possibilities).to.includes('Carla Gurzio');
         done();
       });
     });
@@ -436,6 +496,25 @@ describe('websocket complete game creation and connection testing', () => {
     });
   });
 
+  describe('test startGame', () => {
+    it('should return ok', (done) => {
+      const content = {
+        type: 'startGame',
+        status: 'ok',
+        token: gmToken,
+        data: {},
+      };
+      serverws.send(JSON.stringify(content));
+
+      serverws.once('message', (event) => {
+        const data = JSON.parse(event);
+        expect(data.type).to.equal('startGame');
+        expect(data.status).to.equal('ok');
+        done();
+      });
+    });
+  });
+
   describe('test pause', () => {
     it('should return ok', (done) => {
       const content = {
@@ -443,7 +522,7 @@ describe('websocket complete game creation and connection testing', () => {
         status: 'ok',
         token: gmToken,
         data: {
-          currentTime: 20000,
+          currentTime: 3590,
         },
       };
       serverws.send(JSON.stringify(content));
@@ -471,16 +550,16 @@ describe('websocket complete game creation and connection testing', () => {
         const data = JSON.parse(event);
         expect(data.type).to.equal('resume');
         expect(data.status).to.equal('ok');
-        expect(data.data.currentTime).to.equal(20000);
+        expect(data.data.currentTime).to.equal(3590);
         done();
       });
     });
   });
 
-  describe('test startGame', () => {
+  describe('test stopGame', () => {
     it('should return ok', (done) => {
       const content = {
-        type: 'startGame',
+        type: 'stopGame',
         status: 'ok',
         token: gmToken,
         data: {},
@@ -489,7 +568,26 @@ describe('websocket complete game creation and connection testing', () => {
 
       serverws.once('message', (event) => {
         const data = JSON.parse(event);
-        expect(data.type).to.equal('startGame');
+        expect(data.type).to.equal('stopGame');
+        expect(data.status).to.equal('ok');
+        done();
+      });
+    });
+  });
+
+  describe('test save', () => {
+    it('should return ok', (done) => {
+      const content = {
+        type: 'save',
+        status: 'ok',
+        token: gmToken,
+        data: {},
+      };
+      serverws.send(JSON.stringify(content));
+
+      serverws.once('message', (event) => {
+        const data = JSON.parse(event);
+        expect(data.type).to.equal('save');
         expect(data.status).to.equal('ok');
         done();
       });
@@ -534,6 +632,7 @@ describe('websocket complete game creation and connection testing', () => {
         expect(data.type).to.equal('gmReconnectGame');
         expect(data.status).to.equal('ok');
         expect(data.data.token).to.be.a('string');
+        expect(data.data.status).to.not.equal(null);
         gmToken = data.data.token;
         done();
       });
@@ -572,7 +671,7 @@ describe('websocket complete game creation and connection testing', () => {
         expect(data.type).to.equal('getPlayersPage');
         expect(data.status).to.equal('ok');
         expect(data.data.charactersName).to.be.an('array');
-        expect(data.data.charactersName[0]).to.equal('Meurtrier');
+        expect(data.data.charactersName[0]).to.equal('Vito Falcaninio');
         expect(data.data.charactersPhotos).to.equal(null);
         done();
       });
@@ -597,6 +696,7 @@ describe('websocket complete game creation and connection testing', () => {
       });
     });
   });
+
   describe('test getMyInventoryPage', () => {
     it('should return the list of the names of the objects', (done) => {
       const content = {
@@ -617,6 +717,43 @@ describe('websocket complete game creation and connection testing', () => {
     });
   });
   describe('test getObjectPage', () => {
+  });
 
+  describe('test getMyActions', () => {
+    it('should return the list of actions', (done) => {
+      const content = {
+        type: 'getMyActions',
+        status: 'ok',
+        token,
+        data: {},
+      };
+      ws.send(JSON.stringify(content));
+
+      ws.once('message', (event) => {
+        const data = JSON.parse(event);
+        expect(data.type).to.equal('getMyActions');
+        expect(data.status).to.equal('ok');
+        expect(data.data.characterActions).to.not.equal(null);
+        done();
+      });
+    });
+  });
+
+  describe('test getMg', () => {
+    it('should return a biiiiig object', (done) => {
+      const content = {
+        type: 'getMg',
+        status: 'ok',
+        token: gmToken,
+        data: {},
+      };
+      serverws.send(JSON.stringify(content));
+
+      serverws.once('message', (event) => {
+        const data = JSON.parse(event);
+        expect(data.type).to.equal('getMg');
+        done();
+      });
+    });
   });
 });

@@ -8,6 +8,26 @@ import { Action } from '../../gameElements/action';
 
 const currentGame = new GameTemplate('LeParrain');
 
+let desc = 'Cette enquête se déroule dans les années 30, en plein coeur de la mafia italienne. Le parrain Don Giorgio a été assassiné. ';
+desc += 'Qui a pu commettre une telle atrocité ? Qui va hériter de son empire et de sa fortune ? Toutes ces questions trouveront leur réponse ce soir.';
+currentGame.setDescription(desc);
+
+currentGame.setSummary('Don Giorgio, baron de la drogue et parrain de la pègre locale, a rendu l\'âme. A qui profite le crime ? ');
+
+// Events
+
+currentGame.addEvent(
+  'Mort du parrain',
+  0,
+  'Le parrrain est mort ! C\'est chaud frère',
+);
+
+currentGame.addEvent(
+  'Resurrection du parrain',
+  1,
+  'Comme jesus tout est bien qui finit bien',
+);
+
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
@@ -169,53 +189,53 @@ currentGame.addPlace('Le vestibule', 'C\'est ici que repose le corps du parrain'
 
 // Relations
 // El Sampico
-const relationsSampico = (
-  ['Petro francesco', 'Le gars a l’air solide, il à l’oeil et le corps entraînés, ça se voit.'],
-  ['Tommaso Giorgio', 'Le fils à papa. Le gringo n’a jamais touché à un flingue de sa vie.'],
-  ['Vito Falcaninio', 'Quand le parrain m’a engagé à l’époque, Vito m’a bien aidé à m’intégrer. Il a des principes lui aussi, c’est pas le cas de tout le monde ici.'],
-  ['Carla Gurzio', '¡ Maravillosa ! La femme de ma vie ! La mort du parrain me permettra de lui déclarer mon amour véritable !'],
-  ['Sebastiano Pechetto', 'La poudre du chimiste est connue au Mexique. C’est elle qui finance les cartels là-bas, pas de quoi être fier...']
-);
+const relationsSampico = {
+  'Petro francesco': 'Le gars a l’air solide, il à l’oeil et le corps entraînés, ça se voit.',
+  'Tommaso Giorgio': 'Le fils à papa. Le gringo n’a jamais touché à un flingue de sa vie.',
+  'Vito Falcaninio': 'Quand le parrain m’a engagé à l’époque, Vito m’a bien aidé à m’intégrer. Il a des principes lui aussi, c’est pas le cas de tout le monde ici.',
+  'Carla Gurzio': '¡ Maravillosa ! La femme de ma vie ! La mort du parrain me permettra de lui déclarer mon amour véritable !',
+  'Sebastiano Pechetto': 'La poudre du chimiste est connue au Mexique. C’est elle qui finance les cartels là-bas, pas de quoi être fier...',
+};
 // Petro Francesco
-const relationsPetro = (
-  ['El Sampico', 'J’ai hâte de le coffrer celui-là, mais faut admettre qu’il sait y faire. Je dois ronger mon frein et prendre mon mal en patience, une confrontation directe pourrait très bien signer mon arrêt de mort.'],
-  ['Tomasso Giorgio', 'Je suis pas peu fier d’avoir réussi à me faire passer pour son ami proche pendant autant de temps. Le papa avait des doutes sur moi c’est sûr. Une fois Tomasso au pouvoir, je termine d’apprendre comment tout s’articule dans cette mafia et je boucle tout le monde !'],
-  ['Vito Falcaninio', 'L’obstacle numéro un dans mon plan. S’il prend la place du parrain, je suis cuit !'],
-  ['Carla Gurzio', 'Elle est belle, ça on ne peut pas le nier. On a dû lui rendre bien service en refroidissant son mari. J’espère que la fiole de poison dans sa table de chevet suffira à lui faire porter le chapeau. Suffit maintenant que quelqu’un tombe dessus “par hasard”...'],
-  ['Sebastiano Pechetto', 'Un élément crucial de toute l’organisation criminelle. Sans lui, tout fout l’camp ou presque. Il faut que j’en apprenne le plus possible sur ses fournisseurs, sans me faire cramer.']
-);
+const relationsPetro = {
+  'El Sampico': 'J’ai hâte de le coffrer celui-là, mais faut admettre qu’il sait y faire. Je dois ronger mon frein et prendre mon mal en patience, une confrontation directe pourrait très bien signer mon arrêt de mort.',
+  'Tomasso Giorgio': 'Je suis pas peu fier d’avoir réussi à me faire passer pour son ami proche pendant autant de temps. Le papa avait des doutes sur moi c’est sûr. Une fois Tomasso au pouvoir, je termine d’apprendre comment tout s’articule dans cette mafia et je boucle tout le monde !',
+  'Vito Falcaninio': 'L’obstacle numéro un dans mon plan. S’il prend la place du parrain, je suis cuit !',
+  'Carla Gurzio': 'Elle est belle, ça on ne peut pas le nier. On a dû lui rendre bien service en refroidissant son mari. J’espère que la fiole de poison dans sa table de chevet suffira à lui faire porter le chapeau. Suffit maintenant que quelqu’un tombe dessus “par hasard”...',
+  'Sebastiano Pechetto': 'Un élément crucial de toute l’organisation criminelle. Sans lui, tout fout l’camp ou presque. Il faut que j’en apprenne le plus possible sur ses fournisseurs, sans me faire cramer.',
+};
 // Vito Falcaninio
-const relationsVito = (
-  ['El Sampico', 'Un pro, un vrai.'],
-  ['Tomasso Giorgio', 'Mon poste, tout ce que j’ai, je l’ai mérité. Lui, il est né avec. Entre le bras droit fidèle et le fils à papa, le choix est vite fait : il ne reprendra jamais la place de son père tant que je respire.'],
-  ['Petro Francesco', 'Il est bon celui-ci. Quand je serai parrain j’aurai besoin d’un type comme lui, mais il est trop proche de Tomasso et j’ai El Sampico sous le coude.'],
-  ['Carla Gurzio', 'J’ai toujours eu le bagou pour elle. Je dois trouver un moyen de séduire la dame.'],
-  ['Sebastiano Pechetto', 'Un atout indispensable. Je ne peux tout simplement pas être en mauvais termes avec lui si je veux gérer une mafia digne de ce nom.']
-);
+const relationsVito = {
+  'El Sampico': 'Un pro, un vrai.',
+  'Tomasso Giorgio': 'Mon poste, tout ce que j’ai, je l’ai mérité. Lui, il est né avec. Entre le bras droit fidèle et le fils à papa, le choix est vite fait : il ne reprendra jamais la place de son père tant que je respire.',
+  'Petro Francesco': 'Il est bon celui-ci. Quand je serai parrain j’aurai besoin d’un type comme lui, mais il est trop proche de Tomasso et j’ai El Sampico sous le coude.',
+  'Carla Gurzio': 'J’ai toujours eu le bagou pour elle. Je dois trouver un moyen de séduire la dame.',
+  'Sebastiano Pechetto': 'Un atout indispensable. Je ne peux tout simplement pas être en mauvais termes avec lui si je veux gérer une mafia digne de ce nom.',
+};
 // Tommaso Giorgio
-const relationsTommaso = (
-  ['Petro francesco', 'Plus qu’un complice, qu’un partenaire dans le crime, je considère Petro comme un véritable ami.'],
-  ['El Sampico', 'Ce type ne m’inspire aucune confiance. Il ne sait que tuer, rien d’autre.'],
-  ['Vito Falcaninio', 'Mon ennemi juré ! Il veut aussi la place de mon père, il va falloir m’imposer !'],
-  ['Carla Gurzio', 'Ma belle mère, qui a l’âge d’être ma grande soeur !'],
-  ['Sebastiano Pechetto', 'Le chimiste… Sans lui, il n’y aurait pas de drogue, et donc pas de mafia. Je dois m’attirer ses bonnes faveurs pour qu’on puisse travailler ensemble sans embrouille.']
-);
+const relationsTommaso = {
+  'Petro francesco': 'Plus qu’un complice, qu’un partenaire dans le crime, je considère Petro comme un véritable ami.',
+  'El Sampico': 'Ce type ne m’inspire aucune confiance. Il ne sait que tuer, rien d’autre.',
+  'Vito Falcaninio': 'Mon ennemi juré ! Il veut aussi la place de mon père, il va falloir m’imposer !',
+  'Carla Gurzio': 'Ma belle mère, qui a l’âge d’être ma grande soeur !',
+  'Sebastiano Pechetto': 'Le chimiste… Sans lui, il n’y aurait pas de drogue, et donc pas de mafia. Je dois m’attirer ses bonnes faveurs pour qu’on puisse travailler ensemble sans embrouille.',
+};
 // Carla Gurzio
-const relationsCarla = (
-  ['Petro francesco', 'Assez indifférents face à mes charmes. Je dois rester méfiante de cet homme mystérieux… Mon mari m\'avait fait part de doutes le concernant. Il est très proche de mon idiot de beau fils et ça ne me dit rien qui vaille !'],
-  ['Tomasso Giorgio', 'Un grand naïf celui là ! Je le manipule sans problème, mais la monté au pouvoir d’un idiot pareil signerait la fin de l’organisation… Mon mari l’avait très bien compris et l’a écarté, il est devenu assez agressif depuis. Je vais garder un oeil sur lui'],
-  ['Vito Falcaninio', 'Il est un peu lourd… J’ai peut-être abusé avec la séduction sur celui là. Je vais essayer de prendre mes distances et de m’en débarrasser au plus vite, il ne doit en aucun cas prendre l’héritage !'],
-  ['El Sampico', 'Quel Homme ! Ces muscles saillants ! Cette… Moustache ! Je me languis à l’idée d’entendre sa douce voix me sussurer des mots doux en espagnol encore une fois. Mon mari mort je vais maintenant pouvoir laisser éclater mon amour !'],
-  ['Sebastiano Pechetto', 'Il me semble qu’il a un peu abusé de la drogue qu’il produit. Je dois établir de bonne relation avec lui, tout le monde le respecte et il sera un soutiens de poids pour mon plan.']
-);
+const relationsCarla = {
+  'Petro francesco': 'Assez indifférents face à mes charmes. Je dois rester méfiante de cet homme mystérieux… Mon mari m\'avait fait part de doutes le concernant. Il est très proche de mon idiot de beau fils et ça ne me dit rien qui vaille !',
+  'Tomasso Giorgio': 'Un grand naïf celui là ! Je le manipule sans problème, mais la monté au pouvoir d’un idiot pareil signerait la fin de l’organisation… Mon mari l’avait très bien compris et l’a écarté, il est devenu assez agressif depuis. Je vais garder un oeil sur lui',
+  'Vito Falcaninio': 'Il est un peu lourd… J’ai peut-être abusé avec la séduction sur celui là. Je vais essayer de prendre mes distances et de m’en débarrasser au plus vite, il ne doit en aucun cas prendre l’héritage !',
+  'El Sampico': 'Quel Homme ! Ces muscles saillants ! Cette… Moustache ! Je me languis à l’idée d’entendre sa douce voix me sussurer des mots doux en espagnol encore une fois. Mon mari mort je vais maintenant pouvoir laisser éclater mon amour !',
+  'Sebastiano Pechetto': 'Il me semble qu’il a un peu abusé de la drogue qu’il produit. Je dois établir de bonne relation avec lui, tout le monde le respecte et il sera un soutiens de poids pour mon plan.',
+};
 // Sebastiano Pechetto
-const relationsSebastiano = (
-  ['Petro francesco', 'Toujours les yeux rivés sur moi c’est certain. Il a beau essayer de cacher son regard derrière une paire de lunettes noires mais je ne suis pas dupe !'],
-  ['Tomasso Giorgio', 'Il cache bien son jeu derrière son air de benêt. Il est capable du pire.'],
-  ['Vito Falcaninio', 'Un regard froid pour un homme froid. Il complote en permanence, et c’est certainement contre moi.'],
-  ['Carla Gurzio', 'Méfiance ! C’est une véritable séductrice, elle tentera sûrement de m’entourlouper, d’une manière ou d’une autre.'],
-  ['El Sampico', 'll me fout les j’tons ! C’est une vraie machine à tuer à ce qu’on dit.']
-);
+const relationsSebastiano = {
+  'Petro francesco': 'Toujours les yeux rivés sur moi c’est certain. Il a beau essayer de cacher son regard derrière une paire de lunettes noires mais je ne suis pas dupe !',
+  'Tomasso Giorgio': 'Il cache bien son jeu derrière son air de benêt. Il est capable du pire.',
+  'Vito Falcaninio': 'Un regard froid pour un homme froid. Il complote en permanence, et c’est certainement contre moi.',
+  'Carla Gurzio': 'Méfiance ! C’est une véritable séductrice, elle tentera sûrement de m’entourlouper, d’une manière ou d’une autre.',
+  'El Sampico': 'll me fout les j’tons ! C’est une vraie machine à tuer à ce qu’on dit.',
+};
 
 
 // Actions
@@ -469,13 +489,96 @@ const sendEmpoisonner = (game, player) => {
     1,
   )];
 };
-const actionFouillerPiece = currentGame.addAction('Fouiller une pièce', fouillerPiece, 2, sendFouillerPiece);
-const actionPickpocket = currentGame.addAction('Pickpocket', pickpocket, 3, sendPickpocket);
-const actionEspionner = currentGame.addAction('Espionner', espionner, 1, sendEspionner);
-const actionPotins = currentGame.addAction('Potins', potins, 3, sendPotins);
-const actionRefroidir = currentGame.addAction('Refroidir', refroidir, 1, sendRefroidir);
-const actionEmpoisonner = currentGame.addAction('Empoisonner', empoisonner, 1, sendEmpoisonner);
-const actionSeProteger = currentGame.addAction('Se protéger', seProteger, 1);
+
+const possibleFouillePiece = (game, player) => new Promise((resolve, reject) => {
+  player.role.getActionFromName('Fouiller une pièce')
+    .then((action) => {
+      if (action.nbUse > 0) {
+        resolve(true);
+      }
+      resolve(false, 'Plus de points d\'action');
+    })
+    .catch((err) => reject(err));
+});
+
+const possiblePickpocket = (game, player) => new Promise((resolve, reject) => {
+  player.role.getActionFromName('Pickpocket')
+    .then((action) => {
+      if (action.nbUse > 0) {
+        resolve(true);
+      }
+      resolve(false, 'Plus de points d\'action');
+    })
+    .catch((err) => reject(err));
+});
+
+const possibleEspionner = (game, player) => new Promise((resolve, reject) => {
+  player.role.getActionFromName('Espionner')
+    .then((action) => {
+      if (action.nbUse > 0) {
+        resolve(true);
+      }
+      resolve(false, 'Plus de points d\'action');
+    })
+    .catch((err) => reject(err));
+});
+
+const possiblePotins = (game, player) => new Promise((resolve, reject) => {
+  player.role.getActionFromName('Potins')
+    .then((action) => {
+      if (action.nbUse > 0) {
+        resolve(true);
+      }
+      resolve(false, 'Plus de points d\'action');
+    })
+    .catch((err) => reject(err));
+});
+
+const possibleRefroidir = (game, player) => new Promise((resolve, reject) => {
+  player.role.getActionFromName('Refroidir')
+    .then((action) => {
+      if (action.nbUse > 0) {
+        resolve(true);
+      }
+      resolve(false, 'Plus de points d\'action');
+    })
+    .catch((err) => reject(err));
+});
+
+const possibleEmpoisonner = (game, player) => new Promise((resolve, reject) => {
+  player.role.getActionFromName('Empoisonner')
+    .then((action) => {
+      if (action.nbUse > 0) {
+        player.inventory.forEach((o) => {
+          if (o.name == 'Poison1' || o.name == 'Poison2') {
+            resolve(true);
+          }
+          resolve(false, 'Il faut un objet spécial');
+        });
+      }
+      resolve(false, 'Plus de points d\'action');
+    })
+    .catch((err) => reject(err));
+});
+
+const possibleSeProteger = (game, player) => new Promise((resolve, reject) => {
+  player.role.getActionFromName('Se protéger')
+    .then((action) => {
+      if (action.nbUse > 0) {
+        resolve(true);
+      }
+      resolve(false, 'Plus de points d\'action');
+    })
+    .catch((err) => reject(err));
+});
+
+const actionFouillerPiece = currentGame.addAction('Fouiller une pièce', fouillerPiece, 2, sendFouillerPiece, possibleFouillePiece);
+const actionPickpocket = currentGame.addAction('Pickpocket', pickpocket, 3, sendPickpocket, possiblePickpocket);
+const actionEspionner = currentGame.addAction('Espionner', espionner, 1, sendEspionner, possibleEspionner);
+const actionPotins = currentGame.addAction('Potins', potins, 3, sendPotins, possiblePotins);
+const actionRefroidir = currentGame.addAction('Refroidir', refroidir, 1, sendRefroidir, possibleRefroidir);
+const actionEmpoisonner = currentGame.addAction('Empoisonner', empoisonner, 1, sendEmpoisonner, possibleEmpoisonner);
+const actionSeProteger = currentGame.addAction('Se protéger', seProteger, 1, possibleSeProteger);
 // Vito
 const actionsVito = [
   actionFouillerPiece,
