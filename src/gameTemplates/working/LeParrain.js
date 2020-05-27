@@ -380,7 +380,7 @@ const empoisonner = (game, you, result) => {
       if (player.protected == true) {
         player.setProtected(false);
       } else {
-        player.setAlive(false);
+        player.setPoisoned(true);
         game.notification(you, 'info', `Vous avez empoisonné avec brio ${player.role.name}`);
         game.notification(player, 'info', 'Vous avez été empoisonné, si vous ne trouvez pas d\'antidote à temps, vous mourrez');
         if (you.spied != null) {
@@ -391,6 +391,15 @@ const empoisonner = (game, you, result) => {
         }
       }
       you.role.actions.find((element) => element.name == 'Empoisonner').decreaseUseNb();
+    });
+};
+const guerir = (game, you, result) => {
+  game.getPlayerFromRoleName(result[0][0])
+    .then((player) => {
+      player.setPoisoned(false);
+      game.notification(you, 'info', `Vous avez guérit ${player.role.name}`);
+      game.notification(player, 'info', `Vous avez été guérit de votre empoisonnement par ${you.role.name}`);
+      you.role.actions.find((element) => element.name == 'Guérir').decreaseUseNb();
     });
 };
 const seProteger = (game, you) => {
@@ -489,6 +498,20 @@ const sendEmpoisonner = (game, player) => {
     1,
   )];
 };
+const sendGuerir = (game) => {
+  const choices = [];
+  game.players.forEach((p) => {
+    if (p.poisoned == true) {
+      choices.push(p.role.name);
+    }
+  });
+  return [game.choiceGenerator(
+    'Choississez le joueur que vous voulez guérir',
+    choices,
+    1,
+    1,
+  )];
+};
 
 const possibleFouillePiece = (game, player) => new Promise((resolve, reject) => {
   player.role.getActionFromName('Fouiller une pièce')
@@ -561,6 +584,22 @@ const possibleEmpoisonner = (game, player) => new Promise((resolve, reject) => {
     .catch((err) => reject(err));
 });
 
+const possibleGuerir = (game, player) => new Promise((resolve, reject) => {
+  player.role.getActionFromName('Guérir')
+    .then((action) => {
+      if (action.nbUse > 0) {
+        player.inventory.forEach((o) => {
+          if (o.name == 'Antidote') {
+            resolve(true);
+          }
+          resolve(false, 'Il faut un objet spécial');
+        });
+      }
+      resolve(false, 'plus de points d\'action');
+    })
+    .catch((err) => reject(err));
+});
+
 const possibleSeProteger = (game, player) => new Promise((resolve, reject) => {
   player.role.getActionFromName('Se protéger')
     .then((action) => {
@@ -578,6 +617,7 @@ const espionnerDesc = 'Vous espionnez un autre joueur pour connaître le résult
 const potinsDesc = 'Vous discutez avec un autre joueur afin de savoir ce quil pense d\'un autre joueur';
 const refroidirDesc = 'Vous essayez de tuer un autre joueur';
 const empoisonnerDesc = 'Vous empoisonnez un autre joueur, s\'il n\'est pas guéri à temps, il mourra';
+const guerirDesc = 'Vous pouvez guérir un joueur empoisonné';
 const seProtegerDesc = 'Vous êtes protéger de la prochaine action vous affectant';
 
 const actionFouillerPiece = currentGame.addAction('Fouiller une pièce', fouillerPiece, 2, sendFouillerPiece, possibleFouillePiece, fouillerPieceDesc);
@@ -586,42 +626,49 @@ const actionEspionner = currentGame.addAction('Espionner', espionner, 1, sendEsp
 const actionPotins = currentGame.addAction('Potins', potins, 3, sendPotins, possiblePotins, potinsDesc);
 const actionRefroidir = currentGame.addAction('Refroidir', refroidir, 1, sendRefroidir, possibleRefroidir, refroidirDesc);
 const actionEmpoisonner = currentGame.addAction('Empoisonner', empoisonner, 1, sendEmpoisonner, possibleEmpoisonner, empoisonnerDesc);
+const actionGuerir = currentGame.addAction('Guérir', guerir, 1, sendGuerir, possibleGuerir, guerirDesc);
 const actionSeProteger = currentGame.addAction('Se protéger', seProteger, 1, () => [], possibleSeProteger, seProtegerDesc);
 // Vito
 const actionsVito = [
   actionFouillerPiece,
   actionRefroidir,
   actionPickpocket,
+  actionGuerir,
 ];
 // Carla
 const actionsCarla = [
   actionFouillerPiece,
   actionPotins,
   actionEspionner,
+  actionGuerir,
 ];
 // Petro
 const actionsPetro = [
   actionEmpoisonner,
   actionPotins,
   actionFouillerPiece,
+  actionGuerir,
 ];
 // Sebastiano
 const actionsSebastiano = [
   actionFouillerPiece,
   actionEmpoisonner,
   actionPickpocket,
+  actionGuerir,
 ];
 // Tommaso
 const actionsTommaso = [
   actionFouillerPiece,
   actionSeProteger,
   actionEspionner,
+  actionGuerir,
 ];
 // Sampico
 const actionsSampico = [
   actionRefroidir,
   actionSeProteger,
   actionFouillerPiece,
+  actionGuerir,
 ];
 
 // Missions

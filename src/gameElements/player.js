@@ -15,6 +15,7 @@ export class Player {
     this.alive = true;
     this.protected = false;
     this.spied = null;
+    this.poisoned = false;
     this.inventory = [];
     this.socket = socket || null;
     this.connected = true;
@@ -43,6 +44,10 @@ export class Player {
    */
   setSpied(s) {
     this.spied = s;
+  }
+
+  setPoisoned(p) {
+    this.poisoned = p;
   }
 
   /**
