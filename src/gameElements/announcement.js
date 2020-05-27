@@ -1,7 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 /**
  * Definition d'une structure de base d'une annonce du jeu
- * @param
  */
 export class Announcement {
   /**
@@ -27,5 +26,20 @@ export class Announcement {
       triggered: this.triggered,
       timer: this.timer,
     };
+  }
+
+  /**
+   * has been the event triggered
+   */
+  hasBeenTriggered() {
+    return this.triggered;
+  }
+
+  /**
+   * Set the trigger
+   * @param {Boolean} t trigger
+   */
+  setTriggered(t) {
+    this.triggered = t;
   }
 }

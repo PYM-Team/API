@@ -59,6 +59,19 @@ function testId(websocket, data) {
  * @param {Object} data The data parsed from the request
  */
 function createGame(websocket, data) {
+  const dataSchema = Joi.object({
+    templateName: Joi.string().alphanum().required(),
+    duration: Joi.alternatives(
+      Joi.string().alphanum(),
+      Joi.number().integer(),
+    ).required(),
+  });
+
+  const validData = dataSchema.validate(data);
+  if (validData.error != null) {
+    sendError(websocket, 'createGame', 'Data sent is not valid');
+    return;
+  }
   // finding a non-existant game id
   let newId = 0;
   do {
@@ -78,6 +91,7 @@ function createGame(websocket, data) {
       return;
     }
     games[newId] = lodash.cloneDeep(gameTemplates[data.templateName].default);
+    games[newId].setDuration(validData.value.duration);
     // games[newId] = gameTemplates[data.templateName].default;
     games[newId].addGameMaster(websocket);
     const content = {
@@ -308,7 +322,7 @@ export const sendMessageToSocket = (websocket, content) => {
   try {
     websocket.send(JSON.stringify(content));
   } catch {
-    return new Error('caonnt send');
+    return new Error('cannot send');
   }
   return null;
 };
