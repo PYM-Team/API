@@ -382,6 +382,7 @@ class GameTemplate {
       callback(new Error('Player has no role set'), null);
       return;
     }
+    const characterProperties = player.getProperties();
     const data = {
       characterName: player.role.name,
       characterPhoto: null,
@@ -389,6 +390,7 @@ class GameTemplate {
       characterHints: player.inventory.filter((o) => o.isClue()),
       scenarioTitle: this.name,
       scenarioSummary: this.summary,
+      characterProperties,
     };
     callback(null, data);
   }

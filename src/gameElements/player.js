@@ -103,6 +103,14 @@ export class Player {
     };
   }
 
+  getProperties() {
+    return {
+      poisonned: this.poisonned,
+      protected: this.protected,
+      alive: this.alive,
+    };
+  }
+
   /**
    * Get the player role descrption
    */

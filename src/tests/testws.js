@@ -243,6 +243,7 @@ describe('websocket complete game creation and connection testing', () => {
             'characterHints',
             'scenarioTitle',
             'scenarioSummary',
+            'characterProperties',
           ],
         );
         expect(data.data.characterHints).to.be.an('array');
@@ -818,6 +819,7 @@ describe('websocket complete game creation and connection testing', () => {
         const data = JSON.parse(event);
         expect(data.type).to.equal('updatePlayers');
         expect(data.status).to.equal('ok');
+        expect(data.data.players[0].connected).to.equal(false);
         done();
       });
     });

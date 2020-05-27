@@ -20,6 +20,8 @@ const imageTest = 'iVBORw0KGgoAAAANSUhEUgAAAEYAAABGCAQAAADbJyoPAAAABGdBTUEAALGPC
 export const initWS = () => {
   // Importing the game Templates available in the given folder
   gameTemplates = importModules('gameTemplates/working');
+
+  // TODO recup les games dans la base de donnée
 };
 
 function sendError(websocket, type, message) {
@@ -282,7 +284,6 @@ export const websockified = (ctx) => {
   let username = null;
 
   ctx.websocket.on('close', () => {
-    console.log('disconnect', gameId, entity, username);
     if (gameId != null && entity != null) {
       if (!Object.keys(games).includes(gameId)) {
         if (entity == 'player') {
