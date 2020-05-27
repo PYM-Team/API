@@ -40,9 +40,9 @@ describe('websocket complete game creation and connection testing', () => {
   });
 
   after((done) => {
-    server.close();
     ws.close();
     serverws.close();
+    server.close();
     done();
   });
 
@@ -754,6 +754,7 @@ describe('websocket complete game creation and connection testing', () => {
 
       ws.once('message', (event) => {
         const data = JSON.parse(event);
+        console.log(data.data.characterActions);
         expect(data.type).to.equal('getMyActions');
         expect(data.status).to.equal('ok');
         expect(data.data.characterActions).to.not.equal(null);

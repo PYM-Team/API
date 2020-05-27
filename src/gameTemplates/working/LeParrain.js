@@ -516,7 +516,7 @@ const sendGuerir = (game) => {
 const possibleFouillePiece = (game, player) => new Promise((resolve, reject) => {
   player.role.getActionFromName('Fouiller une pièce')
     .then((action) => {
-      if (action.nbUse > 0) {
+      if (action.useNb > 0) {
         resolve(true);
       }
       resolve(false, 'Plus de points d\'action');
@@ -527,7 +527,7 @@ const possibleFouillePiece = (game, player) => new Promise((resolve, reject) => 
 const possiblePickpocket = (game, player) => new Promise((resolve, reject) => {
   player.role.getActionFromName('Pickpocket')
     .then((action) => {
-      if (action.nbUse > 0) {
+      if (action.useNb > 0) {
         resolve(true);
       }
       resolve(false, 'Plus de points d\'action');
@@ -538,7 +538,7 @@ const possiblePickpocket = (game, player) => new Promise((resolve, reject) => {
 const possibleEspionner = (game, player) => new Promise((resolve, reject) => {
   player.role.getActionFromName('Espionner')
     .then((action) => {
-      if (action.nbUse > 0) {
+      if (action.useNb > 0) {
         resolve(true);
       }
       resolve(false, 'Plus de points d\'action');
@@ -549,7 +549,7 @@ const possibleEspionner = (game, player) => new Promise((resolve, reject) => {
 const possiblePotins = (game, player) => new Promise((resolve, reject) => {
   player.role.getActionFromName('Potins')
     .then((action) => {
-      if (action.nbUse > 0) {
+      if (action.useNb > 0) {
         resolve(true);
       }
       resolve(false, 'Plus de points d\'action');
@@ -560,7 +560,7 @@ const possiblePotins = (game, player) => new Promise((resolve, reject) => {
 const possibleRefroidir = (game, player) => new Promise((resolve, reject) => {
   player.role.getActionFromName('Refroidir')
     .then((action) => {
-      if (action.nbUse > 0) {
+      if (action.useNb > 0) {
         resolve(true);
       }
       resolve(false, 'Plus de points d\'action');
@@ -571,7 +571,7 @@ const possibleRefroidir = (game, player) => new Promise((resolve, reject) => {
 const possibleEmpoisonner = (game, player) => new Promise((resolve, reject) => {
   player.role.getActionFromName('Empoisonner')
     .then((action) => {
-      if (action.nbUse > 0) {
+      if (action.useNb > 0) {
         player.inventory.forEach((o) => {
           if (o.name == 'Poison1' || o.name == 'Poison2') {
             resolve(true);
@@ -603,7 +603,7 @@ const possibleGuerir = (game, player) => new Promise((resolve, reject) => {
 const possibleSeProteger = (game, player) => new Promise((resolve, reject) => {
   player.role.getActionFromName('Se protéger')
     .then((action) => {
-      if (action.nbUse > 0) {
+      if (action.useNb > 0) {
         resolve(true);
       }
       resolve(false, 'Plus de points d\'action');
