@@ -92,7 +92,6 @@ function createGame(websocket, data) {
     }
     games[newId] = lodash.cloneDeep(gameTemplates[data.templateName].default);
     games[newId].setDuration(validData.value.duration);
-    // games[newId] = gameTemplates[data.templateName].default;
     games[newId].addGameMaster(websocket);
     const content = {
       type: 'createGame',
@@ -300,6 +299,10 @@ export const websockified = (ctx) => {
         jwt.verify(valid.value.token, 'secret', (error, payload) => {
           if (error != null) {
             sendError(ctx.websocket, valid.value.type, 'Could not verify the token');
+            return;
+          }
+          if (!Object.keys(games).includes(payload.gameId.toString())) {
+            sendError(ctx.websocket, valid.value.type, 'this gameId does not exist boy...');
             return;
           }
           switch (payload.entity) {

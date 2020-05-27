@@ -72,13 +72,17 @@ export class Player {
    * Get the summary for the overview request
    */
   getOverviewSummary() {
-    return { name: this.role.name, connected: this.connected, role: this.role };
+    return { name: this.name, connected: this.connected, role: this.role };
   }
 
   /**
    * Get the summary for the Mg page request
    */
   getMgSummary() {
+    const relations = [];
+    Object.keys(this.role.relations).forEach((r) => {
+      relations.push({ target: r, thought: this.role.relations[r] });
+    });
     return {
       connected: this.connected,
       role: this.role.name,
@@ -86,7 +90,7 @@ export class Player {
       state: this.alive,
       lastAction: this.lastAction,
       inventory: this.inventory,
-      relations: this.role.relations,
+      relations,
     };
   }
 

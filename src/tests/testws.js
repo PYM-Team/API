@@ -7,6 +7,7 @@ import { expect } from 'chai';
 import app from '../app';
 
 const Websocket = require('ws');
+const fs = require('fs');
 
 // simple test test
 describe('Simple String Test', () => {
@@ -773,6 +774,11 @@ describe('websocket complete game creation and connection testing', () => {
 
       serverws.once('message', (event) => {
         const data = JSON.parse(event);
+        // fs.writeFile('C:\\Users\\tomsa\\Documents\\GitHub\\API\\src\\tests\\out.txt', event, (err) => {
+        //   if (err) {
+        //     console.log(err);
+        //   }
+        // });
         expect(data.type).to.equal('getMg');
         done();
       });
