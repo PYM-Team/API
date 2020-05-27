@@ -170,7 +170,7 @@ function connectGame(websocket, data) {
   });
   const validData = dataSchema.validate(data);
   if (validData.error != null) {
-    sendError('Data sent is not valid');
+    sendError(websocket, 'connectGame', 'Data sent is not valid');
     return;
   }
   if (Object.keys(games).includes(validData.value.gameId.toString())) {
