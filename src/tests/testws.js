@@ -408,7 +408,7 @@ describe('websocket complete game creation and connection testing', () => {
       });
     });
 
-    it('should set the player role and send relaod page to player', (done) => {
+    it('should set the player role and send reload page to player', (done) => {
       const content = {
         type: 'setPlayerRole',
         status: 'ok',
@@ -429,7 +429,7 @@ describe('websocket complete game creation and connection testing', () => {
     });
   });
 
-  describe('test actions', () => {
+  describe('test makeActions', () => {
     it('should handle the action and respond makeAction', (done) => {
       const content = {
         type: 'makeAction',
@@ -696,6 +696,7 @@ describe('websocket complete game creation and connection testing', () => {
       });
     });
   });
+
   describe('test getMyInventoryPage', () => {
     it('should return the list of the names of the objects', (done) => {
       const content = {
@@ -711,6 +712,26 @@ describe('websocket complete game creation and connection testing', () => {
         expect(data.type).to.equal('getMyInventoryPage');
         expect(data.status).to.equal('ok');
         expect(data.data.characterObject).to.be.an('array');
+        done();
+      });
+    });
+  });
+
+  describe('test getMyActions', () => {
+    it('should return the list of actions', (done) => {
+      const content = {
+        type: 'getMyActions',
+        status: 'ok',
+        token,
+        data: {},
+      };
+      ws.send(JSON.stringify(content));
+
+      ws.once('message', (event) => {
+        const data = JSON.parse(event);
+        expect(data.type).to.equal('getMyActions');
+        expect(data.status).to.equal('ok');
+        expect(data.data.characterActions).to.not.equal(null);
         done();
       });
     });

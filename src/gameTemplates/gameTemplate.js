@@ -311,8 +311,8 @@ class GameTemplate {
    * @param {boolean} affectYourself Is this action affecting yourself ?
    * @param {int} affectOthers How many other players are affected
    */
-  addAction(name, effect, useNb, send) {
-    const action = new Action(name, effect, useNb, send);
+  addAction(name, effect, useNb, send, possible) {
+    const action = new Action(name, effect, useNb, send, possible);
     this.actions.push(action);
     return action;
   }
@@ -423,6 +423,27 @@ class GameTemplate {
         myInventory.push(object.name);
       });
       resolve(myInventory);
+    });
+  }
+
+  /**
+   * Get description of the player's actions
+   */
+  getMyActions(player) {
+    return new Promise((resolve) => {
+      const data = {};
+      let itemProcessed = 0;
+      data.characterActions = {};
+      player.role.actions.forEach((action) => {
+        action.getSummary(this, player)
+          .then((summary) => {
+            data.characterActions[action.name] = summary;
+            itemProcessed += 1;
+            if (itemProcessed == player.role.actions.length) {
+              resolve(data);
+            }
+          });
+      });
     });
   }
 
@@ -598,7 +619,8 @@ class GameTemplate {
             }
             break;
           case 'getMyActions':
-            // TODO
+            this.getMyActions(player)
+              .then((data) => this.sendOKToPlayer(websocket, 'getMyActions', data));
             break;
           case 'getEventsPage':
             this.sendOKToPlayer(websocket, 'getEventsPage', { events: this.events.filter((e) => e.hasBeenTriggered()) });

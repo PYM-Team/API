@@ -490,87 +490,87 @@ const sendEmpoisonner = (game, player) => {
   )];
 };
 
-const possibleFouillePiece = (game, player) => {
+const possibleFouillePiece = (game, player) => new Promise((resolve, reject) => {
   player.role.getActionFromName('Fouiller une pièce')
     .then((action) => {
       if (action.nbUse > 0) {
-        return true;
+        resolve(true);
       }
-      return false;
+      resolve(false, 'Plus de points d\'action');
     })
-    .catch((err) => err);
-};
+    .catch((err) => reject(err));
+});
 
-const possiblePickpocket = (game, player) => {
+const possiblePickpocket = (game, player) => new Promise((resolve, reject) => {
   player.role.getActionFromName('Pickpocket')
     .then((action) => {
       if (action.nbUse > 0) {
-        return true;
+        resolve(true);
       }
-      return false;
+      resolve(false, 'Plus de points d\'action');
     })
-    .catch((err) => err);
-};
+    .catch((err) => reject(err));
+});
 
-const possibleEspionner = (game, player) => {
+const possibleEspionner = (game, player) => new Promise((resolve, reject) => {
   player.role.getActionFromName('Espionner')
     .then((action) => {
       if (action.nbUse > 0) {
-        return true;
+        resolve(true);
       }
-      return false;
+      resolve(false, 'Plus de points d\'action');
     })
-    .catch((err) => err);
-};
+    .catch((err) => reject(err));
+});
 
-const possiblePotins = (game, player) => {
+const possiblePotins = (game, player) => new Promise((resolve, reject) => {
   player.role.getActionFromName('Potins')
     .then((action) => {
       if (action.nbUse > 0) {
-        return true;
+        resolve(true);
       }
-      return false;
+      resolve(false, 'Plus de points d\'action');
     })
-    .catch((err) => err);
-};
+    .catch((err) => reject(err));
+});
 
-const possibleRefroidir = (game, player) => {
+const possibleRefroidir = (game, player) => new Promise((resolve, reject) => {
   player.role.getActionFromName('Refroidir')
     .then((action) => {
       if (action.nbUse > 0) {
-        return true;
+        resolve(true);
       }
-      return false;
+      resolve(false, 'Plus de points d\'action');
     })
-    .catch((err) => err);
-};
+    .catch((err) => reject(err));
+});
 
-const possibleEmpoisonner = (game, player) => {
+const possibleEmpoisonner = (game, player) => new Promise((resolve, reject) => {
   player.role.getActionFromName('Empoisonner')
     .then((action) => {
       if (action.nbUse > 0) {
         player.inventory.forEach((o) => {
           if (o.name == 'Poison1' || o.name == 'Poison2') {
-            return true;
+            resolve(true);
           }
-          return false;
+          resolve(false, 'Il faut un objet spécial');
         });
       }
-      return false;
+      resolve(false, 'Plus de points d\'action');
     })
-    .catch((err) => err);
-};
+    .catch((err) => reject(err));
+});
 
-const possibleSeProteger = (game, player) => {
+const possibleSeProteger = (game, player) => new Promise((resolve, reject) => {
   player.role.getActionFromName('Se protéger')
     .then((action) => {
       if (action.nbUse > 0) {
-        return true;
+        resolve(true);
       }
-      return false;
+      resolve(false, 'Plus de points d\'action');
     })
-    .catch((err) => err);
-};
+    .catch((err) => reject(err));
+});
 
 const actionFouillerPiece = currentGame.addAction('Fouiller une pièce', fouillerPiece, 2, sendFouillerPiece, possibleFouillePiece);
 const actionPickpocket = currentGame.addAction('Pickpocket', pickpocket, 3, sendPickpocket, possiblePickpocket);
