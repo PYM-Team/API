@@ -188,6 +188,7 @@ function connectGame(websocket, data) {
       Object.keys(games[validData.value.gameId].roles).forEach((roleName) => {
         const r = {
           name: roleName,
+          summary: games[validData.value.gameId].roles[roleName].summary,
           image: imageTest,
         };
         rolesToSend.push(r);
