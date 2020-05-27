@@ -418,9 +418,10 @@ class GameTemplate {
     });
   }
 
-  getPlayerData(player) {
+  getPlayerData(player, playerRoleName) {
     return new Promise((resolve) => {
-      resolve();
+      console.log(player.role.name);
+      resolve([playerRoleName, player.role.relations[playerRoleName]]);
     });
   }
 
@@ -660,8 +661,17 @@ class GameTemplate {
               });
             break;
           case 'getPlayerData':
-            this.getPlayerData(player)
-              .then();
+            this.getPlayerData(player, received.data.playerRoleName)
+              .then((result) => {
+                const data = {
+                  characterRole: result[0],
+                  characterThoughts: result[1],
+                };
+                this.sendOKToPlayer(websocket, 'getPlayerData', data);
+              })
+              .catch((err) => {
+                this.sendErrorToPlayer(websocket, 'getPlayerData', err);
+              });
             break;
           case 'getMyInventoryPage':
             this.getMyInventoryPage(player)

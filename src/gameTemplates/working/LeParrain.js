@@ -684,7 +684,7 @@ currentGame.addRole(
   actionsTommaso,
 );
 currentGame.addRole(
-  '"El Sampico"',
+  'El Sampico',
   'le meilleur tueur à gage',
   missionSampico,
   basicObjectsSampico,
