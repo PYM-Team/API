@@ -65,7 +65,7 @@ function createGame(websocket, data) {
       Joi.string().alphanum(),
       Joi.number().integer(),
     ).required(),
-  });
+  }).unknown();
 
   const validData = dataSchema.validate(data);
   if (validData.error != null) {
