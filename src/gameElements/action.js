@@ -4,13 +4,13 @@
  * @param
  */
 export class Action {
-  constructor(name, effect, useNb, send, possible) {
+  constructor(name, effect, useNb, send, possible, desc) {
     this.name = name || '';
     this.effect = effect || null;
     this.useNb = useNb || null;
     this.send = send || null;
     this.possible = possible || null;
-    this.description = 'no description has been made for now'; // TODO
+    this.description = desc || null;
   }
 
   decreaseUseNb() {
