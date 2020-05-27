@@ -282,13 +282,14 @@ export const websockified = (ctx) => {
   let username = null;
 
   ctx.websocket.on('close', () => {
-    if (gameId != null && entity != null && username != null) {
+    console.log('disconnect', gameId, entity, username);
+    if (gameId != null && entity != null) {
       if (!Object.keys(games).includes(gameId)) {
         if (entity == 'player') {
           games[gameId].getPlayerFromName(username)
             .then((p) => {
               p.setDisconnected();
-              games[gameId].updatePlayers();
+              games[gameId].sendSetupUpdate();
             }).catch();
         }
       }
@@ -348,6 +349,7 @@ export const websockified = (ctx) => {
             case 'player':
               gameId = payload.gameId;
               entity = payload.entity;
+              username = payload.user;
               games[payload.gameId].handlePlayerUpdate(ctx.websocket, valid.value, payload);
               break;
             case 'gameMaster':

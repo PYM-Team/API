@@ -431,7 +431,7 @@ describe('websocket complete game creation and connection testing', () => {
     });
   });
 
-  describe('test makeActions', () => {
+  describe('test makeAction', () => {
     it('should handle the action and respond makeAction', (done) => {
       const content = {
         type: 'makeAction',
@@ -754,7 +754,6 @@ describe('websocket complete game creation and connection testing', () => {
 
       ws.once('message', (event) => {
         const data = JSON.parse(event);
-        console.log(data.data.characterActions);
         expect(data.type).to.equal('getMyActions');
         expect(data.status).to.equal('ok');
         expect(data.data.characterActions).to.not.equal(null);
@@ -785,6 +784,7 @@ describe('websocket complete game creation and connection testing', () => {
       });
     });
   });
+
   describe('test getPlayerData', () => {
     it('should return the data of the player', (done) => {
       const content = {
@@ -805,6 +805,19 @@ describe('websocket complete game creation and connection testing', () => {
         expect(data.data.characterThoughts).to.be.an('string');
         expect(data.data.characterRole).to.equal('Sebastiano Pechetto');
         expect(data.data.characterThoughts).to.equal('Un atout indispensable. Je ne peux tout simplement pas être en mauvais termes avec lui si je veux gérer une mafia digne de ce nom.');
+        done();
+      });
+    });
+  });
+  // ! This test needs to be the last one
+  describe('test reconnect', () => {
+    it('should send update to the gameMaster', (done) => {
+      ws.close();
+
+      serverws.once('message', (event) => {
+        const data = JSON.parse(event);
+        expect(data.type).to.equal('updatePlayers');
+        expect(data.status).to.equal('ok');
         done();
       });
     });
