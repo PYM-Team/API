@@ -166,6 +166,17 @@ class GameTemplate {
     });
   }
 
+  getPlayersObjectFromName(player, objectName) {
+    return new Promise((resolve, reject) => {
+      player.inventory.forEach((object) => {
+        if (object.name == objectName) {
+          resolve(object);
+        }
+      });
+      reject(new Error('No object matching this object name'));
+    });
+  }
+
   getStatus() {
     return this.status;
   }
@@ -434,12 +445,14 @@ class GameTemplate {
 
   getObjectPage(player, objectName) {
     return new Promise((resolve, reject) => {
-      const object = player.getObjectFromName(objectName);
-      if (object != null) {
-        resolve(object.description);
-      } else {
-        reject(new Error('The player doesn\'t have this object in his inventory'));
-      }
+      this.getPlayersObjectFromName(player, objectName)
+        .then((obj) => {
+          if (obj != null) {
+            resolve(obj.description);
+          } else {
+            reject(new Error('The player doesn\'t have this object in his inventory'));
+          }
+        });
     });
   }
 
@@ -670,10 +683,10 @@ class GameTemplate {
             break;
           case 'getObjectPage':
             this.getObjectPage(player, received.data.objectName)
-              .then((objectDescription) => {
+              .then((objectDescriptionReceived) => {
                 const data = {
+                  objectDescription: objectDescriptionReceived,
                   objectPhoto: null,
-                  characterObject: objectDescription,
                 };
                 this.sendOKToPlayer(websocket, 'getObjectPage', data);
               });

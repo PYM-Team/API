@@ -6,7 +6,7 @@
 export class GameObject {
   constructor(name, description, clue) {
     this.name = name;
-    this.desciption = description || null;
+    this.description = description || null;
     this.clue = clue || null;
   }
 
