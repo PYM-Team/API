@@ -616,4 +616,7 @@ describe('websocket complete game creation and connection testing', () => {
       });
     });
   });
+  describe('test getObjectPage', () => {
+
+  });
 });
