@@ -571,14 +571,22 @@ const possibleSeProteger = (game, player) => new Promise((resolve, reject) => {
     })
     .catch((err) => reject(err));
 });
+// Description
+const fouillerPieceDesc = 'Vous fouillez une pièce en quête d\'objets potentiellement intéressant';
+const pickpocketDesc = 'Vous essayez de faire les poches d\'un autre joueur';
+const espionnerDesc = 'Vous espionnez un autre joueur pour connaître le résultat de sa prochaine action';
+const potinsDesc = 'Vous discutez avec un autre joueur afin de savoir ce quil pense d\'un autre joueur';
+const refroidirDesc = 'Vous essayez de tuer un autre joueur';
+const empoisonnerDesc = 'Vous empoisonnez un autre joueur, s\'il n\'est pas guéri à temps, il mourra';
+const seProtegerDesc = 'Vous êtes protéger de la prochaine action vous affectant';
 
-const actionFouillerPiece = currentGame.addAction('Fouiller une pièce', fouillerPiece, 2, sendFouillerPiece, possibleFouillePiece);
-const actionPickpocket = currentGame.addAction('Pickpocket', pickpocket, 3, sendPickpocket, possiblePickpocket);
-const actionEspionner = currentGame.addAction('Espionner', espionner, 1, sendEspionner, possibleEspionner);
-const actionPotins = currentGame.addAction('Potins', potins, 3, sendPotins, possiblePotins);
-const actionRefroidir = currentGame.addAction('Refroidir', refroidir, 1, sendRefroidir, possibleRefroidir);
-const actionEmpoisonner = currentGame.addAction('Empoisonner', empoisonner, 1, sendEmpoisonner, possibleEmpoisonner);
-const actionSeProteger = currentGame.addAction('Se protéger', seProteger, 1, possibleSeProteger);
+const actionFouillerPiece = currentGame.addAction('Fouiller une pièce', fouillerPiece, 2, sendFouillerPiece, possibleFouillePiece, fouillerPieceDesc);
+const actionPickpocket = currentGame.addAction('Pickpocket', pickpocket, 3, sendPickpocket, possiblePickpocket, pickpocketDesc);
+const actionEspionner = currentGame.addAction('Espionner', espionner, 1, sendEspionner, possibleEspionner, espionnerDesc);
+const actionPotins = currentGame.addAction('Potins', potins, 3, sendPotins, possiblePotins, potinsDesc);
+const actionRefroidir = currentGame.addAction('Refroidir', refroidir, 1, sendRefroidir, possibleRefroidir, refroidirDesc);
+const actionEmpoisonner = currentGame.addAction('Empoisonner', empoisonner, 1, sendEmpoisonner, possibleEmpoisonner, empoisonnerDesc);
+const actionSeProteger = currentGame.addAction('Se protéger', seProteger, 1, () => [], possibleSeProteger, seProtegerDesc);
 // Vito
 const actionsVito = [
   actionFouillerPiece,

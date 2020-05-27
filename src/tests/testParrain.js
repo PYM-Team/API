@@ -68,7 +68,6 @@ describe('Scenario testing', () => {
     const action = scenario.actions.find((element) => element.name == 'Fouiller une pièce');
     expect(action.effect(player, place1)).to.equal(null);
     expect(player.role.actions.find((element) => element.name == 'Fouiller une pièce').useNb).to.equal(1);
-    const place2 = scenario.places.find((element) => element.name == 'La chambre du parrain');
     done();
   });
 
