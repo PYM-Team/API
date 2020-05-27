@@ -61,6 +61,10 @@ export class Player {
     this.rolePref = name;
   }
 
+  setDisconnected() {
+    this.connected = false;
+  }
+
   /**
    * Get the summary for the setup request
    */

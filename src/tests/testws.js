@@ -40,9 +40,9 @@ describe('websocket complete game creation and connection testing', () => {
   });
 
   after((done) => {
-    server.close();
     ws.close();
     serverws.close();
+    server.close();
     done();
   });
 
@@ -754,6 +754,7 @@ describe('websocket complete game creation and connection testing', () => {
 
       ws.once('message', (event) => {
         const data = JSON.parse(event);
+        console.log(data.data.characterActions);
         expect(data.type).to.equal('getMyActions');
         expect(data.status).to.equal('ok');
         expect(data.data.characterActions).to.not.equal(null);
@@ -803,7 +804,7 @@ describe('websocket complete game creation and connection testing', () => {
         expect(data.data.characterRole).to.be.an('string');
         expect(data.data.characterThoughts).to.be.an('string');
         expect(data.data.characterRole).to.equal('Sebastiano Pechetto');
-        expect(data.data.characterThoughts).to.equal('Un atout indispensable. Je ne peux tout simplement pas être en mauvais termes avec lui si je veux gérer une mafia digne de ce nom.')
+        expect(data.data.characterThoughts).to.equal('Un atout indispensable. Je ne peux tout simplement pas être en mauvais termes avec lui si je veux gérer une mafia digne de ce nom.');
         done();
       });
     });

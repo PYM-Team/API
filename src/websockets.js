@@ -276,6 +276,25 @@ function ping(websocket) {
 }
 
 export const websockified = (ctx) => {
+  // socket local var
+  let gameId = null;
+  let entity = null;
+  let username = null;
+
+  ctx.websocket.on('close', () => {
+    if (gameId != null && entity != null && username != null) {
+      if (!Object.keys(games).includes(gameId)) {
+        if (entity == 'player') {
+          games[gameId].getPlayerFromName(username)
+            .then((p) => {
+              p.setDisconnected();
+              games[gameId].updatePlayers();
+            }).catch();
+        }
+      }
+    }
+  });
+
   ctx.websocket.on('message', (event) => {
     const received = JSON.parse(event); // TODO if not json
 
@@ -327,9 +346,13 @@ export const websockified = (ctx) => {
           }
           switch (payload.entity) {
             case 'player':
+              gameId = payload.gameId;
+              entity = payload.entity;
               games[payload.gameId].handlePlayerUpdate(ctx.websocket, valid.value, payload);
               break;
             case 'gameMaster':
+              gameId = payload.gameId;
+              entity = payload.entity;
               games[payload.gameId].handleGmUpdate(ctx.websocket, valid.value);
               break;
             default:
