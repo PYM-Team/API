@@ -48,7 +48,7 @@ describe('scenario testing', () => {
     let spyUse;
 
     const choices = [
-      "['Carla Gurzio']",
+      'Carla Gurzio',
     ];
 
     before((done) => {
@@ -172,7 +172,7 @@ describe('scenario testing', () => {
     let spyUse;
 
     const choices = [
-      "['Vito Falcaninio']",
+      'Vito Falcaninio',
     ];
 
     before((done) => {
@@ -225,10 +225,7 @@ describe('scenario testing', () => {
     let spyNotif;
     let spyUse;
 
-    const choices = [
-      "['Vito Falcaninio']",
-      "['Sebastiano Pechetto']",
-    ];
+    const choices = ['Vito Falcaninio', 'Sebastiano Pechetto'];
 
     before((done) => {
       scenario.addPlayer('titi', 'pass', null);
@@ -334,7 +331,7 @@ describe('scenario testing', () => {
     let spyUse;
 
     const choices = [
-      "['Vito Falcaninio']",
+      'Vito Falcaninio',
     ];
 
     before((done) => {

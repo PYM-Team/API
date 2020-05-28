@@ -275,7 +275,7 @@ const fouillerPiece = (game, you, result) => {
     });
 };
 const pickpocket = (game, you, result) => {
-  game.NgetPlayerFromRoleName(JSON.parse(result[0].replace(/'/g, '"'))[0], (err, player) => {
+  game.NgetPlayerFromRoleName(result[0], (err, player) => {
     if (err != null) {
       return;
     }
@@ -330,7 +330,7 @@ const pickpocket = (game, you, result) => {
 };
 
 const espionner = (game, you, result) => {
-  game.NgetPlayerFromRoleName(JSON.parse(result[0].replace(/'/g, '"'))[0], (err, player) => {
+  game.NgetPlayerFromRoleName(result[0], (err, player) => {
     if (err != null) {
       console.log(err);
       return;
@@ -345,8 +345,8 @@ const espionner = (game, you, result) => {
 };
 
 const potins = (game, you, result) => {
-  game.NgetPlayerFromRoleName(JSON.parse(result[0].replace(/'/g, '"'))[0], (err1, pl1) => {
-    game.NgetPlayerFromRoleName(JSON.parse(result[1].replace(/'/g, '"'))[0], (err2, pl2) => {
+  game.NgetPlayerFromRoleName(result[0], (err1, pl1) => {
+    game.NgetPlayerFromRoleName(result[1], (err2, pl2) => {
       if (err1 != null || err2 != null) {
         console.log('can\'t get the player from role name');
         return;
@@ -423,7 +423,7 @@ const empoisonner = (game, you, result) => {
     });
 };
 const guerir = (game, you, result) => {
-  game.NgetPlayerFromRoleName(JSON.parse(result[0].replace(/'/g, '"'))[0], (err, player) => {
+  game.NgetPlayerFromRoleName(result[0], (err, player) => {
     player.setPoisoned(false);
     game.notification(you, 'info', `Vous avez guérit ${player.role.name}`);
     game.notification(player, 'info', `Vous avez été guérit de votre empoisonnement par ${you.role.name}`);
