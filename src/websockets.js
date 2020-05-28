@@ -5,7 +5,7 @@ import importModules from 'import-modules';
 import Joi from '@hapi/joi';
 import jwt from 'jsonwebtoken';
 import lodash from 'lodash';
-// eslint-disable-next-line no-unused-vars
+// eslint-disable-next-line import/named
 import { NODE_ENV } from './config';
 
 const MAX_REQUEST = 30;
