@@ -409,12 +409,18 @@ const seProteger = (game, you) => {
 };
 
 // Send
-const sendFouillerPiece = (game) => [game.choiceGenerator(
-  'Choissisez une pièce que vous voulez fouiller',
-  game.places,
-  1,
-  1,
-)];
+const sendFouillerPiece = (game) => {
+  const choices = [];
+  game.places.forEach((place) => {
+    choices.push(place.name);
+  });
+  return [game.choiceGenerator(
+    'Choissisez une pièce que vous voulez fouiller',
+    choices,
+    1,
+    1,
+  )];
+};
 const sendPickpocket = (game, player) => {
   const rolesName = game.getRolesName();
   const choices = [];
