@@ -722,7 +722,7 @@ class GameTemplate {
                       this.sendErrorToPlayer(websocket, 'actionResult', 'Could not trigger the effect');
                       return;
                     }
-                    this.notificationToGm('info', `${player.role} a fait l'action ${action.name}`);
+                    this.notificationToGm('info', `${player.role.name} a fait l'action ${action.name}`);
                     this.sendOKToPlayer(websocket, 'actionResult', {});
                   }
                 });
