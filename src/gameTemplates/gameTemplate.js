@@ -126,23 +126,41 @@ class GameTemplate {
 
   getPlayerFromName(name) {
     return new Promise((resolve, reject) => {
-      this.players.forEach((player) => {
-        if (player.name == name) {
-          resolve(player);
-        }
-      });
-      reject(new Error('No player matching this name'));
+      // this.players.forEach((player) => {
+      //   if (player.name == name) {
+      //     resolve(player);
+      //   }
+      // });
+      // reject(new Error('No player matching this name'));
+      const pl = this.players.find((p) => p.name == name);
+      if (pl == undefined) {
+        reject(new Error('No player matching this name'));
+      }
+      resolve(pl);
     });
+  }
+
+  NgetPlayerFromRoleName(rolename, callback) {
+    const pl = this.players.find((p) => p.role.name == rolename);
+    if (pl == undefined) {
+      callback(new Error('No player matching this role name'), null);
+    }
+    callback(null, pl);
   }
 
   getPlayerFromRoleName(roleName) {
     return new Promise((resolve, reject) => {
-      this.players.forEach((player) => {
-        if (player.role.name == roleName) {
-          resolve(player);
-        }
-      });
-      reject(new Error('No player matching this role name'));
+      // this.players.forEach((player) => {
+      //   if (player.role.name == roleName) {
+      //     resolve(player);
+      //   }
+      // });
+      // reject(new Error('No player matching this role name'));
+      const pl = this.players.find((p) => p.role.name == roleName);
+      if (pl == undefined) {
+        reject(new Error('No player matching this role name'));
+      }
+      resolve(pl);
     });
   }
 

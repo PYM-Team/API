@@ -17,7 +17,8 @@
         "--colors",
         "--timeout",
         "5000",
-        "./src/tests/*.js"
+        "--bail",
+        "./src/tests/test.parrain.js"
       ],
       "internalConsoleOptions": "openOnSessionStart",
       "skipFiles": [
