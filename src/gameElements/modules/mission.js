@@ -7,8 +7,8 @@ import { Module } from './module';
  * @param
  */
 export class Mission extends Module {
-  constructor(name, actions, desc) {
-    super(name, actions);
+  constructor(name, desc) {
+    super(name, null);
     this.description = desc;
   }
 }
