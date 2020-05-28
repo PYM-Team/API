@@ -5,6 +5,8 @@ import importModules from 'import-modules';
 import Joi from '@hapi/joi';
 import jwt from 'jsonwebtoken';
 import lodash from 'lodash';
+// eslint-disable-next-line no-unused-vars
+import { NODE_ENV } from './config';
 
 const MAX_REQUEST = 30;
 
@@ -89,7 +91,7 @@ function createGame(websocket, data) {
   jwt.sign({
     entity: 'gameMaster',
     gameId: newId,
-  }, 'secret', (error, token) => {
+  }, process.env.SECRET, (error, token) => {
     if (error != null) {
       sendError(websocket, 'createGame', 'Could not generate the token');
       return;
@@ -132,7 +134,7 @@ function gmReconnectGame(websocket, data) {
         jwt.sign({
           entity: 'gameMaster',
           gameId: validData.value.gameId,
-        }, 'secret', (err, token) => {
+        }, process.env.SECRET, (err, token) => {
           if (err != null) {
             sendError(websocket, 'gmReconnectGame', 'Could not generate the token');
             return;
@@ -181,7 +183,7 @@ function connectGame(websocket, data) {
       gameId: validData.value.gameId,
       user: validData.value.username,
       pass: validData.value.password,
-    }, 'secret', (error, token) => {
+    }, process.env.SECRET, (error, token) => {
       if (error != null) {
         sendError(websocket, 'connectGame', 'Error while generating the JWT');
         return;
@@ -305,7 +307,6 @@ export const websockified = (ctx) => {
     // test max connections
     if (new Date().getTime() - 60000 < lastDate.getTime()) {
       connections += 1;
-      console.log(connections);
       if (connections > MAX_REQUEST) {
         sendError(ctx.websocket, 'maxRequest', `You have exceeded the maximum of ${MAX_REQUEST} connections per minute`);
         ctx.websocket.close();
@@ -362,7 +363,7 @@ export const websockified = (ctx) => {
           sendError(ctx.websocket, valid.value.type, 'You need to specify a token !');
           return;
         }
-        jwt.verify(valid.value.token, 'secret', (error, payload) => {
+        jwt.verify(valid.value.token, process.env.SECRET, (error, payload) => {
           if (error != null) {
             sendError(ctx.websocket, valid.value.type, 'Could not verify the token');
             return;
