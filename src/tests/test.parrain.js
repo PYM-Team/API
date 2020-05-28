@@ -387,7 +387,7 @@ describe('scenario testing', () => {
     let spyUse;
 
     const choices = [
-      "['Carla Gurzio']",
+      'Carla Gurzio',
     ];
 
     before((done) => {
@@ -397,10 +397,12 @@ describe('scenario testing', () => {
       scenario.addPlayer('toto', 'pass', null);
       scenario.handlePlayerUpdate(null, genReq('setRole', { roleName: 'Carla Gurzio' }), payloadToto);
 
+      scenario.addPlayer('tata', 'pass', null);
+
       refroi = scenario.players[0].role.actions.find((a) => a.name == 'Refroidir');
       spyNotif = sinon.spy(scenario, 'notification');
       spyUse = sinon.spy(refroi, 'decreaseUseNb');
-      expect(guerr).to.not.equal(undefined);
+      expect(refroi).to.not.equal(undefined);
 
       done();
     });
@@ -430,7 +432,7 @@ describe('scenario testing', () => {
     it('should verify the refroidir effect when protected', (done) => {
       scenario.players[1].setProtected(true);
       scenario.handlePlayerUpdate(null, genReq('actionResult', { actionName: 'Refroidir', choices }), payloadTiti);
-      expect(scenario.players[1].getProperties().protected).to.equal(false);
+      expect(scenario.players[1].protected).to.equal(false);
       expect(spyNotif).to.be.calledOnceWith(scenario.players[0]);
       expect(spyUse).to.have.callCount(1);
       done();
@@ -439,18 +441,19 @@ describe('scenario testing', () => {
     it('should verify the refroidir effect, random = 0', (done) => {
       const floor = sinon.stub(Math, 'floor').returns(0);
       scenario.handlePlayerUpdate(null, genReq('actionResult', { actionName: 'Refroidir', choices }), payloadTiti);
-      expect(scenario.players[1].getProperties().alive).to.equal(false);
-      expect(spyNotif).to.have.callCount(2);
+      expect(scenario.players[1].alive).to.equal(false);
+      expect(spyNotif).to.have.callCount(3);
       expect(spyUse).to.have.callCount(1);
       floor.restore();
       done();
     });
 
     it('should verify the refroidir effect, random = 1', (done) => {
+      scenario.players[1].setAlive(true);
       const randInt = sinon.stub(scenario, 'getRandomInt').returns(1);
       scenario.handlePlayerUpdate(null, genReq('actionResult', { actionName: 'Refroidir', choices }), payloadTiti);
-      expect(scenario.players[1].getProperties().alive).to.equal(true);
-      expect(spyNotif).to.have.callCount(2);
+      expect(scenario.players[1].alive).to.equal(true);
+      expect(spyNotif).to.have.callCount(3);
       expect(spyUse).to.have.callCount(1);
       randInt.restore();
       done();
