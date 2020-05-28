@@ -190,7 +190,7 @@ function connectGame(websocket, data) {
       }
       games[validData.value.gameId].getPlayerFromName(validData.value.username)
         .then((player) => {
-          if (player.pass == validData.value.password) {
+          if (player.password == validData.value.password) {
             // Felicitation c'est une reconnection
             const content = {
               type: 'connectGame',
