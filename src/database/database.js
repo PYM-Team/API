@@ -5,7 +5,7 @@ import { connect, connection } from 'mongoose';
 // eslint-disable-next-line import/named
 import { NODE_ENV } from './config';
 
-const initDB = () => {
+export const initDB = () => {
   connect(
     `mongodb+srv://${process.env.DBUSERNAME}:${process.env.PASSWORD}@${process.env.DBURI}`,
     { useNewUrlParser: true, useUnifiedTopology: true },

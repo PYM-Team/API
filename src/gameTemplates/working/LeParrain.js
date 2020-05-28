@@ -57,7 +57,7 @@ const FlasqueTequila = new GameObject(
   false,
 );
 const Flingue1 = new GameObject(
-  'Flingue',
+  'Flingue de Vito',
   'Pour El Sampico,cette arme est une extension de sa volonté.',
   false,
 );
@@ -107,7 +107,7 @@ const Cigare = new GameObject(
   false,
 );
 const Flingue2 = new GameObject(
-  'Flingue',
+  'Flingue de El Sampico',
   'Comme le couteau du boucher ou la plume de l’écrivain : l’outil de travail.',
   false,
 );
@@ -171,7 +171,7 @@ const basicObjectsSebastiano = [RapportMorgue, GantsLatex, Cocaine];
 
 // Places
 const Poison1 = new GameObject(
-  'Fiole de poison',
+  'Petite fiole de poison',
   'Une fiole avec une tête de mort dessus dissimulée dans la table à chevet de Carla Gurzio. Cela ressemble à s\'y méprendre à du poison',
   true,
 );
