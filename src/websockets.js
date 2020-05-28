@@ -301,7 +301,7 @@ export const websockified = (ctx) => {
           games[gameId].getPlayerFromName(username)
             .then((p) => {
               p.setDisconnected();
-              games[gameId].sendSetupUpdate();
+              games[gameId].sendUpdate();
             }).catch();
         }
       }
