@@ -675,6 +675,7 @@ describe('websocket complete game creation and connection testing', () => {
         expect(data.status).to.equal('ok');
         expect(data.data.charactersName).to.be.an('array');
         expect(data.data.charactersName[0]).to.equal('Vito Falcaninio');
+        expect(data.data.charactersName.length).to.equal(1);
         expect(data.data.charactersPhotos).to.equal(null);
         done();
       });

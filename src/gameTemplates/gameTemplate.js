@@ -391,7 +391,7 @@ class GameTemplate {
     const data = {
       characterName: player.role.name,
       characterPhoto: null,
-      characterSummaryRole: player.role.summary,
+      characterSummaryRole: player.role.description,
       characterHints: player.inventory.filter((o) => o.isClue()),
       scenarioTitle: this.name,
       scenarioSummary: this.summary,
@@ -414,11 +414,13 @@ class GameTemplate {
   /**
    * Send the list of the roles names
    */
-  getPlayersPage() {
+  getPlayersPage(p) {
     return new Promise((resolve, reject) => {
       const playersName = [];
       this.players.forEach((player) => {
-        playersName.push(player.role.name);
+        if (player != p) {
+          playersName.push(player.role.name);
+        }
       });
       resolve(playersName);
       reject(new Error('A problem occured'));
@@ -654,7 +656,7 @@ class GameTemplate {
             this.sendOKToPlayer(websocket, 'getEventsPage', { events: this.events.filter((e) => e.hasBeenTriggered()) });
             break;
           case 'getPlayersPage':
-            this.getPlayersPage()
+            this.getPlayersPage(player)
               .then((playersName) => {
                 const data = {
                   charactersName: playersName,
