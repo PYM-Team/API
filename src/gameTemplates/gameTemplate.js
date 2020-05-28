@@ -554,7 +554,7 @@ class GameTemplate {
    */
   sendUpdate() {
     const playersToSend = [];
-    if (this.state == 'setup') {
+    if (this.status == 'setup') {
       this.players.forEach((player) => {
         playersToSend.push(player.getSetupSummary());
       });
@@ -633,6 +633,10 @@ class GameTemplate {
     this.sendOKToPlayer(player.socket, 'notification', { type, message });
   }
 
+  notificationToGm(type, message) {
+    this.sendOKToGm('notification', { type, message });
+  }
+
   // ############################## HANDLERS ######################################
 
   /**
@@ -693,6 +697,7 @@ class GameTemplate {
                     const data = {
                       choices,
                     };
+                    this.notificationToGm('info', `${player.role}`)
                     this.sendOKToPlayer(websocket, 'makeAction', data);
                   }
                 });
