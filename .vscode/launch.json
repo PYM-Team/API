@@ -17,7 +17,7 @@
         "--colors",
         "--timeout",
         "5000",
-        "--bail",
+        //"--bail",
         "./src/tests/test.parrain.js"
       ],
       "internalConsoleOptions": "openOnSessionStart",

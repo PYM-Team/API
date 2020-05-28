@@ -96,6 +96,15 @@ class GameTemplate {
     if (this.started) {
       this.sendErrorToGm('startGame', 'The game has already been started');
     } else {
+      // delete players with no role set
+      this.players.forEach((player) => {
+        if (player.role == null) {
+          if (player.socket != null) {
+            player.socket.close();
+          }
+          this.deletePlayer(player);
+        }
+      });
       this.initTime();
       this.started = true;
       this.setTriggers();
@@ -371,6 +380,25 @@ class GameTemplate {
   }
 
   // ################################ UTILS ########################################
+
+  /**
+   * Get a random Int under a max
+   * @param max The max + 1
+   */
+  getRandomInt(max) {
+    return Math.floor(Math.random() * Math.floor(max));
+  }
+
+  /**
+   * Delete the given player
+   * @param player The player to delete
+   */
+  deletePlayer(player) {
+    const index = this.players.indexOf(player);
+    if (index != -1) {
+      this.players.splice(index, 1);
+    }
+  }
 
   /**
    * initialise currentTime to 0

@@ -40,7 +40,7 @@ export class Player {
 
   /**
    * Set if the player is spied or not
-   * @param {Boolean} s spied
+   * @param {String} s spy player role name
    */
   setSpied(s) {
     this.spied = s;
@@ -146,7 +146,7 @@ export class Player {
   getNotClues() {
     const notClues = [];
     this.inventory.forEach((element) => {
-      if (element.clue == false) {
+      if (element.clue != true) {
         notClues.push(element);
       }
     });
