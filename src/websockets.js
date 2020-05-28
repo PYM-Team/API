@@ -99,6 +99,7 @@ function createGame(websocket, data) {
     games[newId] = lodash.cloneDeep(gameTemplates[data.templateName].default);
     games[newId].setDuration(validData.value.duration);
     games[newId].addGameMaster(websocket);
+    games[newId].setGameId(newId);
     const content = {
       type: 'createGame',
       status: 'ok',
