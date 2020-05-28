@@ -697,7 +697,7 @@ class GameTemplate {
                     const data = {
                       choices,
                     };
-                    this.notificationToGm('info', `${player.role}`)
+                    this.notificationToGm('info', `${player.role} veut faire l'action ${received.data.actionName}`);
                     this.sendOKToPlayer(websocket, 'makeAction', data);
                   }
                 });
@@ -722,6 +722,7 @@ class GameTemplate {
                       this.sendErrorToPlayer(websocket, 'actionResult', 'Could not trigger the effect');
                       return;
                     }
+                    this.notificationToGm('info', `${player.role} a fait l'action ${action.name}`);
                     this.sendOKToPlayer(websocket, 'actionResult', {});
                   }
                 });
