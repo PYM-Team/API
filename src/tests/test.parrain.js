@@ -48,7 +48,7 @@ describe('scenario testing', () => {
     let spyUse;
 
     const choices = [
-      ['Carla Gurzio'],
+      "['Carla Gurzio']",
     ];
 
     before((done) => {
@@ -172,7 +172,7 @@ describe('scenario testing', () => {
     let spyUse;
 
     const choices = [
-      ['Vito Falcaninio'],
+      "['Vito Falcaninio']",
     ];
 
     before((done) => {
@@ -226,8 +226,8 @@ describe('scenario testing', () => {
     let spyUse;
 
     const choices = [
-      ['Vito Falcaninio'],
-      ['Sebastiano Pechetto'],
+      "['Vito Falcaninio']",
+      "['Sebastiano Pechetto']",
     ];
 
     before((done) => {
@@ -251,6 +251,7 @@ describe('scenario testing', () => {
     after((done) => {
       scenario.deletePlayer(scenario.players[0]);
       scenario.deletePlayer(scenario.players[0]);
+      scenario.deletePlayer(scenario.players[0]);
       spyNotif.restore();
       spyUse.restore();
       done();
@@ -272,6 +273,111 @@ describe('scenario testing', () => {
 
     it('test Potins', (done) => {
       scenario.handlePlayerUpdate(null, genReq('actionResult', { actionName: 'Potins', choices }), payloadTiti);
+      expect(spyNotif).to.have.callCount(2);
+      expect(spyUse).to.have.callCount(1);
+      done();
+    });
+  });
+
+  describe('se proteger', () => {
+    let protec;
+    let spyNotif;
+    let spyUse;
+
+    const choices = [
+      '[]',
+    ];
+
+    before((done) => {
+      scenario.addPlayer('titi', 'pass', null);
+      scenario.handlePlayerUpdate(null, genReq('setRole', { roleName: 'Tommaso Giorgio' }), payloadTiti);
+
+      protec = scenario.players[0].role.actions.find((a) => a.name == 'Se protéger');
+      spyNotif = sinon.spy(scenario, 'notification');
+      spyUse = sinon.spy(protec, 'decreaseUseNb');
+      expect(protec).to.not.equal(undefined);
+
+      done();
+    });
+
+    after((done) => {
+      scenario.deletePlayer(scenario.players[0]);
+      spyNotif.restore();
+      spyUse.restore();
+      done();
+    });
+
+    beforeEach((done) => {
+      spyNotif.resetHistory();
+      spyUse.resetHistory();
+      done();
+    });
+
+    it('should return the choices', (done) => {
+      const choix = protec.send(scenario, scenario.players[0]);
+      expect(choix).to.be.an('array');
+      expect(choix.length).to.equal(0);
+      done();
+    });
+
+    it('test se proteger', (done) => {
+      scenario.handlePlayerUpdate(null, genReq('actionResult', { actionName: 'Se protéger', choices }), payloadTiti);
+      expect(scenario.players[0].protected).to.equal(true);
+      expect(spyUse).to.have.callCount(1);
+      done();
+    });
+  });
+
+  describe('guerir', () => {
+    let guerr;
+    let spyNotif;
+    let spyUse;
+
+    const choices = [
+      "['Vito Falcaninio']",
+    ];
+
+    before((done) => {
+      scenario.addPlayer('titi', 'pass', null);
+      scenario.handlePlayerUpdate(null, genReq('setRole', { roleName: 'Carla Gurzio' }), payloadTiti);
+
+      scenario.addPlayer('toto', 'pass', null);
+      scenario.handlePlayerUpdate(null, genReq('setRole', { roleName: 'Vito Falcaninio' }), payloadToto);
+
+      guerr = scenario.players[0].role.actions.find((a) => a.name == 'Guérir');
+      spyNotif = sinon.spy(scenario, 'notification');
+      spyUse = sinon.spy(guerr, 'decreaseUseNb');
+      expect(guerr).to.not.equal(undefined);
+
+      done();
+    });
+
+    after((done) => {
+      scenario.deletePlayer(scenario.players[0]);
+      scenario.deletePlayer(scenario.players[0]);
+      spyNotif.restore();
+      spyUse.restore();
+      done();
+    });
+
+    beforeEach((done) => {
+      spyNotif.resetHistory();
+      spyUse.resetHistory();
+      done();
+    });
+
+    it('should return the choices', (done) => {
+      const choix = guerr.send(scenario, scenario.players[0]);
+      expect(choix).to.be.an('array');
+      expect(choix.length).to.equal(1);
+      expect(choix[0]).to.have.keys(['message', 'possibilities', 'min', 'max']);
+      done();
+    });
+
+    it('test guerir', (done) => {
+      scenario.players[1].setPoisoned(true);
+      scenario.handlePlayerUpdate(null, genReq('actionResult', { actionName: 'Guérir', choices }), payloadTiti);
+      expect(scenario.players[1].poisoned).to.equal(false);
       expect(spyNotif).to.have.callCount(2);
       expect(spyUse).to.have.callCount(1);
       done();
