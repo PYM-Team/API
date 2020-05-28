@@ -7,12 +7,13 @@ import { Mission } from '../gameElements/modules/mission';
 import { Action } from '../gameElements/action';
 import { Place } from '../gameElements/place';
 import { Announcement } from '../gameElements/announcement';
-import { createGame } from '../database/controllers/games.controller';
+import { createGame, deleteGame, gameIdExist } from '../database/controllers/games.controller';
 
 import { sendMessageToSocket } from '../websockets';
 
 class GameTemplate {
   constructor(name) {
+    this.gameId = null;
     this.name = name || null;
     this.summary = null;
     this.description = null;
@@ -243,6 +244,14 @@ class GameTemplate {
     callback(new Error('No role matching role name'));
   }
 
+  /**
+   * Set game's id
+   * @param {Number} id the game id
+   */
+  setGameId(id) {
+    this.gameId = id;
+  }
+
   // ################################# ADDERS #####################################
 
   /**
@@ -356,10 +365,27 @@ class GameTemplate {
    * save the current game in the database
    */
   save() {
-    return new Promise((resolve) => {
-      createGame(this);
-      resolve();
-      // reject(new Error('Error while saving'));
+    return new Promise((resolve, reject) => {
+      gameIdExist(this.gameId)
+        .then((result) => {
+          if (result == true) {
+            deleteGame(this.gameId)
+              .then(() => {
+                createGame(this, this.gameId)
+                  .then(() => {
+                    resolve();
+                  });
+              });
+          } else {
+            createGame(this, this.gameId)
+              .then(() => {
+                resolve();
+              });
+          }
+        })
+        .catch((err) => {
+          reject(err);
+        });
     });
   }
 
@@ -520,7 +546,7 @@ class GameTemplate {
       });
       const data = {
         gameDescription: this.description,
-        gameId: this.name,
+        gameId: this.gameId,
         globalDuration: this.totalDuration,
         remainingDuration: this.currentTime,
         players: playersToSend,
