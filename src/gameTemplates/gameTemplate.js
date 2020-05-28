@@ -697,7 +697,7 @@ class GameTemplate {
                     const data = {
                       choices,
                     };
-                    this.notificationToGm('info', `${player.role} veut faire l'action ${received.data.actionName}`);
+                    this.notificationToGm('info', `${player.role.name} veut faire l'action ${received.data.actionName}`);
                     this.sendOKToPlayer(websocket, 'makeAction', data);
                   }
                 });
