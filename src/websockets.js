@@ -8,7 +8,7 @@ import lodash from 'lodash';
 
 const schema = Joi.object({
   type: Joi.string().alphanum().required(),
-  status: Joi.string().alphanum().required(), // TODO allow only ok and error
+  status: Joi.string().alphanum().required(),
   data: Joi.object().required(),
 }).unknown();
 
@@ -298,7 +298,13 @@ export const websockified = (ctx) => {
   });
 
   ctx.websocket.on('message', (event) => {
-    const received = JSON.parse(event); // TODO if not json
+    let received; // TODO if not json
+    try {
+      received = JSON.parse(event);
+    } catch (error) {
+      sendError(ctx.websocket, 'noType', 'Not a valid JSON object');
+      return;
+    }
 
     const valid = schema.validate(received);
     if (valid.error != undefined) {
