@@ -1,6 +1,7 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable no-console */
 import { initWS, websockified } from './websockets';
+import { initDB } from './database/database';
 
 const Koa = require('koa');
 const route = require('koa-route');
@@ -8,6 +9,7 @@ const websockify = require('koa-websocket');
 const cors = require('@koa/cors');
 
 initWS();
+initDB();
 
 const wsOptions = {};
 const app = websockify(new Koa(), wsOptions);
