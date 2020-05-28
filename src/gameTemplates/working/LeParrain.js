@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import GameTemplate from '../gameTemplate';
 import { GameObject } from '../../gameElements/gameObject';
 import { Place } from '../../gameElements/place';
@@ -273,44 +274,87 @@ const fouillerPiece = (game, you, result) => {
     });
 };
 const pickpocket = (game, you, result) => {
-  game.getPlayerFromRoleName(result[0][0])
-    .then((player) => {
-      if (player.protected == true) {
-        player.setProtected(false);
-      }
-      const a = getRandomInt(3);
-      let object = null;
-      let findableObjects;
-      if (a == 0 && player.getClues().length > 0) {
-        findableObjects = player.getClues();
-        object = findableObjects[Math.floor(Math.random() * findableObjects.length)];
-        const index = player.inventory.indexOf(object);
-        player.inventory.splice(index, 1);
-        game.notification(you, 'info', `Vous avez trouvez un objet intéressant dans les poches de ${player.role.name} : ${object.name}`);
-      } else if ((a == 1 && player.inventory.length > 0) || player.getClues().length == 0) {
-        findableObjects = player.getNotClues();
-        object = findableObjects[Math.floor(Math.random() * findableObjects.length)];
-        const index = player.inventory.indexOf(object);
-        player.inventory.splice(index, 1);
-        game.notification(you, 'info', `Vous avez trouvez un objet peu interessant dans les poches de ${player.role.name} : ${object.name}`);
-      } else if (a == 2) {
-        game.notification(player, 'warn', `${you.role.name} a essayé de vous faire les poches`);
-        game.notification(you, 'warn', `Vous avez été repérer en essayent de voler ${player.role.name}`);
-      } else {
-        game.notification(you, 'info', `Vous n'avez rien trouvé dans les poches de ${player.role.name}`);
-      }
-      if (you.spied != null) {
-        game.getPlayerFromRoleName(you.spied)
-          .then((spy) => {
-            if (object != null) {
-              game.notification(spy, 'info', `Vous avez aperçu ${you.role.name} voler ${object.name} à ${player.role.name}`);
-            } else {
-              game.notification(spy, 'info', `Vous avez aperçu ${you.role.name} essayer de voler ${player.role.name}, mais il ne lui a rien pris`);
-            }
-          });
-      }
-      you.role.actions.find((element) => element.name == 'Pickpocket').decreaseUseNb();
-    });
+  game.NgetPlayerFromRoleName(result[0][0], (err, player) => {
+    if (err != null) {
+      game.notification(player, 'info', 'He was protected');
+      return;
+    }
+    if (player.protected == true) {
+      player.setProtected(false);
+      return;
+    }
+    const a = getRandomInt(3);
+    let object = null;
+    let findableObjects;
+    if (a == 0 && player.getClues().length > 0) {
+      findableObjects = player.getClues();
+      object = findableObjects[Math.floor(Math.random() * findableObjects.length)];
+      const index = player.inventory.indexOf(object);
+      player.inventory.splice(index, 1);
+      game.notification(you, 'info', `Vous avez trouvez un objet intéressant dans les poches de ${player.role.name} : ${object.name}`);
+    } else if ((a == 1 && player.inventory.length > 0) || player.getClues().length == 0) {
+      findableObjects = player.getNotClues();
+      object = findableObjects[Math.floor(Math.random() * findableObjects.length)];
+      const index = player.inventory.indexOf(object);
+      player.inventory.splice(index, 1);
+      game.notification(you, 'info', `Vous avez trouvez un objet peu interessant dans les poches de ${player.role.name} : ${object.name}`);
+    } else if (a == 2) {
+      game.notification(player, 'warn', `${you.role.name} a essayé de vous faire les poches`);
+      game.notification(you, 'warn', `Vous avez été repérer en essayent de voler ${player.role.name}`);
+    } else {
+      game.notification(you, 'info', `Vous n'avez rien trouvé dans les poches de ${player.role.name}`);
+    }
+    if (you.spied != null) {
+      game.getPlayerFromRoleName(you.spied)
+        .then((spy) => {
+          if (object != null) {
+            game.notification(spy, 'info', `Vous avez aperçu ${you.role.name} voler ${object.name} à ${player.role.name}`);
+          } else {
+            game.notification(spy, 'info', `Vous avez aperçu ${you.role.name} essayer de voler ${player.role.name}, mais il ne lui a rien pris`);
+          }
+        });
+    }
+    you.role.actions.find((element) => element.name == 'Pickpocket').decreaseUseNb();
+  });
+  // game.getPlayerFromRoleName(result[0][0])
+  //   .then((player) => {
+  //     if (player.protected == true) {
+  //       player.setProtected(false);
+  //       return;
+  //     }
+  //     const a = getRandomInt(3);
+  //     let object = null;
+  //     let findableObjects;
+  //     if (a == 0 && player.getClues().length > 0) {
+  //       findableObjects = player.getClues();
+  //       object = findableObjects[Math.floor(Math.random() * findableObjects.length)];
+  //       const index = player.inventory.indexOf(object);
+  //       player.inventory.splice(index, 1);
+  //       game.notification(you, 'info', `Vous avez trouvez un objet intéressant dans les poches de ${player.role.name} : ${object.name}`);
+  //     } else if ((a == 1 && player.inventory.length > 0) || player.getClues().length == 0) {
+  //       findableObjects = player.getNotClues();
+  //       object = findableObjects[Math.floor(Math.random() * findableObjects.length)];
+  //       const index = player.inventory.indexOf(object);
+  //       player.inventory.splice(index, 1);
+  //       game.notification(you, 'info', `Vous avez trouvez un objet peu interessant dans les poches de ${player.role.name} : ${object.name}`);
+  //     } else if (a == 2) {
+  //       game.notification(player, 'warn', `${you.role.name} a essayé de vous faire les poches`);
+  //       game.notification(you, 'warn', `Vous avez été repérer en essayent de voler ${player.role.name}`);
+  //     } else {
+  //       game.notification(you, 'info', `Vous n'avez rien trouvé dans les poches de ${player.role.name}`);
+  //     }
+  //     if (you.spied != null) {
+  //       game.getPlayerFromRoleName(you.spied)
+  //         .then((spy) => {
+  //           if (object != null) {
+  //             game.notification(spy, 'info', `Vous avez aperçu ${you.role.name} voler ${object.name} à ${player.role.name}`);
+  //           } else {
+  //             game.notification(spy, 'info', `Vous avez aperçu ${you.role.name} essayer de voler ${player.role.name}, mais il ne lui a rien pris`);
+  //           }
+  //         });
+  //     }
+  //     you.role.actions.find((element) => element.name == 'Pickpocket').decreaseUseNb();
+  //   });
 };
 const espionner = (game, you, result) => {
   game.getPlayerFromRoleName(result[0][0])
