@@ -552,11 +552,17 @@ class GameTemplate {
   /**
    * Send update of connected players to the socket
    */
-  sendSetupUpdate() {
+  sendUpdate() {
     const playersToSend = [];
-    this.players.forEach((player) => {
-      playersToSend.push(player.getSetupSummary());
-    });
+    if (this.status == 'setup') {
+      this.players.forEach((player) => {
+        playersToSend.push(player.getSetupSummary());
+      });
+    } else {
+      this.players.forEach((player) => {
+        playersToSend.push(player.getOverviewSummary());
+      });
+    }
     const content = {
       type: 'updatePlayers',
       status: 'ok',
@@ -627,6 +633,10 @@ class GameTemplate {
     this.sendOKToPlayer(player.socket, 'notification', { type, message });
   }
 
+  notificationToGm(type, message) {
+    this.sendOKToGm('notification', { type, message });
+  }
+
   // ############################## HANDLERS ######################################
 
   /**
@@ -655,7 +665,7 @@ class GameTemplate {
                 this.sendErrorToPlayer(websocket, 'setRole', err.message);
               } else {
                 this.sendOKToPlayer(websocket, 'setRole', {});
-                this.sendSetupUpdate();
+                this.sendUpdate();
               }
             });
             break;
@@ -687,6 +697,7 @@ class GameTemplate {
                     const data = {
                       choices,
                     };
+                    this.notificationToGm('info', `${player.role}`)
                     this.sendOKToPlayer(websocket, 'makeAction', data);
                   }
                 });

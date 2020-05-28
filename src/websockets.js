@@ -9,7 +9,7 @@ import lodash from 'lodash';
 import { NODE_ENV } from './config';
 import { getAllGames } from './database/controllers/games.controller';
 
-const MAX_REQUEST = 30;
+const MAX_REQUEST = 500;
 
 const schema = Joi.object({
   type: Joi.string().alphanum().required(),
@@ -301,7 +301,7 @@ export const websockified = (ctx) => {
           games[gameId].getPlayerFromName(username)
             .then((p) => {
               p.setDisconnected();
-              games[gameId].sendSetupUpdate();
+              games[gameId].sendUpdate();
             }).catch();
         }
       }
