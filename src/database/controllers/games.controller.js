@@ -18,10 +18,22 @@ export function getGame(gameToGet) {
   });
 }
 
-export function createGame(gameToCreate) {
+export function gameIdExist(aGameId) {
+  return new Promise((resolve) => {
+    Game.exists({ gameId: aGameId })
+      .then((result) => {
+        resolve(result);
+      })
+      .catch((err) => {
+        resolve(err);
+      });
+  });
+}
+
+export function createGame(gameToCreate, aGameId) {
   // generating the random id;
   return new Promise((resolve) => {
-    Game({ game: gameToCreate }).save()
+    Game({ game: gameToCreate, gameId: aGameId }).save()
       .then(() => {
         resolve();
       })
@@ -31,9 +43,9 @@ export function createGame(gameToCreate) {
   });
 }
 
-export function deleteGame(gameToDelete) {
+export function deleteGame(aGameId) {
   return new Promise((resolve) => {
-    Game.deleteOne({ game: gameToDelete })
+    Game.deleteOne({ gameId: aGameId })
       .then(() => {
         resolve();
       })
