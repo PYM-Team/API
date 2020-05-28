@@ -6,6 +6,8 @@ import Joi from '@hapi/joi';
 import jwt from 'jsonwebtoken';
 import lodash from 'lodash';
 
+const MAX_REQUEST = 30;
+
 const schema = Joi.object({
   type: Joi.string().alphanum().required(),
   status: Joi.string().alphanum().required(),
@@ -282,6 +284,8 @@ export const websockified = (ctx) => {
   let gameId = null;
   let entity = null;
   let username = null;
+  let connections = 0;
+  let lastDate = new Date();
 
   ctx.websocket.on('close', () => {
     if (gameId != null && entity != null) {
@@ -298,7 +302,22 @@ export const websockified = (ctx) => {
   });
 
   ctx.websocket.on('message', (event) => {
-    let received; // TODO if not json
+    // test max connections
+    if (new Date().getTime() - 60000 < lastDate.getTime()) {
+      connections += 1;
+      console.log(connections);
+      if (connections > MAX_REQUEST) {
+        sendError(ctx.websocket, 'maxRequest', `You have exceeded the maximum of ${MAX_REQUEST} connections per minute`);
+        ctx.websocket.close();
+        return;
+      }
+    } else {
+      lastDate = new Date();
+      connections = 0;
+    }
+
+    // sanitize input
+    let received;
     try {
       received = JSON.parse(event);
     } catch (error) {
