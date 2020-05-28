@@ -9,7 +9,7 @@ import lodash from 'lodash';
 import { NODE_ENV } from './config';
 import { getAllGames } from './database/controllers/games.controller';
 
-const MAX_REQUEST = 30;
+const MAX_REQUEST = 500;
 
 const schema = Joi.object({
   type: Joi.string().alphanum().required(),
