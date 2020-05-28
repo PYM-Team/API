@@ -383,4 +383,80 @@ describe('scenario testing', () => {
       done();
     });
   });
+
+  describe('refroidir', () => {
+    let refroi;
+    let spyNotif;
+    let spyUse;
+
+    const choices = [
+      "['Carla Gurzio']",
+    ];
+
+    before((done) => {
+      scenario.addPlayer('titi', 'pass', null);
+      scenario.handlePlayerUpdate(null, genReq('setRole', { roleName: 'Vito Falcaninio' }), payloadTiti);
+
+      scenario.addPlayer('toto', 'pass', null);
+      scenario.handlePlayerUpdate(null, genReq('setRole', { roleName: 'Carla Gurzio' }), payloadToto);
+
+      refroi = scenario.players[0].role.actions.find((a) => a.name == 'Refroidir');
+      spyNotif = sinon.spy(scenario, 'notification');
+      spyUse = sinon.spy(refroi, 'decreaseUseNb');
+      expect(guerr).to.not.equal(undefined);
+
+      done();
+    });
+
+    after((done) => {
+      scenario.deletePlayer(scenario.players[0]);
+      scenario.deletePlayer(scenario.players[0]);
+      spyNotif.restore();
+      spyUse.restore();
+      done();
+    });
+
+    beforeEach((done) => {
+      spyNotif.resetHistory();
+      spyUse.resetHistory();
+      done();
+    });
+
+    it('should return the choices', (done) => {
+      const choix = refroi.send(scenario, scenario.players[0]);
+      expect(choix).to.be.an('array');
+      expect(choix.length).to.equal(1);
+      expect(choix[0]).to.have.keys(['message', 'possibilities', 'min', 'max']);
+      done();
+    });
+
+    it('should verify the refroidir effect when protected', (done) => {
+      scenario.players[1].setProtected(true);
+      scenario.handlePlayerUpdate(null, genReq('actionResult', { actionName: 'Refroidir', choices }), payloadTiti);
+      expect(scenario.players[1].getProperties().protected).to.equal(false);
+      expect(spyNotif).to.be.calledOnceWith(scenario.players[0]);
+      expect(spyUse).to.have.callCount(1);
+      done();
+    });
+
+    it('should verify the refroidir effect, random = 0', (done) => {
+      const floor = sinon.stub(Math, 'floor').returns(0);
+      scenario.handlePlayerUpdate(null, genReq('actionResult', { actionName: 'Refroidir', choices }), payloadTiti);
+      expect(scenario.players[1].getProperties().alive).to.equal(false);
+      expect(spyNotif).to.have.callCount(2);
+      expect(spyUse).to.have.callCount(1);
+      floor.restore();
+      done();
+    });
+
+    it('should verify the refroidir effect, random = 1', (done) => {
+      const randInt = sinon.stub(scenario, 'getRandomInt').returns(1);
+      scenario.handlePlayerUpdate(null, genReq('actionResult', { actionName: 'Refroidir', choices }), payloadTiti);
+      expect(scenario.players[1].getProperties().alive).to.equal(true);
+      expect(spyNotif).to.have.callCount(2);
+      expect(spyUse).to.have.callCount(1);
+      randInt.restore();
+      done();
+    });
+  });
 });
