@@ -391,7 +391,7 @@ class GameTemplate {
     const data = {
       characterName: player.role.name,
       characterPhoto: null,
-      characterSummaryRole: player.role.summary,
+      characterSummaryRole: player.role.description,
       characterHints: player.inventory.filter((o) => o.isClue()),
       scenarioTitle: this.name,
       scenarioSummary: this.summary,
