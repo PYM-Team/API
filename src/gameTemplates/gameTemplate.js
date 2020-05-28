@@ -7,6 +7,7 @@ import { Mission } from '../gameElements/modules/mission';
 import { Action } from '../gameElements/action';
 import { Place } from '../gameElements/place';
 import { Announcement } from '../gameElements/announcement';
+import { createGame } from '../database/controllers/games.controller';
 
 import { sendMessageToSocket } from '../websockets';
 
@@ -351,8 +352,12 @@ class GameTemplate {
     this.currentTime = 0;
   }
 
+  /**
+   * save the current game in the database
+   */
   save() {
     return new Promise((resolve) => {
+      createGame(this);
       resolve();
       // reject(new Error('Error while saving'));
     });
