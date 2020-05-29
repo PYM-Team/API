@@ -195,7 +195,9 @@ class GameTemplate {
   }
 
   NgetPlaceFromName(name, callback) {
+    console.log('bonjour');
     const pl = this.places.find((p) => p.name == name);
+    console.log(pl);
     if (pl == undefined) {
       callback(new Error('No place matching this name'), null);
     }
