@@ -11,7 +11,7 @@ const cors = require('@koa/cors');
 initWS();
 initDB();
 
-const wsOptions = {};
+const wsOptions = { KeepAliveInterval: 10 };
 const app = websockify(new Koa(), wsOptions);
 app.ws.use(route.all('/', (ctx) => websockified(ctx)));
 
