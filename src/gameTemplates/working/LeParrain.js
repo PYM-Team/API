@@ -19,15 +19,21 @@ currentGame.setSummary('Don Giorgio, baron de la drogue et parrain de la pègre 
 // Events
 
 currentGame.addEvent(
-  'Mort du parrain',
+  'Début de la soirée',
   0,
-  'Le parrrain est mort ! C\'est chaud frère',
+  'Un serviteur entre dans le salon où vous vous trouvez assis autour de la table et prend la parole : Vous voilà tous réunis ce soir selon la volonté de feu Don Giorgio. Selon son ultime désir je me dois de vous annoncer la chose suivante : l\’un de vous à tué Don Giorgio. Vous êtes ici présents pour démasquer le coupable de l\’assassinat de notre grand parrain. L\’héritage est formel : le pouvoir et la richesse qui vous attend dépendra entièrement du résultat de votre enquête ce soir. Bonne chance.',
 );
 
 currentGame.addEvent(
-  'Resurrection du parrain',
-  1,
-  'Comme jesus tout est bien qui finit bien',
+  'Appel téléphonique',
+  0,
+  'Un driiiiiiiiiing résonne dans une pièce voisine et le serviteur entre dans le salon : "Un appel urgent pour vous monsieur Francesco" ',
+);
+
+currentGame.addEvent(
+  'Nouveauté !',
+  0.75,
+  'Le serviteur du début de soirée rentre de manière soudaine dans la pièce et annonce : “Je me dois d’ajouter à ma déclaration précédente que le testament a été relu. Si le coupable n’est pas découvert personne ne touchera l\’héritage et l\’intégralité de la fortune de feu Don Giorgio sera reversé, selon sa volonté, à l’orphelinat local. Ceci étant dit, je vous laisse continuer.”',
 );
 
 export function getRandomInt(max) {
