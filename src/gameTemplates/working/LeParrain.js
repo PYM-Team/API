@@ -57,7 +57,7 @@ const FlasqueTequila = new GameObject(
   false,
 );
 const Flingue1 = new GameObject(
-  'Flingue de Vito',
+  'Flingue de El Sampico',
   'Pour El Sampico,cette arme est une extension de sa volonté.',
   false,
 );
@@ -107,7 +107,7 @@ const Cigare = new GameObject(
   false,
 );
 const Flingue2 = new GameObject(
-  'Flingue de El Sampico',
+  'Flingue de Vito',
   'Comme le couteau du boucher ou la plume de l’écrivain : l’outil de travail.',
   false,
 );
@@ -176,7 +176,7 @@ const Poison1 = new GameObject(
   true,
 );
 const Poison2 = new GameObject(
-  'Fiole de Poison',
+  'Fiole de poison',
   'Une fiole avec une tête de mort dessus. Pas étonnant de trouver ce genre de produits dangereux dans un laboratoire',
   false,
 );
@@ -247,32 +247,37 @@ const relationsSebastiano = {
  * @param {*} place prend en argument l'objet Place qui correspond à la pièce voulant être fouillée
  */
 const fouillerPiece = (game, you, result) => {
-  game.getPlaceFromName(result[0][0])
-    .then((place) => {
-      const a = getRandomInt(2);
-      let object = null;
-      if (place.name == 'Le vestibule') {
-        if (a == 0) {
-          game.notification(you, 'info', 'En regardant le corps du parrain, vous ne trouvez aucune de strangulation ou d\'impacte de balle. Mais la drôle de couleur de son visage et la bave sortant de sa bouche vus font penser à un empoisonnement...');
-        }
-      } else if (place.objects.length > 0) {
-        object = place.objects[Math.floor(Math.random() * place.objects.length)];
-        const index = place.objects.indexOf(object);
-        place.objects.splice(index, 1);
-        game.notification(you, 'info', `Vous avez trouvez un objet dans ${place.role.name} : ${object.name}`);
-      } else {
-        game.notification(you, 'info', 'Vous n\'avez rien trouvé de particulier');
+  game.NgetPlaceFromName(result[0], (err, place) => {
+    if (err != null) {
+      return;
+    }
+    console.log(place);
+    const a = game.getRandomInt(2);
+    let object = null;
+    if (place.name == 'Le vestibule') {
+      if (a == 0) {
+        game.notification(you, 'info', 'En regardant le corps du parrain, vous ne trouvez aucune de strangulation ou d\'impacte de balle. Mais la drôle de couleur de son visage et la bave sortant de sa bouche vus font penser à un empoisonnement...');
       }
-      if (you.spied != null) {
-        game.getPlayerFromRoleName(you.spied)
-          .then((spy) => {
-            if (object != null) {
-              game.notification(spy, 'info', `Vous avez aperçu ${you.role.name} rammasser ${object.name} dans ${place.name}`);
-            }
-          });
-      }
-      you.role.actions.find((element) => element.name == 'Fouiller une pièce').decreaseUseNb();
-    });
+    } else if (place.objects.length > 0) {
+      console.log(place);
+      object = place.objects[Math.floor(Math.random() * place.objects.length)];
+      const index = place.objects.indexOf(object);
+      place.objects.splice(index, 1);
+      you.inventory.push(object);
+      game.notification(you, 'info', `Vous avez trouvez un objet dans ${place.role.name} : ${object.name}`);
+    } else {
+      game.notification(you, 'info', 'Vous n\'avez rien trouvé de particulier');
+    }
+    if (you.spied != null) {
+      game.getPlayerFromRoleName(you.spied)
+        .then((spy) => {
+          if (object != null) {
+            game.notification(spy, 'info', `Vous avez aperçu ${you.role.name} rammasser ${object.name} dans ${place.name}`);
+          }
+        });
+    }
+    you.role.actions.find((element) => element.name == 'Fouiller une pièce').decreaseUseNb();
+  });
 };
 const pickpocket = (game, you, result) => {
   game.NgetPlayerFromRoleName(result[0], (err, player) => {
