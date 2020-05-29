@@ -194,6 +194,14 @@ class GameTemplate {
     });
   }
 
+  NgetPlaceFromName(name, callback) {
+    const pl = this.places.find((p) => p.name == name);
+    if (pl == undefined) {
+      callback(new Error('No place matching this name'), null);
+    }
+    callback(null, pl);
+  }
+
   getPlayersObjectFromName(player, objectName) {
     return new Promise((resolve, reject) => {
       player.inventory.forEach((object) => {

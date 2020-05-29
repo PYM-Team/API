@@ -57,7 +57,7 @@ const FlasqueTequila = new GameObject(
   false,
 );
 const Flingue1 = new GameObject(
-  'Flingue de Vito',
+  'Flingue de El Sampico',
   'Pour El Sampico,cette arme est une extension de sa volonté.',
   false,
 );
@@ -107,7 +107,7 @@ const Cigare = new GameObject(
   false,
 );
 const Flingue2 = new GameObject(
-  'Flingue de El Sampico',
+  'Flingue de Vito',
   'Comme le couteau du boucher ou la plume de l’écrivain : l’outil de travail.',
   false,
 );
@@ -176,7 +176,7 @@ const Poison1 = new GameObject(
   true,
 );
 const Poison2 = new GameObject(
-  'Fiole de Poison',
+  'Fiole de poison',
   'Une fiole avec une tête de mort dessus. Pas étonnant de trouver ce genre de produits dangereux dans un laboratoire',
   false,
 );
@@ -247,32 +247,37 @@ const relationsSebastiano = {
  * @param {*} place prend en argument l'objet Place qui correspond à la pièce voulant être fouillée
  */
 const fouillerPiece = (game, you, result) => {
-  game.getPlaceFromName(result[0][0])
-    .then((place) => {
-      const a = getRandomInt(2);
-      let object = null;
-      if (place.name == 'Le vestibule') {
-        if (a == 0) {
-          game.notification(you, 'info', 'En regardant le corps du parrain, vous ne trouvez aucune de strangulation ou d\'impacte de balle. Mais la drôle de couleur de son visage et la bave sortant de sa bouche vus font penser à un empoisonnement...');
-        }
-      } else if (place.objects.length > 0) {
-        object = place.objects[Math.floor(Math.random() * place.objects.length)];
-        const index = place.objects.indexOf(object);
-        place.objects.splice(index, 1);
-        game.notification(you, 'info', `Vous avez trouvez un objet dans ${place.role.name} : ${object.name}`);
-      } else {
-        game.notification(you, 'info', 'Vous n\'avez rien trouvé de particulier');
+  game.NgetPlaceFromName(result[0], (err, place) => {
+    if (err != null) {
+      return;
+    }
+    console.log(place);
+    const a = game.getRandomInt(2);
+    let object = null;
+    if (place.name == 'Le vestibule') {
+      if (a == 0) {
+        game.notification(you, 'info', 'En regardant le corps du parrain, vous ne trouvez aucune de strangulation ou d\'impacte de balle. Mais la drôle de couleur de son visage et la bave sortant de sa bouche vus font penser à un empoisonnement...');
       }
-      if (you.spied != null) {
-        game.getPlayerFromRoleName(you.spied)
-          .then((spy) => {
-            if (object != null) {
-              game.notification(spy, 'info', `Vous avez aperçu ${you.role.name} rammasser ${object.name} dans ${place.name}`);
-            }
-          });
-      }
-      you.role.actions.find((element) => element.name == 'Fouiller une pièce').decreaseUseNb();
-    });
+    } else if (place.objects.length > 0) {
+      console.log(place);
+      object = place.objects[Math.floor(Math.random() * place.objects.length)];
+      const index = place.objects.indexOf(object);
+      place.objects.splice(index, 1);
+      you.inventory.push(object);
+      game.notification(you, 'info', `Vous avez trouvez un objet dans ${place.role.name} : ${object.name}`);
+    } else {
+      game.notification(you, 'info', 'Vous n\'avez rien trouvé de particulier');
+    }
+    if (you.spied != null) {
+      game.getPlayerFromRoleName(you.spied)
+        .then((spy) => {
+          if (object != null) {
+            game.notification(spy, 'info', `Vous avez aperçu ${you.role.name} rammasser ${object.name} dans ${place.name}`);
+          }
+        });
+    }
+    you.role.actions.find((element) => element.name == 'Fouiller une pièce').decreaseUseNb();
+  });
 };
 const pickpocket = (game, you, result) => {
   game.NgetPlayerFromRoleName(result[0], (err, player) => {
@@ -280,7 +285,7 @@ const pickpocket = (game, you, result) => {
       return;
     }
     if (player.protected == true) {
-      game.notification(you, 'info', 'He was protected');
+      game.notification(you, 'info', 'Il était protégé');
       player.setProtected(false);
     } else {
       const a = game.getRandomInt(3);
@@ -370,38 +375,39 @@ const potins = (game, you, result) => {
 };
 
 const refroidir = (game, you, result) => {
-  game.getPlayerFromRoleName(result[0][0])
-    .then((player) => {
-      if (player.protected == true) {
-        player.setProtected(false);
+  game.NgetPlayerFromRoleName(result[0], (err, pl) => {
+    if (pl.protected) {
+      game.notification(you, 'info', 'Il était protégé');
+      pl.setProtected(false);
+    } else {
+      const a = game.getRandomInt(2);
+      if (a == 0) {
+        pl.setAlive(false);
+        game.notification(you, 'info', `Vous avez tué ${pl.role.name}`);
+        game.notification(pl, 'death', `Vous avez été tué par ${you.role.name}`);
+        game.players.forEach((element) => {
+          if (element != you && element != pl) {
+            game.notification(element, 'info', `${you.role.name} a tué ${pl.role.name}`);
+          }
+        });
       } else {
-        const a = getRandomInt(2);
-        if (a == 0) {
-          player.setAlive(false);
-          game.notification(you, 'info', `Vous avez tué ${player.role.name}`);
-          game.notification(player, 'death', `Vous avez été tué par ${you.role.name}`);
-          game.players.forEach((element) => {
-            if (element != you && element != player) {
-              game.notification(element, 'info', `${you.role.name} a tué ${player.role.name}`);
-            }
-          });
-        } else {
-          game.notification(you, 'info', `Vous n'avez pas réussi à tuer ${player.role.name}`);
-          game.players.forEach((element) => {
-            if (element != you && element != player) {
-              game.notification(element, 'info', `${you.role.name} a essayé de tuer ${player.role.name}, sans succès`);
-            }
-          });
-        }
-        if (you.spied != null) {
-          game.getPlayerFromRoleName(you.spied)
-            .then((spy) => {
-              game.notification(spy, 'info', `Vous avez trouvé ${you.role.name} en train de d'essayer de tuer ${player.role.name}`);
-            });
-        }
-        you.role.actions.find((element) => element.name == 'Refroidir').decreaseUseNb();
+        game.notification(you, 'info', `Vous n'avez pas réussi à tuer ${pl.role.name}`);
+        game.notification(pl, 'info', `${you.role.name} a essayé de  vous tuer, sans succès`);
+        game.players.forEach((element) => {
+          if (element != you && element != pl) {
+            game.notification(element, 'info', `${you.role.name} a essayé de tuer ${pl.role.name}, sans succès`);
+          }
+        });
       }
-    });
+      if (you.spied != null) {
+        game.getPlayerFromRoleName(you.spied)
+          .then((spy) => {
+            game.notification(spy, 'info', `Vous avez trouvé ${you.role.name} en train de d'essayer de tuer ${pl.role.name}`);
+          });
+      }
+    }
+    you.role.actions.find((element) => element.name == 'Refroidir').decreaseUseNb();
+  });
 };
 const empoisonner = (game, you, result) => {
   game.getPlayerFromRoleName(result[0][0])

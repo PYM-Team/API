@@ -387,7 +387,7 @@ describe('scenario testing', () => {
     let spyUse;
 
     const choices = [
-      "['Carla Gurzio']",
+      'Carla Gurzio',
     ];
 
     before((done) => {
@@ -397,15 +397,18 @@ describe('scenario testing', () => {
       scenario.addPlayer('toto', 'pass', null);
       scenario.handlePlayerUpdate(null, genReq('setRole', { roleName: 'Carla Gurzio' }), payloadToto);
 
+      scenario.addPlayer('tata', 'pass', null);
+
       refroi = scenario.players[0].role.actions.find((a) => a.name == 'Refroidir');
       spyNotif = sinon.spy(scenario, 'notification');
       spyUse = sinon.spy(refroi, 'decreaseUseNb');
-      expect(guerr).to.not.equal(undefined);
+      expect(refroi).to.not.equal(undefined);
 
       done();
     });
 
     after((done) => {
+      scenario.deletePlayer(scenario.players[0]);
       scenario.deletePlayer(scenario.players[0]);
       scenario.deletePlayer(scenario.players[0]);
       spyNotif.restore();
@@ -430,7 +433,7 @@ describe('scenario testing', () => {
     it('should verify the refroidir effect when protected', (done) => {
       scenario.players[1].setProtected(true);
       scenario.handlePlayerUpdate(null, genReq('actionResult', { actionName: 'Refroidir', choices }), payloadTiti);
-      expect(scenario.players[1].getProperties().protected).to.equal(false);
+      expect(scenario.players[1].protected).to.equal(false);
       expect(spyNotif).to.be.calledOnceWith(scenario.players[0]);
       expect(spyUse).to.have.callCount(1);
       done();
@@ -439,20 +442,84 @@ describe('scenario testing', () => {
     it('should verify the refroidir effect, random = 0', (done) => {
       const floor = sinon.stub(Math, 'floor').returns(0);
       scenario.handlePlayerUpdate(null, genReq('actionResult', { actionName: 'Refroidir', choices }), payloadTiti);
-      expect(scenario.players[1].getProperties().alive).to.equal(false);
-      expect(spyNotif).to.have.callCount(2);
+      expect(scenario.players[1].alive).to.equal(false);
+      expect(spyNotif).to.have.callCount(3);
       expect(spyUse).to.have.callCount(1);
       floor.restore();
       done();
     });
 
     it('should verify the refroidir effect, random = 1', (done) => {
+      scenario.players[1].setAlive(true);
       const randInt = sinon.stub(scenario, 'getRandomInt').returns(1);
       scenario.handlePlayerUpdate(null, genReq('actionResult', { actionName: 'Refroidir', choices }), payloadTiti);
-      expect(scenario.players[1].getProperties().alive).to.equal(true);
-      expect(spyNotif).to.have.callCount(2);
+      expect(scenario.players[1].alive).to.equal(true);
+      expect(spyNotif).to.have.callCount(3);
       expect(spyUse).to.have.callCount(1);
       randInt.restore();
+      done();
+    });
+  });
+
+  describe('fouiller une pièce', () => {
+    let fouiller;
+    let spyNotif;
+    let spyUse;
+
+    const choices1 = [
+      'Le vestibule',
+    ];
+
+    const choices2 = [
+      'La chambre du parrain',
+    ];
+
+    before((done) => {
+      scenario.addPlayer('titi', 'pass', null);
+      scenario.handlePlayerUpdate(null, genReq('setRole', { roleName: 'Vito Falcaninio' }), payloadTiti);
+
+      fouiller = scenario.players[0].role.actions.find((a) => a.name == 'Fouiller une pièce');
+      spyNotif = sinon.spy(scenario, 'notification');
+      spyUse = sinon.spy(fouiller, 'decreaseUseNb');
+      expect(fouiller).to.not.equal(undefined);
+
+      done();
+    });
+
+    after((done) => {
+      scenario.deletePlayer(scenario.players[0]);
+      spyNotif.restore();
+      spyUse.restore();
+      done();
+    });
+
+    beforeEach((done) => {
+      spyNotif.resetHistory();
+      spyUse.resetHistory();
+      done();
+    });
+
+    it('should verify the fouiller une pièce effect, random = 0 and Le vestibule', (done) => {
+      const floor = sinon.stub(Math, 'floor').returns(0);
+      scenario.handlePlayerUpdate(null, genReq('actionResult', { actionName: 'Fouiller une pièce', choices1 }), payloadTiti);
+      expect(spyNotif).to.have.callCount(0);
+      expect(spyUse).to.have.callCount(0);
+      floor.restore();
+      done();
+    });
+
+    it('should verify the fouiller une pièce effect in a place with objects', (done) => {
+      scenario.handlePlayerUpdate(null, genReq('actionResult', { actionName: 'Fouiller une pièce', choices2 }), payloadTiti);
+      expect(scenario.players[0].inventory
+        .find((o) => o.name == 'Petite fiole de poison'))
+        .to.not.equal(undefined);
+
+      expect(scenario.places[0].objects
+        .find((o) => o.name == 'Petite fiole de poison'))
+        .to.equal(undefined);
+
+      expect(spyNotif).to.have.callCount(1);
+      expect(spyUse).to.have.callCount(1);
       done();
     });
   });
