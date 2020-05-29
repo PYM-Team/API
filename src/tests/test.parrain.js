@@ -54,11 +54,13 @@ describe('scenario testing', () => {
     before((done) => {
       // create a first player
       scenario.addPlayer('toto', 'pass', null);
-      scenario.handlePlayerUpdate(null, genReq('setRole', { roleName: 'Vito Falcaninio' }), payloadToto);
+      scenario.handleGmUpdate(null, genReq('setPlayerRole', { playerName: 'toto', roleName: 'Vito Falcaninio' }));
 
       // create a second player
       scenario.addPlayer('titi', 'pass', null);
-      scenario.handlePlayerUpdate(null, genReq('setRole', { roleName: 'Carla Gurzio' }), payloadTiti);
+      scenario.handleGmUpdate(null, genReq('setPlayerRole', { playerName: 'titi', roleName: 'Carla Gurzio' }));
+
+      console.log(scenario.players[0].role);
 
       pick = scenario.players[0].role.actions.find((a) => a.name == 'Pickpocket');
       spyNotif = sinon.spy(scenario, 'notification');
@@ -510,6 +512,7 @@ describe('scenario testing', () => {
 
     it('should verify the fouiller une pièce effect in a place with objects', (done) => {
       scenario.handlePlayerUpdate(null, genReq('actionResult', { actionName: 'Fouiller une pièce', choices2 }), payloadTiti);
+
       expect(scenario.players[0].inventory
         .find((o) => o.name == 'Petite fiole de poison'))
         .to.not.equal(undefined);
