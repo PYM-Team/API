@@ -222,6 +222,28 @@ describe('websocket complete game creation and connection testing', () => {
     });
   });
 
+  describe('test setFirstPlayerRole', () => {
+    it('should set the player role and respond ok', (done) => {
+      const content = {
+        type: 'setPlayerRole',
+        status: 'ok',
+        token: gmToken,
+        data: {
+          playerName: 'toto',
+          roleName: 'Vito Falcaninio',
+        },
+      };
+      serverws.send(JSON.stringify(content));
+
+      serverws.once('message', (event) => {
+        const data = JSON.parse(event);
+        expect(data.type).to.be.equal('setPlayerRole');
+        expect(data.status).to.equal('ok');
+        done();
+      });
+    });
+  });
+
   describe('Authenticated player wants his home page', () => {
     it('should respond the right informations', (done) => {
       const content = {
@@ -432,6 +454,25 @@ describe('websocket complete game creation and connection testing', () => {
     });
   });
 
+  describe('test startGame', () => {
+    it('should return ok', (done) => {
+      const content = {
+        type: 'startGame',
+        status: 'ok',
+        token: gmToken,
+        data: {},
+      };
+      serverws.send(JSON.stringify(content));
+
+      serverws.once('message', (event) => {
+        const data = JSON.parse(event);
+        expect(data.type).to.equal('startGame');
+        expect(data.status).to.equal('ok');
+        done();
+      });
+    });
+  });
+
   describe('test makeAction', () => {
     it('should handle the action and respond makeAction', (done) => {
       const content = {
@@ -499,25 +540,6 @@ describe('websocket complete game creation and connection testing', () => {
     });
   });
 
-  describe('test startGame', () => {
-    it('should return ok', (done) => {
-      const content = {
-        type: 'startGame',
-        status: 'ok',
-        token: gmToken,
-        data: {},
-      };
-      serverws.send(JSON.stringify(content));
-
-      serverws.once('message', (event) => {
-        const data = JSON.parse(event);
-        expect(data.type).to.equal('startGame');
-        expect(data.status).to.equal('ok');
-        done();
-      });
-    });
-  });
-
   describe('test pause', () => {
     it('should return ok', (done) => {
       const content = {
@@ -554,25 +576,6 @@ describe('websocket complete game creation and connection testing', () => {
         expect(data.type).to.equal('resume');
         expect(data.status).to.equal('ok');
         expect(data.data.currentTime).to.equal(3590);
-        done();
-      });
-    });
-  });
-
-  describe('test stopGame', () => {
-    it('should return ok', (done) => {
-      const content = {
-        type: 'stopGame',
-        status: 'ok',
-        token: gmToken,
-        data: {},
-      };
-      serverws.send(JSON.stringify(content));
-
-      serverws.once('message', (event) => {
-        const data = JSON.parse(event);
-        expect(data.type).to.equal('stopGame');
-        expect(data.status).to.equal('ok');
         done();
       });
     });
@@ -807,6 +810,25 @@ describe('websocket complete game creation and connection testing', () => {
         expect(data.data.characterThoughts).to.be.an('string');
         expect(data.data.characterRole).to.equal('Sebastiano Pechetto');
         expect(data.data.characterThoughts).to.equal('Un atout indispensable. Je ne peux tout simplement pas être en mauvais termes avec lui si je veux gérer une mafia digne de ce nom.');
+        done();
+      });
+    });
+  });
+
+  describe('test stopGame', () => {
+    it('should return ok', (done) => {
+      const content = {
+        type: 'stopGame',
+        status: 'ok',
+        token: gmToken,
+        data: {},
+      };
+      serverws.send(JSON.stringify(content));
+
+      serverws.once('message', (event) => {
+        const data = JSON.parse(event);
+        expect(data.type).to.equal('stopGame');
+        expect(data.status).to.equal('ok');
         done();
       });
     });

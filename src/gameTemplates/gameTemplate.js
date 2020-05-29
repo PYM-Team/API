@@ -273,7 +273,7 @@ class GameTemplate {
    */
   setPlayerRolePref(player, roleName, callback) {
     if (Object.keys(this.roles).includes(roleName)) {
-      player.setRole(this.roles[roleName]); // TODO chang this
+      // //player.setRole(this.roles[roleName]); // TODO chang this
       player.setRolePref(roleName);
       callback(null);
       return;
@@ -659,6 +659,78 @@ class GameTemplate {
     this.players.forEach((player) => {
       error = false;
       if (player.name == tokenPayload.user && player.password == tokenPayload.pass) {
+        if (!this.started) {
+          if (received.type == 'setRole') {
+            this.setPlayerRolePref(player, received.data.roleName, (err) => {
+              if (err != null) {
+                this.sendErrorToPlayer(websocket, 'setRole', err.message);
+              } else {
+                this.sendOKToPlayer(websocket, 'setRole', {});
+                this.sendUpdate();
+              }
+            });
+          }
+        } else if (!this.paused) { // action made only if game is started / not paused
+          switch (received.type) {
+            case 'makeAction':
+              if (player.role == null) {
+                this.sendErrorToPlayer(websocket, 'makeAction', 'The specified player has no role');
+              } else {
+                let noAction = true;
+                if (player.role.actions != null) {
+                  player.role.actions.forEach((action) => {
+                    if (action.name == received.data.actionName) {
+                      noAction = false;
+                      let choices = [];
+                      try {
+                        choices = action.send(this, player);
+                      } catch {
+                        this.sendErrorToPlayer(websocket, 'makeAction', 'Scenario error in action send attribute');
+                        return;
+                      }
+                      const data = {
+                        choices,
+                      };
+                      this.notificationToGm('info', `${player.role.name} veut faire l'action ${received.data.actionName}`);
+                      this.sendOKToPlayer(websocket, 'makeAction', data);
+                    }
+                  });
+                }
+                if (noAction) {
+                  this.sendErrorToPlayer(websocket, 'makeAction', 'The specified player has not this action');
+                }
+              }
+              break;
+            case 'actionResult':
+              if (player.role == null) {
+                this.sendErrorToPlayer(websocket, 'makeAction', 'The specified player has no role');
+              } else {
+                let noAction = true;
+                if (player.role.actions != null) {
+                  player.role.actions.forEach((action) => {
+                    if (action.name == received.data.actionName) {
+                      noAction = false;
+                      try {
+                        action.effect(this, player, received.data.choices);
+                      } catch {
+                        this.sendErrorToPlayer(websocket, 'actionResult', 'Could not trigger the effect');
+                        return;
+                      }
+                      this.notificationToGm('info', `${player.role.name} a fait l'action ${action.name}`);
+                      this.sendOKToPlayer(websocket, 'actionResult', {});
+                    }
+                  });
+                }
+                if (noAction) {
+                  this.sendErrorToPlayer(websocket, 'makeAction', 'The specified player has not this action');
+                }
+              }
+              break;
+            default:
+              break;
+          }
+        }
+        // functions accessible everytime
         switch (received.type) {
           case 'getHomePage':
             this.getHomePage(player, (err, data) => {
@@ -666,16 +738,6 @@ class GameTemplate {
                 this.sendErrorToPlayer(websocket, 'getHomePage', err.message);
               } else {
                 this.sendOKToPlayer(websocket, 'getHomePage', data);
-              }
-            });
-            break;
-          case 'setRole':
-            this.setPlayerRolePref(player, received.data.roleName, (err) => {
-              if (err != null) {
-                this.sendErrorToPlayer(websocket, 'setRole', err.message);
-              } else {
-                this.sendOKToPlayer(websocket, 'setRole', {});
-                this.sendUpdate();
               }
             });
             break;
@@ -805,72 +867,132 @@ class GameTemplate {
   }
 
   handleGmUpdate(websocket, received) {
-    switch (received.type) {
-      case 'getSetup':
-        this.getSetup((err, data) => {
-          if (err != null) {
-            this.sendErrorToGm('getSetup', err.message);
-          } else {
-            this.sendOKToGm('getSetup', data);
-          }
-        });
-        break;
-      case 'setPlayerRole':
-        this.getPlayerFromName(received.data.playerName)
-          .then((player) => {
-            this.getRoleFromName(received.data.roleName)
-              .then((role) => {
-                player.setRole(role);
-                this.sendOKToGm('setPlayerRole', {});
-                this.sendOKToPlayer(player.socket, 'reloadPage', {});
-              })
-              .catch((err) => {
-                this.sendErrorToGm('setPlayerRole', err.message);
-              });
-          })
-          .catch((err) => {
-            this.sendErrorToGm('setPlayerRole', err.message);
+    if (this.started) {
+      if (this.paused) { // lancé, en pause
+        switch (received.type) {
+          case 'getSetup':
+            this.getSetup((err, data) => {
+              if (err != null) {
+                this.sendErrorToGm('getSetup', err.message);
+              } else {
+                this.sendOKToGm('getSetup', data);
+              }
+            });
+            break;
+          case 'resume':
+            this.paused = false;
+            this.setTriggers();
+            this.sendOKToGm('resume', { currentTime: this.currentTime });
+            break;
+          case 'getOverview':
+            this.getOverview()
+              .then((data) => { this.sendOKToGm('getOverview', data); });
+            break;
+          case 'save':
+            this.save()
+              .then(this.sendOKToGm('save', {}))
+              .catch((err) => this.sendErrorToGm('save', err.message));
+            break;
+          case 'getMg':
+            this.getMasterPage()
+              .then((data) => this.sendOKToGm('getMg', data));
+            break;
+          default:
+            this.sendErrorToGm('received.type', 'Does not exist when game is started and paused');
+            break;
+        }
+      } else { // lancé pas en pause
+        switch (received.type) {
+          case 'getSetup':
+            this.getSetup((err, data) => {
+              if (err != null) {
+                this.sendErrorToGm('getSetup', err.message);
+              } else {
+                this.sendOKToGm('getSetup', data);
+              }
+            });
+            break;
+          case 'announce':
+            this.players.forEach((p) => {
+              this.notification(p, 'announce', received.data.message);
+            });
+            this.sendOKToGm('announce', {});
+            break;
+          case 'pause':
+            this.paused = true;
+            this.currentTime = received.data.currentTime;
+            this.cancelTriggers();
+            this.sendOKToGm('pause', {});
+            break;
+          case 'stopGame':
+            this.stopGame();
+            break;
+          case 'getOverview':
+            this.getOverview()
+              .then((data) => { this.sendOKToGm('getOverview', data); });
+            break;
+          case 'save':
+            this.save()
+              .then(this.sendOKToGm('save', {}))
+              .catch((err) => this.sendErrorToGm('save', err.message));
+            break;
+          case 'getMg':
+            this.getMasterPage()
+              .then((data) => this.sendOKToGm('getMg', data));
+            break;
+          default:
+            this.sendErrorToGm(received.type, 'This function does not exist when game is started');
+            break;
+        }
+      }
+    } else { // pas lancé
+      switch (received.type) {
+        case 'getSetup':
+          this.getSetup((err, data) => {
+            if (err != null) {
+              this.sendErrorToGm('getSetup', err.message);
+            } else {
+              this.sendOKToGm('getSetup', data);
+            }
           });
-        break;
-      case 'announce':
-        this.players.forEach((p) => {
-          this.notification(p, 'announce', received.data.message);
-        });
-        this.sendOKToGm('announce', {});
-        break;
-      case 'pause':
-        this.paused = true;
-        this.currentTime = received.data.currentTime;
-        this.cancelTriggers();
-        this.sendOKToGm('pause', {});
-        break;
-      case 'resume':
-        this.paused = false;
-        this.setTriggers();
-        this.sendOKToGm('resume', { currentTime: this.currentTime });
-        break;
-      case 'startGame':
-        this.startGame();
-        break;
-      case 'stopGame':
-        this.stopGame();
-        break;
-      case 'getOverview':
-        this.getOverview()
-          .then((data) => { this.sendOKToGm('getOverview', data); });
-        break;
-      case 'save':
-        this.save()
-          .then(this.sendOKToGm('save', {}))
-          .catch((err) => this.sendErrorToGm('save', err.message));
-        break;
-      case 'getMg':
-        this.getMasterPage()
-          .then((data) => this.sendOKToGm('getMg', data));
-        break;
-      default:
-        this.sendErrorToGm(received.type, 'This function does not exist');
-        break;
+          break;
+        case 'setPlayerRole':
+          this.getPlayerFromName(received.data.playerName)
+            .then((player) => {
+              this.getRoleFromName(received.data.roleName)
+                .then((role) => {
+                  player.setRole(role);
+                  this.sendOKToGm('setPlayerRole', {});
+                  this.sendOKToPlayer(player.socket, 'reloadPage', {});
+                })
+                .catch((err) => {
+                  this.sendErrorToGm('setPlayerRole', err.message);
+                });
+            })
+            .catch((err) => {
+              this.sendErrorToGm('setPlayerRole', err.message);
+            });
+          break;
+        case 'startGame':
+          this.startGame();
+          break;
+        case 'getOverview':
+          this.getOverview()
+            .then((data) => { this.sendOKToGm('getOverview', data); });
+          break;
+        case 'save':
+          this.save()
+            .then(this.sendOKToGm('save', {}))
+            .catch((err) => this.sendErrorToGm('save', err.message));
+          break;
+        case 'getMg':
+          this.getMasterPage()
+            .then((data) => this.sendOKToGm('getMg', data));
+          break;
+        default:
+          this.sendErrorToGm(received.type, 'This function does not exist when game is not started');
+          break;
+      }
     }
   }
 
