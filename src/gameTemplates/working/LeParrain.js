@@ -303,6 +303,15 @@ const pickpocket = (game, you, result) => {
         player.inventory.splice(index, 1);
         game.notification(you, 'info', `Vous avez trouvez un objet intéressant dans les poches de ${player.role.name} : ${object.name}`);
       } else if ((a == 1 && player.inventory.length > 0) || (a == 0 && player.getClues().length == 0)) {
+        findableObjects = player.getNotClues();
+        object = findableObjects[Math.floor(Math.random() * findableObjects.length)];
+        const index = player.inventory.indexOf(object);
+        if (index == -1) {
+          console.log('can\'t find the index');
+          return;
+        }
+        you.inventory.push(object);
+        player.inventory.splice(index, 1);
         game.notification(you, 'info', `Vous avez trouvez un objet peu interessant dans les poches de ${player.role.name} : ${object.name}`);
       } else if (a == 2) {
         game.notification(player, 'warn', `${you.role.name} a essayé de vous faire les poches`);
